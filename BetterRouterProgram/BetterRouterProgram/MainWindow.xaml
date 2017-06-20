@@ -14,13 +14,20 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
         
-        <TextBox Text="Choose the Baud Rate"/>
-        <ComboBox x:Name="baudRateDD">
+        <TextBlock Text="Choose the Baud Rate" Grid.Column="1"/>
+        <ComboBox x:Name="baudRateDD" Grid.Column="2">
         </ComboBox>
 
-        <TextBox Text="Choose the Serial Port" />
-        <ComboBox x:Name="portNameDD">
+        <TextBlock Text="Choose the Serial Port" Grid.Row="1" Grid.Column="1" />
+        <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="2">
         </ComboBox>
 
     </Grid>
