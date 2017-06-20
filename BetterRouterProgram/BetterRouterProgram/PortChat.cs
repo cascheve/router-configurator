@@ -1,8 +1,5 @@
 ﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.IO.Ports;
 
@@ -13,7 +10,7 @@ namespace BetterRouterProgram
         static bool moveOn;
         static SerialPort serialPort;
 
-        public static void Run(MainWindow m)
+        public static void Connect()
         {
             
             StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
