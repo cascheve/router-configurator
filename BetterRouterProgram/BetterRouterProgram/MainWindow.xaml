@@ -5,30 +5,44 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="550">
-    
+        Title="MainWindow" Height="200" Width="550">
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="150" />
             <ColumnDefinition Width="100" />
             <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
-        
-        <TextBlock Text="Choose the Baud Rate" Grid.Column="1"/>
-        <ComboBox x:Name="baudRateDD" Grid.Column="2">
+
+        <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" />
+        <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3">
         </ComboBox>
 
-        <TextBlock Text="Choose the Serial Port" Grid.Row="1" Grid.Column="1" />
-        <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="2">
-        </ComboBox>
+        <TextBlock Text="Enter the System Username: " Grid.Row="3" Grid.Column="1" />
+        <TextBox Text="" Grid.Row="3" Grid.Column="3"></TextBox>
+
+        <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" />
+        <TextBox Text="" Grid.Row="5" Grid.Column="3"></TextBox>
+
+        <Button Grid.Column="5" Grid.Row="7">
+            <TextBlock Text="Connect"/>
+        </Button>
 
     </Grid>
 </Window>
