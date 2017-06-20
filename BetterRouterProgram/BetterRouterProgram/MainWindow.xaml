@@ -5,12 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="MainWindow" Height="200" Width="550">
+        Title="Router Configurator" Height="250" Width="550">
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
             <RowDefinition Height="25"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="10"/>
@@ -22,10 +26,10 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="200" />
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="150" />
-            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="50" />
             <ColumnDefinition Width="100" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
@@ -34,13 +38,21 @@
         <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3">
         </ComboBox>
 
-        <TextBlock Text="Enter the System Username: " Grid.Row="3" Grid.Column="1" />
-        <TextBox Name="username" Text="" Grid.Row="3" Grid.Column="3"></TextBox>
+        <TextBlock Text="Enter the Initial Password: " Grid.Row="3" Grid.Column="1" />
+        <TextBox Name="initPassword" Text="" Grid.Row="3" Grid.Column="3"></TextBox>
 
         <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" />
-        <TextBox Name="password" Text="" Grid.Row="5" Grid.Column="3"></TextBox>
+        <TextBox Name="sysPassword" Text="" Grid.Row="5" Grid.Column="3"></TextBox>
 
-        <Button Name="connectButton" Grid.Column="5" Grid.Row="7" Click="attemptConnection">
+        <TextBlock Text="Enter the Router ID: " Grid.Row="7" Grid.Column="1" />
+        <TextBox Name="routerID" Text="" Grid.Row="7" Grid.Column="3"></TextBox>
+
+        <TextBlock Name="filepathText" Text="File Path of Router Configuration: " Grid.Row="9" Grid.Column="1"></TextBlock>
+        <Button Name="browseButton" Grid.Column="3" Grid.Row="9" Click="browseFiles">
+            <TextBlock Name="browseText" Text="Browse"/>
+        </Button>
+
+        <Button Name="connectButton" Grid.Column="5" Grid.Row="11" Click="attemptConnection">
             <TextBlock Text="Connect"/>
         </Button>
 
