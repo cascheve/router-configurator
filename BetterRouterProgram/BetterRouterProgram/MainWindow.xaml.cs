@@ -3,6 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
 using Microsoft.Win32;
@@ -39,9 +40,36 @@ namespace BetterRouterProgram
         private void browseFiles(object sender, RoutedEventArgs e)
         {
 
-            Stream myStream = null;
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            String myStream = null;
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
 
+            fbd.Description = "Select the Directory holding the Configuration Files";
+            fbd.ShowNewFolderButton = true;
+            fbd.RootFolder = Environment.SpecialFolder.Personal;
+
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                //Get folder name
+                try
+                {
+                    if ((myStream = fbd.SelectedPath) != null)
+                    {
+                        //read the stream
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //TODO: Better Exception Handling
+                    System.Windows.Forms.MessageBox.Show("Error: Could not read Folder from disk. Original error: " + ex.Message);
+                }
+            }
+            else
+            {
+                //TODO: If the Dialog Fails, Handle
+            }
+
+            /*
+            Microsoft.Win32.OpenFileDialog openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
             openFileDialog1.InitialDirectory = "c:\\";
             openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             openFileDialog1.FilterIndex = 2;
@@ -62,9 +90,9 @@ namespace BetterRouterProgram
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                    System.Windows.Forms.MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
-            }
+            }*/
 
         }
 
