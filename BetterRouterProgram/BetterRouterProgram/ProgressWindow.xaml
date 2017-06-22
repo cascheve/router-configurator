@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="Router Progress" Height="300" Width="300">
+        Title="Router Progress" Height="300" Width="500">
     <Grid>
         
         <Grid.RowDefinitions>
@@ -23,12 +23,14 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="140" />
-            <ColumnDefinition Width="140" />
+            <ColumnDefinition Width="160" />
+            <ColumnDefinition Width="160" />
+            <ColumnDefinition Width="150" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="pingText" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Bottom" />
+        <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Bottom" />
+        <TextBlock Name="statusText" Text="" Grid.Row="1" Grid.Column="2"/>
 
     </Grid>
 </Window>

@@ -18,7 +18,6 @@ namespace BetterRouterProgram
 
                 InitializeSerialPort(portName);
 
-                moveOn = true;
                 System.Diagnostics.Process.Start(configDir + "\\tftpd32.exe");
 
                 ProgressWindow pw = new ProgressWindow();
@@ -54,8 +53,7 @@ namespace BetterRouterProgram
 
         public static string ReadBuffer(string endChar) {
             string message = "";
-
-
+           
             return message;
 
         }
