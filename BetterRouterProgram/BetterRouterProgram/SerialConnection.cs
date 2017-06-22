@@ -60,7 +60,7 @@ namespace BetterRouterProgram
             SerialPort.DiscardOutBuffer();
         }
 
-        public static string ReadBuffer(string endChar) {
+        public static string ReadResponse(string endChar) {
             char currentResponse = ' ';
             string response = "";
 
@@ -76,17 +76,38 @@ namespace BetterRouterProgram
             return response;
         }
 
-        public static void RunInstruction(string message, bool ) {
-            
+        public static void RunInstruction(string instruction) {
+            ResetConnectionBuffers();
+	        SerialPort.Write(instruction + '\r\n');
+	        message = ReadResponse('#');
+	
+	        return message;
         }
 
-        public static void Login() {
+        //might move to different module
+        public static void Login(string username = "root", string password = "") {
+            SerialPort.Write('\r\n');
+            Thread.Sleep(0.5);
             
+            SerialPort.Write(username + '\r\n')
+            Thread.Sleep(0.5);
+            
+            SerialPort.Write(password + '\r\n')
+            Thread.Sleep(0.5)
+            
+            /*check login success
+            if router_connection.read(bytes_to_read()).decode("utf-8").rstrip().endswith('#'):
+                print('login successful')
+            else:
+                print('login failed, closing script')
+                stop_tftpd()
+                close_connection()
+                input('press any key to continue...')
+                sys.exit()*/
         }
 
-        
-
-        public static void SetPassword() {
+        //move to different module
+        /*public static void SetPassword() {
             
         }
 
@@ -104,7 +125,7 @@ namespace BetterRouterProgram
 
         public static void CopyToSecondary() {
             
-        }
+        }*/
 
 
         /* methods to add methods "cross-referenced"
