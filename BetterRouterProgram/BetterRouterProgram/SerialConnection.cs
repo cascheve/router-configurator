@@ -80,7 +80,7 @@ namespace BetterRouterProgram
         public static string RunInstruction(string instruction) {
             ResetConnectionBuffers();
 	        SerialPort.Write(instruction + "\r\n");
-	        message = ReadResponse('#');
+	        string message = ReadResponse('#');
 	
 	        return message;
         }
@@ -89,12 +89,12 @@ namespace BetterRouterProgram
         public static void Login(string username = "root", string password = "") {
             SerialPort.Write("\r\n");
             Thread.Sleep(500);
-            
-            SerialPort.Write(username + "\r\n")
+
+            SerialPort.Write(username + "\r\n");
             Thread.Sleep(500);
-            
-            SerialPort.Write(password + "\r\n")
-            Thread.Sleep(500)
+
+            SerialPort.Write(password + "\r\n");
+            Thread.Sleep(500);
             
             /*check login success
             if router_connection.read(bytes_to_read()).decode("utf-8").rstrip().endswith('#'):

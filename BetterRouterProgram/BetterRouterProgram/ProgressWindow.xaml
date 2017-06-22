@@ -24,7 +24,7 @@
 
         <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Center" />
         <TextBlock x:Name="statusText" Grid.Row="1" Grid.Column="2"/>
-        <ProgressBar Name="progBar1" Grid.Row="1" Grid.Column="2" Height="20"/>
+        <ProgressBar Name="progressBar" Grid.Row="1" Grid.Column="2" Height="20"/>
         <TextBlock Name="currentTask" Text="Attempting to Connect" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
     </Grid>

@@ -35,7 +35,7 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" />
-        <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3" Width="100" Height="25" HorizontalAlignment="Left">
+        <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3" Width="100" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom">
         </ComboBox>
 
         <TextBlock Text="Enter the Initial Password: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom" />
