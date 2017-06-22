@@ -46,7 +46,7 @@ namespace BetterRouterProgram
 
             fbd.Description = "Select the Directory holding the Configuration Files";
             fbd.ShowNewFolderButton = true;
-            fbd.RootFolder = Environment.SpecialFolder.Personal;
+            errorText.Text = fbd.SelectedPath;
 
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -57,7 +57,15 @@ namespace BetterRouterProgram
                     {
                         //Selected Path is the Absolute path selected (as a string)
                         filepathToolTip.Text = fbd.SelectedPath;
-                        filepathText.Text = fbd.SelectedPath.Substring(0, 40) + "...";
+
+                        if (fbd.SelectedPath.Length > 35)
+                        {
+                            filepathText.Text = fbd.SelectedPath.Substring(0, 35) + "...";
+                        }
+                        else
+                        {
+                            filepathText.Text = fbd.SelectedPath;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -107,9 +115,31 @@ namespace BetterRouterProgram
             string routerID = this.routerID.Text;
             string configDir = this.filepathToolTip.Text;
 
-            //TODO: Make sure all fields are filled
+            errorText.Text = "";
 
-            RouterConnection.Connect(comPort, iString, sString, routerID, configDir);
+            //TODO: Make sure all fields are filled
+            if (comPort.Equals(""))
+            {
+                errorText.Text = "Please fill in the Port Number";
+            }
+            else if (sString.Equals(""))
+            {
+                errorText.Text = "Please fill in the System Password";
+
+            }
+            else if (routerID.Equals(""))
+            {
+                errorText.Text = "Please fill in the Router's ID";
+
+            }
+            else if (configDir.Equals(""))
+            {
+                errorText.Text = "Please fill the Configuration File Directory";
+            }
+            else
+            {
+                RouterConnection.Connect(comPort, iString, sString, routerID, configDir);
+            }
 
         }
     }

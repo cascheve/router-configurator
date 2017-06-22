@@ -63,5 +63,7 @@
         <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="11" Click="attemptConnection">
         </Button>
 
+        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="11" Grid.Column="3"/>
+
     </Grid>
 </Window>
