@@ -19,8 +19,9 @@ namespace BetterRouterProgram
 
                 System.Diagnostics.Process.Start(configDir + "\\tftpd32.exe");
 
-                pw = new ProgressWindow();
+                ProgressWindow pw = new ProgressWindow();
                 pw.Show();
+                FunctionUtil.InitializeProgressWindow(pw);
 
                 //CloseConnection()
             }
@@ -82,6 +83,30 @@ namespace BetterRouterProgram
 	
 	        return message;
         }
+
+        public static void Login(string username, string password) {
+            SerialPort.Write("\r\n");
+            Thread.Sleep(500);
+
+            SerialPort.Write(username + "\r\n");
+            Thread.Sleep(500);
+
+            SerialPort.Write(password + "\r\n");
+            Thread.Sleep(500);
+
+            /*TODO: check login success
+            if router_connection.read(bytes_to_read()).decode("utf-8").rstrip().endswith('#'):
+                print('login successful')
+            else:
+                print('login failed, closing script')
+                stop_tftpd()
+                close_connection()
+                input('press any key to continue...')
+                sys.exit()*/
+
+            //TODO: probably return something based on if it could login or not 
+        }
+
 
         //add to other module as well
         /* methods to add methods "cross-referenced"

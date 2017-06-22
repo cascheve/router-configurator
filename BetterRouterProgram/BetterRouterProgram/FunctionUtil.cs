@@ -15,7 +15,7 @@ namespace BetterRouterProgram
         private const int PasswordProgress = 90;        
         private const int RebootProgress = 100;
 
-        public static void initializeProgressWindow(ProgressWindow pw) {
+        public static void InitializeProgressWindow(ProgressWindow pw) {
             ProgressWindow = pw;
         }
 
@@ -30,24 +30,7 @@ namespace BetterRouterProgram
         public static void Login(string username = "root", string password = "") {
             UpdateProgressWindow("Logging In");
 
-            SerialPort.Write("\r\n");
-            Thread.Sleep(500);
-
-            SerialPort.Write(username + "\r\n");
-            Thread.Sleep(500);
-
-            SerialPort.Write(password + "\r\n");
-            Thread.Sleep(500);
-
-            /*check login success
-            if router_connection.read(bytes_to_read()).decode("utf-8").rstrip().endswith('#'):
-                print('login successful')
-            else:
-                print('login failed, closing script')
-                stop_tftpd()
-                close_connection()
-                input('press any key to continue...')
-                sys.exit()*/
+            SerialConnection.Login(username, password);
 
             UpdateProgressWindow("Login Successful", LoginProgress);
         }
