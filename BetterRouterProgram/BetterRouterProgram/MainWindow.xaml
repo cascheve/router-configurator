@@ -34,20 +34,20 @@
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" />
+        <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" />
         <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3" Width="100" Height="25" HorizontalAlignment="Left">
         </ComboBox>
 
-        <TextBlock Text="Enter the Initial Password: " Grid.Row="3" Grid.Column="1" />
+        <TextBlock Text="Enter the Initial Password: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom" />
         <TextBox Name="initPassword" Text="" Grid.Row="3" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
-        <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" />
+        <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Bottom" />
         <TextBox Name="sysPassword" Text="" Grid.Row="5" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
-        <TextBlock Text="Enter the Router ID: " Grid.Row="7" Grid.Column="1" />
+        <TextBlock Text="Enter the Router ID: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Bottom" />
         <TextBox Name="routerID" Text="" Grid.Row="7" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
-        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="9" Grid.Column="1"></TextBlock>
+        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Bottom"></TextBlock>
         <TextBlock Name="filepathText" Text="" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Right" Width="280">
             <TextBlock.ToolTip>
                 <ToolTip>
