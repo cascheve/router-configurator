@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="Router Progress" Height="150" Width="500">
+        Title="Router Progress" Height="120" Width="520">
     <Grid>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="15"/>
+            <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
@@ -17,14 +17,15 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="160" />
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="430" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Bottom" />
+        <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Center" />
         <TextBlock x:Name="statusText" Grid.Row="1" Grid.Column="2"/>
         <ProgressBar Name="progBar1" Grid.Row="1" Grid.Column="2" Height="20"/>
+        <TextBlock Name="currentTask" Text="Attempting to Connect" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
     </Grid>
 </Window>
