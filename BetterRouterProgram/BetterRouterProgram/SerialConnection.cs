@@ -1,5 +1,4 @@
 using System;
-
 using System.Threading;
 using System.IO.Ports;
 
@@ -7,8 +6,7 @@ namespace BetterRouterProgram
 {
     public class SerialConnection
     {
-        static SerialPort SerialPort = null;
-        static ProgressWindow pw;
+        private static SerialPort SerialPort = null;
 
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
@@ -84,79 +82,6 @@ namespace BetterRouterProgram
 	
 	        return message;
         }
-
-        //might move to different module
-        public static void Login(string username = "root", string password = "") {
-            SerialPort.Write("\r\n");
-            Thread.Sleep(500);
-
-            SerialPort.Write(username + "\r\n");
-            Thread.Sleep(500);
-
-            SerialPort.Write(password + "\r\n");
-            Thread.Sleep(500);
-            
-            /*check login success
-            if router_connection.read(bytes_to_read()).decode("utf-8").rstrip().endswith('#'):
-                print('login successful')
-            else:
-                print('login failed, closing script')
-                stop_tftpd()
-                close_connection()
-                input('press any key to continue...')
-                sys.exit()*/
-        }
-
-        //move to different module
-        /*public static void SetPassword() {
-            pw.currentTask.Text = "Setting Password";
-
-
-            pw.progressBar.Value = 20;
-            pw.currentTask.Text = "Password Set";
-        }
-            
-
-        public static void Login() {
-            pw.currentTask.Text = "Logging In";
-
-
-            pw.progressBar.Value = 10;
-            pw.currentTask.Text = "Log-In Successful";
-        }
-
-        public static void SetTime() {
-            pw.currentTask.Text = "Setting Time";
-
-
-            pw.progressBar.Value = 30;
-            pw.currentTask.Text = "Time Set";
-        }
-
-        public static void PingTest() {
-            pw.currentTask.Text = "Pinging Host Machine";
-
-
-            pw.progressBar.Value = 40;
-            pw.currentTask.Text = "Ping Successful";
-        }
-
-        public static void CopyFiles() {
-            pw.currentTask.Text = "Copying Configurations";
-
-
-            pw.progressBar.Value = 50;
-            pw.currentTask.Text = "File Copying Successful";
-        }
-
-        public static void CopyToSecondary() {
-            pw.currentTask.Text = "Creating Back-Up Files";
-
-
-            pw.progressBar.Value = 60;
-            pw.currentTask.Text = "File Copying Successful";
-        }*/
-
 
         //add to other module as well
         /* methods to add methods "cross-referenced"
