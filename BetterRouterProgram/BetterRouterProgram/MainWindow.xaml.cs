@@ -19,8 +19,6 @@ namespace BetterRouterProgram
             InitializeComponent();
 
             this.portNameDD.Background = Brushes.LightGray;
-            this.portNameDD.MaxWidth = (this.Width) / 7;
-            this.portNameDD.MaxHeight = (this.Height) / 8;
 
             FillPortNames(this);
         }
@@ -109,6 +107,8 @@ namespace BetterRouterProgram
 
         private void attemptConnection(object sender, RoutedEventArgs e)
         {
+            //TODO: Turn off click handler when the main window is currently open -> stops user from opening too many connections
+
             string comPort = this.portNameDD.Text;
             string iString = this.initPassword.Text;
             string sString = this.sysPassword.Text;

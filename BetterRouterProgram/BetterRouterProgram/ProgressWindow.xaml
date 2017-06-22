@@ -28,7 +28,7 @@
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="pingText" Text="Ping Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Bottom" />
+        <TextBlock Name="pingText" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Bottom" />
 
     </Grid>
 </Window>

@@ -15,7 +15,6 @@ namespace BetterRouterProgram
             
             try
             {
-                StringComparer stringComparer = StringComparer.OrdinalIgnoreCase;
                 Thread readThread = new Thread(Read);
 
                 // Create a new SerialPort object with default settings.
