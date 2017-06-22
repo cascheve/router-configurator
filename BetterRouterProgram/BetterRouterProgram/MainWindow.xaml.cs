@@ -137,7 +137,7 @@ namespace BetterRouterProgram
             }
             else
             {
-                RouterConnection.Connect(comPort, iString, sString, routerID, configDir);
+                SerialConnection.Connect(comPort, iString, sString, routerID, configDir);
             }
 
         }

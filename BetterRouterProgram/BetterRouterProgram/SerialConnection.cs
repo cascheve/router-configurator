@@ -36,6 +36,10 @@ namespace BetterRouterProgram
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
 
+                ReadFromConnection("");
+
+                Thread.Sleep(1000);
+
                 while (!moveOn)
                 {
                     //WriteToConnection
@@ -69,11 +73,19 @@ namespace BetterRouterProgram
             serialPort.WriteTimeout = 500;
 
             serialPort.Open();
+
+            char[] buffer = { '\r', '\n' };
+
+            serialPort.Write(buffer, 0, 2);
         }
 
         public static string ReadFromConnection(string endChar) {
             string message = "";
 
+            char[] buffer = new char[16];
+            serialPort.Read(buffer, 0, 16);
+
+            message = string(buffer);
 
             return message;
 
