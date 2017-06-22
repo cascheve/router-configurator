@@ -8,6 +8,7 @@ namespace BetterRouterProgram
     public class SerialConnection
     {
         static SerialPort SerialPort = null;
+        static ProgressWindow pw;
 
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
@@ -20,7 +21,7 @@ namespace BetterRouterProgram
 
                 System.Diagnostics.Process.Start(configDir + "\\tftpd32.exe");
 
-                ProgressWindow pw = new ProgressWindow();
+                pw = new ProgressWindow();
                 pw.Show();
 
                 //CloseConnection()
@@ -70,7 +71,7 @@ namespace BetterRouterProgram
 
 		        if(currentResponse == '#'){
 			        break;
-                }
+                }   
             }
 
             return response;
@@ -108,26 +109,56 @@ namespace BetterRouterProgram
 
         //move to different module
         /*public static void SetPassword() {
+            pw.currentTask.Text = "Setting Password";
+
+
+            pw.progressBar.Value = 20;
+            pw.currentTask.Text = "Password Set";
+        }
             
+
+        public static void Login() {
+            pw.currentTask.Text = "Logging In";
+
+
+            pw.progressBar.Value = 10;
+            pw.currentTask.Text = "Log-In Successful";
         }
 
         public static void SetTime() {
-            
+            pw.currentTask.Text = "Setting Time";
+
+
+            pw.progressBar.Value = 30;
+            pw.currentTask.Text = "Time Set";
         }
 
         public static void PingTest() {
-            
+            pw.currentTask.Text = "Pinging Host Machine";
+
+
+            pw.progressBar.Value = 40;
+            pw.currentTask.Text = "Ping Successful";
         }
 
         public static void CopyFiles() {
-            
+            pw.currentTask.Text = "Copying Configurations";
+
+
+            pw.progressBar.Value = 50;
+            pw.currentTask.Text = "File Copying Successful";
         }
 
         public static void CopyToSecondary() {
-            
+            pw.currentTask.Text = "Creating Back-Up Files";
+
+
+            pw.progressBar.Value = 60;
+            pw.currentTask.Text = "File Copying Successful";
         }*/
 
 
+        //add to other module as well
         /* methods to add methods "cross-referenced"
         +prompt_reboot() - calls function to run instruction
         +run_instructions() - calls run_instruction()*/
