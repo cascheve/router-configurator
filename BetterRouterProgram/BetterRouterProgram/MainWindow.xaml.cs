@@ -117,7 +117,6 @@ namespace BetterRouterProgram
 
             errorText.Text = "";
 
-            //TODO: Make sure all fields are filled
             if (comPort.Equals(""))
             {
                 errorText.Text = "Please fill in the Port Number";
