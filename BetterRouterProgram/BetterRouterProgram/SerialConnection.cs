@@ -86,14 +86,15 @@ namespace BetterRouterProgram
             pw.currentTask.Text = "Logging In";
 
 
+            pw.progressBar.Value = 10;
             pw.currentTask.Text = "Log-In Successful";
-
         }
 
         public static void SetPassword() {
             pw.currentTask.Text = "Setting Password";
 
 
+            pw.progressBar.Value = 20;
             pw.currentTask.Text = "Password Set";
         }
 
@@ -101,6 +102,7 @@ namespace BetterRouterProgram
             pw.currentTask.Text = "Setting Time";
 
 
+            pw.progressBar.Value = 30;
             pw.currentTask.Text = "Time Set";
         }
 
@@ -108,6 +110,7 @@ namespace BetterRouterProgram
             pw.currentTask.Text = "Pinging Computer";
 
 
+            pw.progressBar.Value = 40;
             pw.currentTask.Text = "Ping Successful";
         }
 
@@ -115,6 +118,7 @@ namespace BetterRouterProgram
             pw.currentTask.Text = "Copying Configurations";
 
 
+            pw.progressBar.Value = 50;
             pw.currentTask.Text = "File Copying Successful";
         }
 
@@ -122,6 +126,7 @@ namespace BetterRouterProgram
             pw.currentTask.Text = "Creating Back-Up Files";
 
 
+            pw.progressBar.Value = 60;
             pw.currentTask.Text = "File Copying Successful";
         }
 
