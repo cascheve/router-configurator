@@ -22,6 +22,7 @@ namespace BetterRouterProgram
         public ProgressWindow()
         {
             InitializeComponent();
+            progBar1.Value = 0.5;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace BetterRouterProgram
     public class SerialConnection
     {
         static SerialPort SerialPort = null;
+        static ProgressWindow pw;
 
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
@@ -20,7 +21,7 @@ namespace BetterRouterProgram
 
                 System.Diagnostics.Process.Start(configDir + "\\tftpd32.exe");
 
-                ProgressWindow pw = new ProgressWindow();
+                pw = new ProgressWindow();
                 pw.Show();
 
                 //CloseConnection()
@@ -70,40 +71,58 @@ namespace BetterRouterProgram
 
 		        if(currentResponse == '#'){
 			        break;
-                }
+                }   
             }
 
             return response;
         }
 
-        public static void RunInstruction(string message, bool ) {
+        public static void RunInstruction(string message, bool boolean) {
             
+
         }
 
         public static void Login() {
-            
+            pw.currentTask.Text = "Logging In";
+
+
+            pw.currentTask.Text = "Log-In Successful";
+
         }
 
-        
-
         public static void SetPassword() {
-            
+            pw.currentTask.Text = "Setting Password";
+
+
+            pw.currentTask.Text = "Password Set";
         }
 
         public static void SetTime() {
-            
+            pw.currentTask.Text = "Setting Time";
+
+
+            pw.currentTask.Text = "Time Set";
         }
 
         public static void PingTest() {
-            
+            pw.currentTask.Text = "Pinging Computer";
+
+
+            pw.currentTask.Text = "Ping Successful";
         }
 
         public static void CopyFiles() {
-            
+            pw.currentTask.Text = "Copying Configurations";
+
+
+            pw.currentTask.Text = "File Copying Successful";
         }
 
         public static void CopyToSecondary() {
-            
+            pw.currentTask.Text = "Creating Back-Up Files";
+
+
+            pw.currentTask.Text = "File Copying Successful";
         }
 
 
