@@ -13,6 +13,7 @@ namespace BetterRouterProgram
 
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
@@ -52,9 +53,11 @@ namespace BetterRouterProgram
                 //Get folder name
                 try
                 {
-                    if ((myStream = fbd.SelectedPath) != null)
+                    if ((myStream = fbd.SelectedPath) != null && (myStream != ""))
                     {
-                        //read the stream
+                        //Selected Path is the Absolute path selected (as a string)
+                        filepathToolTip.Text = fbd.SelectedPath;
+                        filepathText.Text = fbd.SelectedPath.Substring(0, 40) + "...";
                     }
                 }
                 catch (Exception ex)
@@ -99,12 +102,14 @@ namespace BetterRouterProgram
         private void attemptConnection(object sender, RoutedEventArgs e)
         {
             string comPort = this.portNameDD.Text;
-            string uString = this.initPassword.Text;
-            string pString = this.sysPassword.Text;
+            string iString = this.initPassword.Text;
+            string sString = this.sysPassword.Text;
             string routerID = this.routerID.Text;
-            string configFP = this.browseText.Text;
+            string configDir = this.filepathToolTip.Text;
 
-       
+            //TODO: Make sure all fields are filled
+
+            RouterConnection.Connect(comPort, iString, sString, routerID, configDir);
 
         }
     }

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="Router Configurator" Height="250" Width="550">
+        Title="Router Configurator" Height="250" Width="750">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -28,32 +28,39 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="200" />
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="150" />
-            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="100" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" />
-        <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3">
+        <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3" Width="100" Height="25" HorizontalAlignment="Left">
         </ComboBox>
 
         <TextBlock Text="Enter the Initial Password: " Grid.Row="3" Grid.Column="1" />
-        <TextBox Name="initPassword" Text="" Grid.Row="3" Grid.Column="3"></TextBox>
+        <TextBox Name="initPassword" Text="" Grid.Row="3" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
         <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" />
-        <TextBox Name="sysPassword" Text="" Grid.Row="5" Grid.Column="3"></TextBox>
+        <TextBox Name="sysPassword" Text="" Grid.Row="5" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
         <TextBlock Text="Enter the Router ID: " Grid.Row="7" Grid.Column="1" />
-        <TextBox Name="routerID" Text="" Grid.Row="7" Grid.Column="3"></TextBox>
+        <TextBox Name="routerID" Text="" Grid.Row="7" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
-        <TextBlock Name="filepathText" Text="File Path of Router Configuration: " Grid.Row="9" Grid.Column="1"></TextBlock>
-        <Button Name="browseButton" Grid.Column="3" Grid.Row="9" Click="browseFiles">
-            <TextBlock Name="browseText" Text="Browse"/>
-        </Button>
+        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="9" Grid.Column="1"></TextBlock>
+        <TextBlock Name="filepathText" Text="" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Right" Width="280">
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <StackPanel>
+                        <TextBlock FontWeight="Bold">Browse for Configuration Folder</TextBlock>
+                        <TextBlock Name="filepathToolTip"></TextBlock>
+                    </StackPanel>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
+        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="9" Click="browseFiles" Width="100" HorizontalAlignment="Left"/>
 
-        <Button Name="connectButton" Grid.Column="5" Grid.Row="11" Click="attemptConnection">
-            <TextBlock Text="Connect"/>
+        <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="11" Click="attemptConnection">
         </Button>
 
     </Grid>
