@@ -7,18 +7,7 @@ namespace BetterRouterProgram
 {
     public class SerialConnection
     {
-        static SerialPort serialPort = null;
-        static bool moveOn = false;
-
-        //public static SerialPort getInstance()
-        //{
-        //    if (serialPort == null)
-        //    {
-        //        InitializeSerialPort();
-        //    }
-
-        //    return serialPort;
-        //}
+        static SerialPort SerialPort = null;
 
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
@@ -29,25 +18,12 @@ namespace BetterRouterProgram
 
                 InitializeSerialPort(portName);
 
-                moveOn = true;
-                //readThread.Start();
                 System.Diagnostics.Process.Start(configDir + "\\tftpd32.exe");
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
 
-                ReadFromConnection("");
-
-                Thread.Sleep(1000);
-
-                while (!moveOn)
-                {
-                    //WriteToConnection
-       
-                }
-
-                //readThread.Join();
-                serialPort.Close();
+                //CloseConnection()
             }
 
             //TODO: Better Exception Handling
@@ -66,34 +42,68 @@ namespace BetterRouterProgram
 
         }
 
-        public static void InitializeSerialPort(string comPort) {
-            serialPort = new SerialPort(comPort, 9600);
+        private static void InitializeSerialPort(string comPort) {
+            SerialPort = new SerialPort(comPort, 9600);
 
-            serialPort.ReadTimeout = 500;
-            serialPort.WriteTimeout = 500;
+            SerialPort.ReadTimeout = 500;
+            SerialPort.WriteTimeout = 500;
 
-            serialPort.Open();
-
-            char[] buffer = { '\r', '\n' };
-
-            serialPort.Write(buffer, 0, 2);
+            SerialPort.Open();
         }
 
-        public static string ReadFromConnection(string endChar) {
+        public static string ReadBuffer(string endChar) {
             string message = "";
-
-            char[] buffer = new char[16];
-            serialPort.Read(buffer, 0, 16);
-
-            message = string(buffer);
-
+           
             return message;
 
         }
 
-        public static void WriteToConnection(string message) {
+        public static void WriteBuffer(string message) {
 
         }
+
+
+        public static void CloseConnection() {
+            SerialPort.Close();
+        }
+
+        public static void ResetConnectionBuffers() {
+            SerialPort.DiscardInBuffer();
+            SerialPort.DiscardOutBuffer();
+        }
+
+        public static void Login() {
+            
+        }
+
+        public static void RunInstruction() {
+            
+        }
+
+        public static void SetPassword() {
+            
+        }
+
+        public static void SetTime() {
+            
+        }
+
+        public static void PingTest() {
+            
+        }
+
+        public static void CopyFiles() {
+            
+        }
+
+        public static void CopyToSecondary() {
+            
+        }
+
+
+        /* methods to add methods "cross-referenced"
+        +prompt_reboot() - calls function to run instruction
+        +run_instructions() - calls run_instruction()*/
 
     }
 }
