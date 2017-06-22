@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="Router Progress" Height="300" Width="500">
+        Title="Router Progress" Height="150" Width="500">
     <Grid>
         
         <Grid.RowDefinitions>
@@ -13,24 +13,18 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="160" />
-            <ColumnDefinition Width="160" />
-            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="250" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
         <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Bottom" />
-        <TextBlock Name="statusText" Text="" Grid.Row="1" Grid.Column="2"/>
+        <TextBlock x:Name="statusText" Grid.Row="1" Grid.Column="2"/>
+        <ProgressBar Name="progBar1" Grid.Row="1" Grid.Column="2" Height="20"/>
 
     </Grid>
 </Window>
