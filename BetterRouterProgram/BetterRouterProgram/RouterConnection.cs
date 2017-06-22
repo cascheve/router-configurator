@@ -2,8 +2,6 @@
 using System;
 using System.Threading;
 using System.IO.Ports;
-using System.Net;
-using System.Net.NetworkInformation;
 
 namespace BetterRouterProgram
 {
@@ -37,22 +35,9 @@ namespace BetterRouterProgram
 
                 while (!moveOn)
                 {
-                    //serialPort.Write()   
-                    System.Diagnostics.Process.Start(configDir + "\\tftpd32.exe");
+                    serialPort.Write("\r\n");
+                    Thread.Sleep(500);
 
-                    Ping pingSender = new Ping();
-                    IPAddress address = IPAddress.Loopback;
-                    PingReply reply = pingSender.Send(address);
-
-                    if (reply.Status == IPStatus.Success)
-                    {
-                       
-                        Console.WriteLine("Address: {0}", reply.Address.ToString());
-                        Console.WriteLine("RoundTrip time: {0}", reply.RoundtripTime);
-                        Console.WriteLine("Time to live: {0}", reply.Options.Ttl);
-                        Console.WriteLine("Don't fragment: {0}", reply.Options.DontFragment);
-                        Console.WriteLine("Buffer size: {0}", reply.Buffer.Length);
-                    }
                 }
 
                 readThread.Join();
@@ -70,18 +55,19 @@ namespace BetterRouterProgram
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show("Original Error: " + ex.Message + "\n" + ex.HelpLink);
+                System.Windows.Forms.MessageBox.Show("Original Error: " + ex.Message);
             }
 
         }
 
         public static void Read()
         {
+
             while (!moveOn)
             {
                 try
                 {
-                    
+                    //serialPort.Read();
                 }
                 catch (TimeoutException) {
 
