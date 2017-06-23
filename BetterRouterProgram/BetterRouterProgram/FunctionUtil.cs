@@ -1,3 +1,4 @@
+
 using System;
 using System.Threading;
 using System.IO.Ports;
@@ -23,16 +24,26 @@ namespace BetterRouterProgram
             if(value > -1) {
                 ProgressWindow.progressBar.Value = value;
             }
+
             ProgressWindow.currentTask.Text = text;
         }
 
-        //might move to different module
         public static void Login(string username = "root", string password = "") {
             UpdateProgressWindow("Logging In");
 
-            SerialConnection.Login(username, password);
+            //if the serial connection fails using the username and password specified
+            if (!SerialConnection.Login(username, password)) {
+                
+                SerialConnection.CloseConnection();
+                //TODO: EXIT
+            }
 
             UpdateProgressWindow("Login Successful", LoginProgress);
+        }
+
+        public static void StopTFTP()
+        {
+            System.Diagnostics.Process.Start("TASKKILL / F / IM tftpd32.exe");
         }
 
         public static void SetPassword() {
