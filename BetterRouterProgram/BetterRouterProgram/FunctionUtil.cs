@@ -9,6 +9,7 @@ namespace BetterRouterProgram
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
+        private static string dateFormat = "yyyyMMdd";
 
         enum Progress : int {
                 None = -1,
@@ -46,6 +47,7 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Login Successful", (int)Progress.Login);
         }
 
+        // Get the return value of Process.Start in order to stop the process
         public static void StopProcess(Process p)
         {
             p.CloseMainWindow();
@@ -60,9 +62,20 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Password Set", (int)Progress.Password);
         }
          
-        public static void SetTime() {
+        public static void SetTime(int offset = 0) {
             UpdateProgressWindow("Setting Time");
 
+            // day = datetime.now().strftime('%Y/%m/%d')
+            // minutesec = datetime.now().strftime('%M:%S')
+            // hour = int(datetime.now().strftime('%H')) + offset
+            // date = '{} {}:{}'.format(day, hour, minutesec)
+            // run_instruction('SET -SYS DATE = {}'.format(date))
+
+            DateTime setDate = DateTime.Now.AddHours(offset);
+
+            //SET - SYS DATE = 2017 / 05 / 19 12:02
+            //may be setDate.DateTime
+            SerialConnection.RunInstruction("SET -SYS DATE = " + setDate.ToString());
 
             UpdateProgressWindow("Time Set", (int)Progress.SetTime);
         }
