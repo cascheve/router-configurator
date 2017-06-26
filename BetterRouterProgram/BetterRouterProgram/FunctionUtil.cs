@@ -11,7 +11,9 @@ namespace BetterRouterProgram
         private static ProgressWindow ProgressWindow = null;
         private static string dateFormat = "yyyyMMdd";
 
-        enum Progress : int {
+        private static Process Tftp = null;
+
+        private enum Progress : int {
                 None = -1,
                 Login = 10, 
                 Ping = 20,
@@ -20,15 +22,15 @@ namespace BetterRouterProgram
                 SetTime = 80, 
                 Password = 90,
                 Reboot = 100
-            };  
+        };
 
         public static void InitializeProgressWindow(ProgressWindow pw) {
             ProgressWindow = pw;
         }
 
-        private static void UpdateProgressWindow(string text, int value = (int)Progress.None) {
-            if(value > (int)Progress.None) {
-                ProgressWindow.progressBar.Value = value;
+        private static void UpdateProgressWindow(string text, Progress value = Progress.None) {
+            if(value != Progress.None) {
+                ProgressWindow.progressBar.Value = (int)value;
             }
 
             ProgressWindow.currentTask.Text = text;
@@ -43,16 +45,8 @@ namespace BetterRouterProgram
                 SerialConnection.CloseConnection();
                 //TODO: EXIT
             }
-
-            UpdateProgressWindow("Login Successful", (int)Progress.Login);
-        }
-
-        // Get the return value of Process.Start in order to stop the process
-        public static void StopProcess(Process p)
-        {
-            p.CloseMainWindow();
-            p.Close();
-            p = null;
+            
+            UpdateProgressWindow("Login Successful", Progress.Login);
         }
 
         public static void SetPassword() {
@@ -80,7 +74,7 @@ namespace BetterRouterProgram
          //   run_instruction('setd -ac secret = "{}"'.format(password))
 
 
-            UpdateProgressWindow("Password Set", (int)Progress.Password);
+            UpdateProgressWindow("Password Set", Progress.Password);
         }
          
         public static void SetTime(int offset = 0) {
@@ -98,14 +92,14 @@ namespace BetterRouterProgram
             //may be setDate.DateTime
             SerialConnection.RunInstruction("SET -SYS DATE = " + setDate.ToString());
 
-            UpdateProgressWindow("Time Set", (int)Progress.SetTime);
+            UpdateProgressWindow("Time Set", Progress.SetTime);
         }
 
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
 
 
-            UpdateProgressWindow("Ping Successful", (int)Progress.Ping);
+            UpdateProgressWindow("Ping Successful", Progress.Ping);
         }
 
         public static void CopyFiles() {
@@ -113,7 +107,7 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("File Copying Successful", (int)Progress.CopyFiles);
+            UpdateProgressWindow("File Copying Successful", Progress.CopyFiles);
         }
 
         public static void CopyToSecondary() {
@@ -142,7 +136,7 @@ namespace BetterRouterProgram
           //              i += 1       
           //  print('copying files from primary to secondary   [ done ]     ')
 
-            UpdateProgressWindow("Backup Created Successfully", (int)Progress.CopySecondary);
+            UpdateProgressWindow("Backup Created Successfully", Progress.CopySecondary);
         }
 
         public static void Reboot() {
@@ -150,7 +144,18 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("Reboot Successful", (int)Progress.Reboot); 
+            UpdateProgressWindow("Reboot Successful", Progress.Reboot); 
+        }
+
+        public static void StartTftp(string configDir)
+        {
+            Tftp = Process.Start(configDir + "\\tftpd32.exe");
+        }
+
+        public static void StopTftp()
+        {
+            Tftp.CloseMainWindow();
+            Tftp.Close();
         }
     }
 }

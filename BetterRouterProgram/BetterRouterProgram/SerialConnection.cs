@@ -8,7 +8,6 @@ namespace BetterRouterProgram
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
-        private static Process tftpInstance = null;
 
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
@@ -19,7 +18,7 @@ namespace BetterRouterProgram
 
                 InitializeSerialPort(portName);
 
-                tftpInstance = Process.Start(configDir + "\\tftpd32.exe");
+                FunctionUtil.StartTftp(configDir);
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
@@ -37,9 +36,9 @@ namespace BetterRouterProgram
             {
                 System.Windows.Forms.MessageBox.Show("Error: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.");
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                System.Windows.Forms.MessageBox.Show("Original Error: " + ex.Message);
+                System.Windows.Forms.MessageBox.Show("Original Error: " + e.Message);
             }
 
         }
@@ -56,10 +55,7 @@ namespace BetterRouterProgram
         public static void CloseConnection() {
             SerialPort.Close();
 
-            if (tftpInstance != null)
-            {
-                FunctionUtil.StopProcess(tftpInstance);
-            }
+            FunctionUtil.StopTftp();
         }
 
         public static void ResetConnectionBuffers() {
