@@ -7,20 +7,24 @@ namespace BetterRouterProgram
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
-        private const int LoginProgress = 10;
-        private const int PingProgress = 20;
-        private const int CopyFilesProgress = 50;
-        private const int CopySecondaryProgress = 70;
-        private const int SetTimeProgress = 80;
-        private const int PasswordProgress = 90;        
-        private const int RebootProgress = 100;
+
+        enum Progress : int {
+            None=-1,
+            Login=10, 
+            Ping=20,
+            CopyFiles=50,
+            CopySecondary=70, 
+            SetTime=80, 
+            Password=90,
+            Reboot=100
+            };  
 
         public static void InitializeProgressWindow(ProgressWindow pw) {
             ProgressWindow = pw;
         }
 
-        private static void UpdateProgressWindow(string text, int value = -1) {
-            if(value > -1) {
+        private static void UpdateProgressWindow(string text, int value = Progress.None) {
+            if(value > Progress.None) {
                 ProgressWindow.progressBar.Value = value;
             }
             ProgressWindow.currentTask.Text = text;
@@ -32,7 +36,7 @@ namespace BetterRouterProgram
 
             SerialConnection.Login(username, password);
 
-            UpdateProgressWindow("Login Successful", LoginProgress);
+            UpdateProgressWindow("Login Successful", Progress.Login);
         }
 
         public static void SetPassword() {
@@ -40,21 +44,21 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("Password Set", PasswordProgress);
+            UpdateProgressWindow("Password Set", Progress.Password);
         }
          
         public static void SetTime() {
             UpdateProgressWindow("Setting Time");
 
 
-            UpdateProgressWindow("Time Set", SetTimeProgress);
+            UpdateProgressWindow("Time Set", Progress.SetTime);
         }
 
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
 
 
-            UpdateProgressWindow("Ping Successful", PingProgress);
+            UpdateProgressWindow("Ping Successful", Progress.Ping);
         }
 
         public static void CopyFiles() {
@@ -62,7 +66,7 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("File Copying Successful", CopyFilesProgress);
+            UpdateProgressWindow("File Copying Successful", Progress.CopyFiles);
         }
 
         public static void CopyToSecondary() {
@@ -70,7 +74,7 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("Backup Created Successfully", CopySecondaryProgress);
+            UpdateProgressWindow("Backup Created Successfully", Progress.CopySecondary);
         }
 
         public static void Reboot() {
@@ -78,7 +82,7 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("Reboot Successful", RebootProgress); 
+            UpdateProgressWindow("Reboot Successful", Progress.Reboot); 
         }
     }
 }
