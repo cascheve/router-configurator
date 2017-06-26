@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.IO.Ports;
+using System.Diagnostics;
 
 namespace BetterRouterProgram
 {
@@ -10,22 +11,22 @@ namespace BetterRouterProgram
         private static ProgressWindow ProgressWindow = null;
 
         enum Progress : int {
-            None=-1,
-            Login=10, 
-            Ping=20,
-            CopyFiles=50,
-            CopySecondary=70, 
-            SetTime=80, 
-            Password=90,
-            Reboot=100
+                None = -1,
+                Login = 10, 
+                Ping = 20,
+                CopyFiles = 50,
+                CopySecondary = 70, 
+                SetTime = 80, 
+                Password = 90,
+                Reboot = 100
             };  
 
         public static void InitializeProgressWindow(ProgressWindow pw) {
             ProgressWindow = pw;
         }
 
-        private static void UpdateProgressWindow(string text, int value = Progress.None) {
-            if(value > Progress.None) {
+        private static void UpdateProgressWindow(string text, int value = (int)Progress.None) {
+            if(value > (int)Progress.None) {
                 ProgressWindow.progressBar.Value = value;
             }
 
@@ -42,12 +43,13 @@ namespace BetterRouterProgram
                 //TODO: EXIT
             }
 
-            UpdateProgressWindow("Login Successful", Progress.Login);
+            UpdateProgressWindow("Login Successful", (int)Progress.Login);
         }
 
-        public static void StopTFTP()
+        public static void StopProcess(Process p)
         {
-            System.Diagnostics.Process.Start("TASKKILL / F / IM tftpd32.exe");
+            p.CloseMainWindow();
+            p.Close();
         }
 
         public static void SetPassword() {
@@ -55,21 +57,21 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("Password Set", Progress.Password);
+            UpdateProgressWindow("Password Set", (int)Progress.Password);
         }
          
         public static void SetTime() {
             UpdateProgressWindow("Setting Time");
 
 
-            UpdateProgressWindow("Time Set", Progress.SetTime);
+            UpdateProgressWindow("Time Set", (int)Progress.SetTime);
         }
 
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
 
 
-            UpdateProgressWindow("Ping Successful", Progress.Ping);
+            UpdateProgressWindow("Ping Successful", (int)Progress.Ping);
         }
 
         public static void CopyFiles() {
@@ -77,7 +79,7 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("File Copying Successful", Progress.CopyFiles);
+            UpdateProgressWindow("File Copying Successful", (int)Progress.CopyFiles);
         }
 
         public static void CopyToSecondary() {
@@ -85,7 +87,7 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("Backup Created Successfully", Progress.CopySecondary);
+            UpdateProgressWindow("Backup Created Successfully", (int)Progress.CopySecondary);
         }
 
         public static void Reboot() {
@@ -93,7 +95,7 @@ namespace BetterRouterProgram
 
 
 
-            UpdateProgressWindow("Reboot Successful", Progress.Reboot); 
+            UpdateProgressWindow("Reboot Successful", (int)Progress.Reboot); 
         }
     }
 }

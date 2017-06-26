@@ -1,12 +1,14 @@
 using System;
 using System.Threading;
 using System.IO.Ports;
+using System.Diagnostics;
 
 namespace BetterRouterProgram
 {
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
+        private static Process tftpInstance = null;
 
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
@@ -17,7 +19,7 @@ namespace BetterRouterProgram
 
                 InitializeSerialPort(portName);
 
-                System.Diagnostics.Process.Start(configDir + "\\tftpd32.exe");
+                tftpInstance = Process.Start(configDir + "\\tftpd32.exe");
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
@@ -53,6 +55,11 @@ namespace BetterRouterProgram
 
         public static void CloseConnection() {
             SerialPort.Close();
+
+            if (tftpInstance != null)
+            {
+                FunctionUtil.StopProcess(tftpInstance);
+            }
         }
 
         public static void ResetConnectionBuffers() {

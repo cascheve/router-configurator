@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
 using Microsoft.Win32;
+using System.Threading;
 
 namespace BetterRouterProgram
 {
@@ -138,6 +139,7 @@ namespace BetterRouterProgram
             else
             {
                 SerialConnection.Connect(comPort, iString, sString, routerID, configDir);
+
             }
 
         }
