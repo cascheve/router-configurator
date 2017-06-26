@@ -68,7 +68,7 @@ namespace BetterRouterProgram
                 currentResponse = (char)(SerialPort.ReadChar());
                 response += currentResponse;
 
-		        if(currentResponse == '#'){
+		        if(currentResponse == endChar){
 			        break;
                 }   
             }
@@ -84,7 +84,7 @@ namespace BetterRouterProgram
 	        return message;
         }
 
-        public static void Login(string username, string password) {
+        public static bool Login(string username, string password) {
             SerialPort.Write("\r\n");
             Thread.Sleep(500);
 
@@ -94,17 +94,14 @@ namespace BetterRouterProgram
             SerialPort.Write(password + "\r\n");
             Thread.Sleep(500);
 
-            /*TODO: check login success
-            if router_connection.read(bytes_to_read()).decode("utf-8").rstrip().endswith('#'):
-                print('login successful')
-            else:
-                print('login failed, closing script')
-                stop_tftpd()
-                close_connection()
-                input('press any key to continue...')
-                sys.exit()*/
+            bool retVal = false;
 
-            //TODO: probably return something based on if it could login or not 
+            //If the next line output by the router ends with the # char, we know login was successful
+            if (ReadResponse('#').Length > 0) {
+                retVal = true;
+            }
+
+            return retVal;
         }
 
 
