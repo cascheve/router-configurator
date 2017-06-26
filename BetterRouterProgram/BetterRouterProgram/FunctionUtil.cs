@@ -52,11 +52,32 @@ namespace BetterRouterProgram
         {
             p.CloseMainWindow();
             p.Close();
+            p = null;
         }
 
         public static void SetPassword() {
             UpdateProgressWindow("Setting Password");
 
+         //   password = password.strip(' \t\r\n')
+         //   if password == settings['init_password']  or password == '?init_password':
+		       // print('Can\'t change to the same password, skipping step')
+         //       return
+         //   try:
+		       // if password.startswith('?'):
+			      //  password = settings[password[1:]]
+         //   except KeyError:
+		       // print('{}: no setting with that name, skipping step'.format(password[1:]))
+         //       return
+         //   message = run_instruction('SETDefault -SYS NMPassWord = "{}" "{}" "{}"'.format(settings['init_password'], password, password))
+         //   if 'Invalid password' in message:
+         //           print('Password used doesn\'t meet requirements, skipping step')
+         //       return
+         //   elif 'Password changed' in message:
+         //           print('Password successfully changed')
+	        //else:
+		       // print('Something is wrong with the password used, skipping step')
+         //       return
+         //   run_instruction('setd -ac secret = "{}"'.format(password))
 
 
             UpdateProgressWindow("Password Set", (int)Progress.Password);
@@ -98,7 +119,28 @@ namespace BetterRouterProgram
         public static void CopyToSecondary() {
             UpdateProgressWindow("Creating Back-Up Files");
 
-
+          // run_instruction('cd a:/')
+          //  run_instruction('md /secondary')
+          //  spinner = ['    *    ', '   ***   ', '  *****  ', ' ******* ', '*********', ' ******* ', '  *****  ', '   ***   ', '    *    ']
+          //  reset_connection_buffers()
+          //  instr = 'copy a:/primary/*.* a:/secondary\r\n'
+          //  router_connection.write(str_to_byte(instr))
+          //  # waiting animation
+          //          i = 0
+          //  dotcount = 0
+          //  currResponse = ''
+          //  while True:
+		        //currResponse = router_connection.read().decode("utf-8")
+          //      if '#' == currResponse:
+			       // break
+          //      elif '.' == currResponse:
+			       // dotcount += 1
+          //          if dotcount % 2:
+				      //  print('copying files from primary to secondary   [{}]'.format(spinner[i % len(spinner)]), end = '')
+          //              sleep(0.05)
+          //              print('\r', end = '')
+          //              i += 1       
+          //  print('copying files from primary to secondary   [ done ]     ')
 
             UpdateProgressWindow("Backup Created Successfully", (int)Progress.CopySecondary);
         }
