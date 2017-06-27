@@ -100,20 +100,20 @@ namespace BetterRouterProgram
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
 
-         //   message = run_instruction('ping {}'.format(settings['ip_addr']))
-         //   if 'is alive' in message:
-         //           print('ping successful, local machine connected')
-	        //else:
-		       // if 'Host unreachable' in message:
-         //           print('IP address cannot be reached')
-         //       elif 'Request timed out' in message:
-         //           print('ping timed out')
-         //       print('ping failed to host: {}'.format(settings['ip_addr']))
-         //       exit = input('would you like to exit? (y/n): ')
-         //       if exit == 'y':
-			      //  close_connection()                  
-         //           stop_tftpd()
-         //           sys.exit()
+             //   message = run_instruction('ping {}'.format(settings['ip_addr']))
+             //   if 'is alive' in message:
+             //           print('ping successful, local machine connected')
+	            //else:
+		           // if 'Host unreachable' in message:
+             //           print('IP address cannot be reached')
+             //       elif 'Request timed out' in message:
+             //           print('ping timed out')
+             //       print('ping failed to host: {}'.format(settings['ip_addr']))
+             //       exit = input('would you like to exit? (y/n): ')
+             //       if exit == 'y':
+			          //  close_connection()                  
+             //           stop_tftpd()
+             //           sys.exit()
 
             UpdateProgressWindow("Ping Successful", Progress.Ping);
         }
@@ -190,19 +190,22 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Backup Created Successfully", Progress.CopySecondary);
         }
 
-        public static void Reboot() {
-            UpdateProgressWindow("Rebooting");
+        public static void PromptReboot() {
 
-            //validStatement = False
-           // while not validStatement:
-           //             reboot = input('Would you like to reboot now? (y/n): ')
-           //     if reboot == 'n':
-			        //validStatement = True
-           //     elif reboot == 'y':
-			        //validStatement = True
-           //         run_instruction('rb', True)
+            ProgressWindow.RebootButton.IsEnabled = true;
+            ProgressWindow.RebootText.Opacity = 1.0;
+            UpdateProgressWindow("Please Reboot", Progress.Reboot - 5);
+        }
 
-            UpdateProgressWindow("Reboot Successful", Progress.Reboot); 
+        public static void HandleReboot()
+        {
+            UpdateProgressWindow("Rebooting", Progress.Reboot - 5);
+            
+            //SerialConnection.RunInstruction("rb");
+            //TODO: wait for reboot to finish before updating progress
+
+            UpdateProgressWindow("Reboot Successful", Progress.Reboot);
+
         }
 
         public static void StartTftp(string configDir)
