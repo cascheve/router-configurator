@@ -86,7 +86,7 @@ namespace BetterRouterProgram
             SerialPort.DiscardOutBuffer();
         }
 
-        private static string ReadResponse(char endChar) {
+        private static string ReadResponse(char endChar = '#') {
             char currentResponse = ' ';
             string response = "";
 
@@ -105,9 +105,7 @@ namespace BetterRouterProgram
         public static string RunInstruction(string instruction) {
             ResetConnectionBuffers();
 	        SerialPort.Write(instruction + "\r\n");
-	        string message = ReadResponse('#');
-	
-	        return message;
+            return ReadResponse();
         }
 
         public static bool Login(string username, string password) {

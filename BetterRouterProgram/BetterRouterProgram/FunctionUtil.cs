@@ -10,6 +10,14 @@ namespace BetterRouterProgram
     - prompt_reboot: on 
     - 
     */
+
+    //TODO: In // print(...) statements put text in the progress window or  a pop up little window
+
+    /*Loading Spinner How To (For CopyToSecondary and CopyFiles):
+    https://stackoverflow.com/questions/6359848/wpf-loading-spinner
+    https://www.google.com/search?q=wpf+loading+animation&source=lnms&sa=X&ved=0ahUKEwjI-Y_q_97UAhUCSz4KHdKgAtoQ_AUICSgA&biw=1536&bih=736&dpr=1.25
+    */
+
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
@@ -109,21 +117,28 @@ namespace BetterRouterProgram
 
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
+            
+            SerialConnection.RunInstruction("ping " + SerialConnection.GetSetting("router ID"));
+            
+            if (message.Contains("is alive")) {
+                // print('ping successful, local machine connected')
+            }
+	        else{
+		        if(message.Contains("Host unreachable")){
+                    // print('IP address cannot be reached')
+                }
+                else if(message.Contains("Request timed out")) {
+                    //           print('ping timed out')
+                }
 
-             //   message = run_instruction('ping {}'.format(settings['ip_addr']))
-             //   if 'is alive' in message:
-             //           print('ping successful, local machine connected')
-	            //else:
-		           // if 'Host unreachable' in message:
-             //           print('IP address cannot be reached')
-             //       elif 'Request timed out' in message:
-             //           print('ping timed out')
-             //       print('ping failed to host: {}'.format(settings['ip_addr']))
-             //       exit = input('would you like to exit? (y/n): ')
-             //       if exit == 'y':
-			          //  close_connection()                  
-             //           stop_tftpd()
-             //           sys.exit()
+                //TODO: do something like this but with WPF stuff
+                // print('ping failed to host: {}'.format(settings['ip_addr']))
+                // exit = input('would you like to exit? (y/n): ')
+                // if exit == 'y':
+			        //  close_connection()                  
+                // stop_tftpd()
+                // sys.exit()
+            }
 
             UpdateProgressWindow("Ping Successful", Progress.Ping);
         }
@@ -148,7 +163,8 @@ namespace BetterRouterProgram
 			         //   print('{}: host file not supported'.format(file))
             //            continue
             //        reset_connection_buffers()
-            //        instr = 'copy {}{} {}\r\n'.format(settings['ip_addr'] + ':', hostFile, file)
+            //        instr = 'copy {}{} {}\r\n'.format(settings['ip_addr'] + ':', hostFile, file) 
+            //        *******use setting config directory to prepend to hostFile
             //        router_connection.write(str_to_byte(instr))
             //        # waiting animation
             //            i = 0
@@ -174,28 +190,12 @@ namespace BetterRouterProgram
         public static void CopyToSecondary() {
             UpdateProgressWindow("Creating Back-Up Files");
 
-          // run_instruction('cd a:/')
-          //  run_instruction('md /secondary')
-          //  spinner = ['    *    ', '   ***   ', '  *****  ', ' ******* ', '*********', ' ******* ', '  *****  ', '   ***   ', '    *    ']
-          //  reset_connection_buffers()
-          //  instr = 'copy a:/primary/*.* a:/secondary\r\n'
-          //  router_connection.write(str_to_byte(instr))
-          //  # waiting animation
-          //          i = 0
-          //  dotcount = 0
-          //  currResponse = ''
-          //  while True:
-		        //currResponse = router_connection.read().decode("utf-8")
-          //      if '#' == currResponse:
-			       // break
-          //      elif '.' == currResponse:
-			       // dotcount += 1
-          //          if dotcount % 2:
-				      //  print('copying files from primary to secondary   [{}]'.format(spinner[i % len(spinner)]), end = '')
-          //              sleep(0.05)
-          //              print('\r', end = '')
-          //              i += 1       
-          //  print('copying files from primary to secondary   [ done ]     ')
+            SerialConnection.RunInstruction("cd a:/");
+            SerialConnection.RunInstruction("md /secondary");
+            SerialConnection.ResetConnectionBuffers();
+            SerialConnection.RunInstruction("copy a:/primary/*.* a:/secondary");
+          
+            // print('copies created successfully')
 
             UpdateProgressWindow("Backup Created Successfully", Progress.CopySecondary);
         }
@@ -204,15 +204,15 @@ namespace BetterRouterProgram
 
             ProgressWindow.RebootButton.IsEnabled = true;
             ProgressWindow.RebootText.Opacity = 1.0;
-            UpdateProgressWindow("Please Reboot", Progress.Reboot - 5);
+            UpdateProgressWindow("Please Reboot Router", Progress.Reboot - 5);
         }
 
         public static void HandleReboot()
         {
             UpdateProgressWindow("Rebooting", Progress.Reboot - 5);
             
-            //SerialConnection.RunInstruction("rb");
-            //TODO: wait for reboot to finish before updating progress
+            SerialConnection.RunInstruction("rb");
+            Thread.Sleep(500);
 
             UpdateProgressWindow("Reboot Successful", Progress.Reboot);
 
