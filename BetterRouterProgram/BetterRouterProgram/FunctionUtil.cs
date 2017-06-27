@@ -9,7 +9,7 @@ namespace BetterRouterProgram
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
-        private static string dateFormat = "yyyyMMdd";
+        private static string dateFormat = "yyyyMMdd hh:mm";
 
         private static Process Tftp = null;
 
@@ -86,18 +86,40 @@ namespace BetterRouterProgram
             // date = '{} {}:{}'.format(day, hour, minutesec)
             // run_instruction('SET -SYS DATE = {}'.format(date))
 
+            //TODO: Use date format string
             DateTime setDate = DateTime.Now.AddHours(offset);
+            
+
 
             //SET - SYS DATE = 2017 / 05 / 19 12:02
             //may be setDate.DateTime
-            SerialConnection.RunInstruction("SET -SYS DATE = " + setDate.ToString());
+            //SerialConnection.RunInstruction("SET -SYS DATE = " + setDate.ToString());
+            //outputs as mm/dd/yyyy hh:mm:ss XM
 
-            UpdateProgressWindow("Time Set", Progress.SetTime);
+            UpdateProgressWindow(setDate.ToString(), Progress.SetTime);
+
+            Thread.Sleep(2000);
+
+            //UpdateProgressWindow("Time Set", Progress.SetTime);
         }
 
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
 
+         //   message = run_instruction('ping {}'.format(settings['ip_addr']))
+         //   if 'is alive' in message:
+         //           print('ping successful, local machine connected')
+	        //else:
+		       // if 'Host unreachable' in message:
+         //           print('IP address cannot be reached')
+         //       elif 'Request timed out' in message:
+         //           print('ping timed out')
+         //       print('ping failed to host: {}'.format(settings['ip_addr']))
+         //       exit = input('would you like to exit? (y/n): ')
+         //       if exit == 'y':
+			      //  close_connection()                  
+         //           stop_tftpd()
+         //           sys.exit()
 
             UpdateProgressWindow("Ping Successful", Progress.Ping);
         }
@@ -105,7 +127,42 @@ namespace BetterRouterProgram
         public static void CopyFiles() {
             UpdateProgressWindow("Copying Configurations");
 
-
+            //    run_instruction('cd')
+            //    # parses each file in the list, checks to see if it is supported
+            //# then it formats the string for the instruction
+            //            for file in files_list:
+            //        hostFile = ''
+            //        file = file.strip(' \t\r\n')
+            //        if file in IMPLICIT_FILES:
+            //            if file == 'staticRP.cfg' or file == 'antiacl.cfg' or file == 'boot.ppc':
+				        //    hostFile = file
+            //            elif file == 'acl.cfg' or file == 'xgsn.cfg':
+				        //    hostFile = settings['router_id'] + '_' + file
+            //            elif file == 'boot.cfg':
+				        //    hostFile = settings['router_id'] + '.cfg'
+		          //  else:
+			         //   print('{}: host file not supported'.format(file))
+            //            continue
+            //        reset_connection_buffers()
+            //        instr = 'copy {}{} {}\r\n'.format(settings['ip_addr'] + ':', hostFile, file)
+            //        router_connection.write(str_to_byte(instr))
+            //        # waiting animation
+            //            i = 0
+            //        dotcount = 0
+            //        currResponse = ''
+            //        while True:
+			         //   currResponse = router_connection.read().decode("utf-8")
+            //            if '#' == currResponse:
+				        //    break
+            //            elif '.' == currResponse:
+				        //    dotcount += 1
+            //                if dotcount % 2:
+					       //     print('copying file: {} -> {}   [{}]'.format(hostFile, file, spinner[i % len(spinner)]), end = '')
+            //                    sleep(0.05)
+            //                    print('\r', end = '')
+            //                    i += 1
+            //        print('copying file: {} -> {}   [ done ]     '.format(hostFile, file))
+            //    print('\n')
 
             UpdateProgressWindow("File Copying Successful", Progress.CopyFiles);
         }
@@ -142,7 +199,14 @@ namespace BetterRouterProgram
         public static void Reboot() {
             UpdateProgressWindow("Rebooting");
 
-
+            //validStatement = False
+           // while not validStatement:
+           //             reboot = input('Would you like to reboot now? (y/n): ')
+           //     if reboot == 'n':
+			        //validStatement = True
+           //     elif reboot == 'y':
+			        //validStatement = True
+           //         run_instruction('rb', True)
 
             UpdateProgressWindow("Reboot Successful", Progress.Reboot); 
         }
