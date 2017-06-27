@@ -74,6 +74,7 @@ namespace BetterRouterProgram
         }
 
         public static void CloseConnection() {
+            //TODO: is serial port open?
             SerialPort.Close();
 
             FunctionUtil.StopTftp();
@@ -101,6 +102,7 @@ namespace BetterRouterProgram
         }
 
         public static string RunInstruction(string instruction) {
+            //TODO: is there a connection?
             ResetConnectionBuffers();
 	        SerialPort.Write(instruction + "\r\n");
 	        string message = ReadResponse('#');
@@ -109,6 +111,7 @@ namespace BetterRouterProgram
         }
 
         public static bool Login(string username, string password) {
+            //TODO: is there a connection?
             SerialPort.Write("\r\n");
             Thread.Sleep(500);
 

@@ -226,6 +226,7 @@ namespace BetterRouterProgram
 
         public static void StopTftp()
         {
+            //TODO: is tftp open?
             Tftp.CloseMainWindow();
             Tftp.Close();
         }
