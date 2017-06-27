@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.IO.Ports;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace BetterRouterProgram
 {
@@ -10,8 +11,19 @@ namespace BetterRouterProgram
         private static SerialPort SerialPort = null;
         private static string ConfigurationDirectory;
 
+        private static Dictionary<string, string> Settings = null;
+
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
+            Settings = new Dictionary<string, string>()
+            {
+                {"port", portName},
+                {"intial password", initPassword},
+                {"system password", sysPassword},
+                {"router ID", routerID},
+                {"config directory", configDir},
+            };
+
             try
             {
                 ConfigurationDirectory = configDir;
@@ -20,7 +32,7 @@ namespace BetterRouterProgram
 
                 InitializeSerialPort(portName);
 
-                FunctionUtil.StartTftp(configDir);
+                FunctionUtil.StartTftp();
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
@@ -48,9 +60,8 @@ namespace BetterRouterProgram
 
         }
 
-        public static string GetConfigDir()
-        {
-            return ConfigurationDirectory;
+        public static string GetSetting(string setting) {
+            return Settings[setting];
         }
 
         private static void InitializeSerialPort(string comPort) {
@@ -106,8 +117,6 @@ namespace BetterRouterProgram
 
             SerialPort.Write(password + "\r\n");
             Thread.Sleep(500);
-
-            bool retVal = false;
 
             //If the next line output by the router ends with the # char, we know login was successful
             if (ReadResponse('#').Length > 0) {

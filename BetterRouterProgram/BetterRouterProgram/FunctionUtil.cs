@@ -57,13 +57,17 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Setting Password");
 
             password = password.Trim(' ', '\t', '\r', '\n');
-            if(/*password == the initial password]*/false){
+            
+            if(password.Equals(SerialConnection.GetSetting("intitial password"))){
                 //print('Can\'t change to the same password, skipping step');
                 return;
             }
 
             string message = SerialConnection.RunInstruction(String.Format(
-                "SETDefault -SYS NMPassWord = \"{0}\" \"{1}\" \"{2}\"", "initial_password", password, password
+                "SETDefault -SYS NMPassWord = \"{0}\" \"{1}\" \"{2}\"", 
+                SerialConnection.GetSetting("intitial password"),
+                password, 
+                password
             ));
 
             if(message.Contains("Password changed")) {
@@ -215,9 +219,9 @@ namespace BetterRouterProgram
 
         }
 
-        public static void StartTftp(string configDir)
+        public static void StartTftp()
         {
-            Tftp = Process.Start(configDir + "\\tftpd32.exe");
+            Tftp = Process.Start(SerialConnection.GetSetting("config directory") + "\\tftpd32.exe");
         }
 
         public static void StopTftp()
