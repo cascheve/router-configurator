@@ -9,15 +9,26 @@ namespace BetterRouterProgram
     {
         private static SerialPort SerialPort = null;
 
+        private static Dictionary<string, string> Settings = null;
+
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
+            Settings = new Dictionary<int, string>()
+            {
+                {"port", portName},
+                {"intial password", initPassword},
+                {"system password", sysPassword},
+                {"router ID", routerID},
+                {"config directory", configDir},
+            };
+
             try
             {
                 //Thread readThread = new Thread(ReadFromConnection);
 
                 InitializeSerialPort(portName);
 
-                FunctionUtil.StartTftp(configDir);
+                FunctionUtil.StartTftp();
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
@@ -43,6 +54,16 @@ namespace BetterRouterProgram
                 System.Windows.Forms.MessageBox.Show("Original Error: " + ex.Message);
             }
 
+        }
+
+        public static string GetSetting(string setting) {
+            try {
+                return settings[setting];
+            }
+            catch (KeyNotFoundException) {
+                // no key with that name
+            }
+            
         }
 
         private static void InitializeSerialPort(string comPort) {
