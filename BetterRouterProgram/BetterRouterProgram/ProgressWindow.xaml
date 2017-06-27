@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="Router Progress" Height="120" Width="520">
+        Title="Router Progress" Height="160" Width="550">
     <Grid>
         
         <Grid.RowDefinitions>
@@ -13,19 +13,25 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="50" />
-            <ColumnDefinition Width="430" />
+            <ColumnDefinition Width="400" />
+            <ColumnDefinition Width="70" />
             <ColumnDefinition Width="10" />
+
         </Grid.ColumnDefinitions>
 
         <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Center" />
         <TextBlock x:Name="statusText" Grid.Row="1" Grid.Column="2"/>
         <ProgressBar Name="progressBar" Grid.Row="1" Grid.Column="2" Height="20"/>
         <TextBlock Name="currentTask" Text="Attempting to Connect" Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
+        <Button Name="RebootButton" Grid.Row="3" Grid.Column="3" IsEnabled="False" Click="HandleReboot">
+            <TextBlock Name ="RebootText" Text="Reboot" Opacity="0.6"/>
+        </Button>
+        
     </Grid>
 </Window>

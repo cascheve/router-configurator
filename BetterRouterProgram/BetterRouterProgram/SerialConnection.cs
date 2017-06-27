@@ -23,6 +23,9 @@ namespace BetterRouterProgram
                 pw.Show();
                 FunctionUtil.InitializeProgressWindow(pw);
 
+                FunctionUtil.SetTime();
+                FunctionUtil.PromptReboot();
+
                 //CloseConnection()
             }
 

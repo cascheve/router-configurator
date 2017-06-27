@@ -13,7 +13,7 @@ namespace BetterRouterProgram
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
-        private static string dateFormat = "yyyyMMdd";
+        private static string dateFormat = "yyyy/MM/dd HH:mm";
 
         private static Process Tftp = null;
 
@@ -84,27 +84,43 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Password Set", Progress.Password);
         }
          
+        //takes a signed offset which is the number of hours forward or backward the clock must be from CST
         public static void SetTime(int offset = 0) {
             UpdateProgressWindow("Setting Time");
 
-            // day = datetime.now().strftime('%Y/%m/%d')
-            // minutesec = datetime.now().strftime('%M:%S')
-            // hour = int(datetime.now().strftime('%H')) + offset
-            // date = '{} {}:{}'.format(day, hour, minutesec)
-            // run_instruction('SET -SYS DATE = {}'.format(date))
+            //TODO: implement time zones instead of offset            
 
-            DateTime setDate = DateTime.Now.AddHours(offset);
+            DateTime setDate = DateTime.Now.AddHours(offset);           
 
             //SET - SYS DATE = 2017 / 05 / 19 12:02
-            //may be setDate.DateTime
-            SerialConnection.RunInstruction("SET -SYS DATE = " + setDate.ToString());
+            //outputs as mm/dd/yyyy hh:mm:ss XM
 
-            UpdateProgressWindow("Time Set", Progress.SetTime);
+            UpdateProgressWindow(setDate.ToString(dateFormat), Progress.SetTime);
+
+            //SerialConnection.RunInstruction("SET - SYS DATE = " + setDate.ToString(dateFormat));
+
+            Thread.Sleep(2000);
+
+            //UpdateProgressWindow("Time Set", Progress.SetTime);
         }
 
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
 
+             //   message = run_instruction('ping {}'.format(settings['ip_addr']))
+             //   if 'is alive' in message:
+             //           print('ping successful, local machine connected')
+	            //else:
+		           // if 'Host unreachable' in message:
+             //           print('IP address cannot be reached')
+             //       elif 'Request timed out' in message:
+             //           print('ping timed out')
+             //       print('ping failed to host: {}'.format(settings['ip_addr']))
+             //       exit = input('would you like to exit? (y/n): ')
+             //       if exit == 'y':
+			          //  close_connection()                  
+             //           stop_tftpd()
+             //           sys.exit()
 
             UpdateProgressWindow("Ping Successful", Progress.Ping);
         }
@@ -112,7 +128,42 @@ namespace BetterRouterProgram
         public static void CopyFiles() {
             UpdateProgressWindow("Copying Configurations");
 
-
+            //    run_instruction('cd')
+            //    # parses each file in the list, checks to see if it is supported
+            //# then it formats the string for the instruction
+            //            for file in files_list:
+            //        hostFile = ''
+            //        file = file.strip(' \t\r\n')
+            //        if file in IMPLICIT_FILES:
+            //            if file == 'staticRP.cfg' or file == 'antiacl.cfg' or file == 'boot.ppc':
+				        //    hostFile = file
+            //            elif file == 'acl.cfg' or file == 'xgsn.cfg':
+				        //    hostFile = settings['router_id'] + '_' + file
+            //            elif file == 'boot.cfg':
+				        //    hostFile = settings['router_id'] + '.cfg'
+		          //  else:
+			         //   print('{}: host file not supported'.format(file))
+            //            continue
+            //        reset_connection_buffers()
+            //        instr = 'copy {}{} {}\r\n'.format(settings['ip_addr'] + ':', hostFile, file)
+            //        router_connection.write(str_to_byte(instr))
+            //        # waiting animation
+            //            i = 0
+            //        dotcount = 0
+            //        currResponse = ''
+            //        while True:
+			         //   currResponse = router_connection.read().decode("utf-8")
+            //            if '#' == currResponse:
+				        //    break
+            //            elif '.' == currResponse:
+				        //    dotcount += 1
+            //                if dotcount % 2:
+					       //     print('copying file: {} -> {}   [{}]'.format(hostFile, file, spinner[i % len(spinner)]), end = '')
+            //                    sleep(0.05)
+            //                    print('\r', end = '')
+            //                    i += 1
+            //        print('copying file: {} -> {}   [ done ]     '.format(hostFile, file))
+            //    print('\n')
 
             UpdateProgressWindow("File Copying Successful", Progress.CopyFiles);
         }
@@ -146,12 +197,22 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Backup Created Successfully", Progress.CopySecondary);
         }
 
-        public static void Reboot() {
-            UpdateProgressWindow("Rebooting");
+        public static void PromptReboot() {
 
+            ProgressWindow.RebootButton.IsEnabled = true;
+            ProgressWindow.RebootText.Opacity = 1.0;
+            UpdateProgressWindow("Please Reboot", Progress.Reboot - 5);
+        }
 
+        public static void HandleReboot()
+        {
+            UpdateProgressWindow("Rebooting", Progress.Reboot - 5);
+            
+            //SerialConnection.RunInstruction("rb");
+            //TODO: wait for reboot to finish before updating progress
 
-            UpdateProgressWindow("Reboot Successful", Progress.Reboot); 
+            UpdateProgressWindow("Reboot Successful", Progress.Reboot);
+
         }
 
         public static void StartTftp(string configDir)
