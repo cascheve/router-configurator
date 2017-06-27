@@ -21,7 +21,7 @@ namespace BetterRouterProgram
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
-        private const dateFormat = "yyyy/MM/dd HH:mm:ss";
+        private const string dateFormat = "yyyy/MM/dd HH:mm:ss";
 
         private static Process Tftp = null;
 
@@ -37,7 +37,7 @@ namespace BetterRouterProgram
         };
 
         public static void InitializeProgressWindow(ProgressWindow pw) {
-            ProgressWindow = pw;
+            ProgressWindow = pw;        
         }
 
         private static void UpdateProgressWindow(string text, Progress value = Progress.None) {
@@ -64,7 +64,8 @@ namespace BetterRouterProgram
         public static void SetPassword(string password) {
             UpdateProgressWindow("Setting Password");
 
-            password = password.trim([' ', '\t', '\r', '\n']);
+            password = password.Trim(' ', '\t', '\r', '\n');
+            
             if(password.Equals(SerialConnection.GetSetting("intitial password"))){
                 //print('Can\'t change to the same password, skipping step');
                 return;
@@ -77,10 +78,10 @@ namespace BetterRouterProgram
                 password
             ));
 
-            if(message.Contains("Password changed") {
+            if(message.Contains("Password changed")) {
                 // print('Password successfully changed')
             }
-            else if(message.Contains("Invalid password") {
+            else if(message.Contains("Invalid password")) {
                 
                 // print('Password used doesn\'t meet requirements, skipping step')
                 return;
@@ -225,6 +226,7 @@ namespace BetterRouterProgram
 
         public static void StopTftp()
         {
+            //TODO: is tftp open?
             Tftp.CloseMainWindow();
             Tftp.Close();
         }

@@ -2,18 +2,20 @@ using System;
 using System.Threading;
 using System.IO.Ports;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace BetterRouterProgram
 {
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
+        private static string ConfigurationDirectory;
 
         private static Dictionary<string, string> Settings = null;
 
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
-            Settings = new Dictionary<int, string>()
+            Settings = new Dictionary<string, string>()
             {
                 {"port", portName},
                 {"intial password", initPassword},
@@ -24,6 +26,8 @@ namespace BetterRouterProgram
 
             try
             {
+                ConfigurationDirectory = configDir;
+
                 //Thread readThread = new Thread(ReadFromConnection);
 
                 InitializeSerialPort(portName);
@@ -34,8 +38,8 @@ namespace BetterRouterProgram
                 pw.Show();
                 FunctionUtil.InitializeProgressWindow(pw);
 
-                FunctionUtil.SetTime();
-                FunctionUtil.PromptReboot();
+                //FunctionUtil.SetTime();
+                //FunctionUtil.PromptReboot();
 
                 //CloseConnection()
             }
@@ -57,13 +61,7 @@ namespace BetterRouterProgram
         }
 
         public static string GetSetting(string setting) {
-            try {
-                return settings[setting];
-            }
-            catch (KeyNotFoundException) {
-                // no key with that name
-            }
-            
+            return Settings[setting];
         }
 
         private static void InitializeSerialPort(string comPort) {
@@ -76,6 +74,7 @@ namespace BetterRouterProgram
         }
 
         public static void CloseConnection() {
+            //TODO: is serial port open?
             SerialPort.Close();
 
             FunctionUtil.StopTftp();
@@ -103,12 +102,14 @@ namespace BetterRouterProgram
         }
 
         public static string RunInstruction(string instruction) {
+            //TODO: is there a connection?
             ResetConnectionBuffers();
 	        SerialPort.Write(instruction + "\r\n");
             return ReadResponse();
         }
 
         public static bool Login(string username, string password) {
+            //TODO: is there a connection?
             SerialPort.Write("\r\n");
             Thread.Sleep(500);
 
@@ -117,8 +118,6 @@ namespace BetterRouterProgram
 
             SerialPort.Write(password + "\r\n");
             Thread.Sleep(500);
-
-            bool retVal = false;
 
             //If the next line output by the router ends with the # char, we know login was successful
             if (ReadResponse('#').Length > 0) {
