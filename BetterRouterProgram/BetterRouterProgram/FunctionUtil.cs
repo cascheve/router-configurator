@@ -9,7 +9,7 @@ namespace BetterRouterProgram
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
-        private static string dateFormat = "yyyyMMdd hh:mm";
+        private static string dateFormat = "yyyy/MM/dd HH:mm";
 
         private static Process Tftp = null;
 
@@ -77,26 +77,20 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Password Set", Progress.Password);
         }
          
+        //takes a signed offset which is the number of hours forward or backward the clock must be from CST
         public static void SetTime(int offset = 0) {
             UpdateProgressWindow("Setting Time");
 
-            // day = datetime.now().strftime('%Y/%m/%d')
-            // minutesec = datetime.now().strftime('%M:%S')
-            // hour = int(datetime.now().strftime('%H')) + offset
-            // date = '{} {}:{}'.format(day, hour, minutesec)
-            // run_instruction('SET -SYS DATE = {}'.format(date))
+            //TODO: implement time zones instead of offset            
 
-            //TODO: Use date format string
-            DateTime setDate = DateTime.Now.AddHours(offset);
-            
-
+            DateTime setDate = DateTime.Now.AddHours(offset);           
 
             //SET - SYS DATE = 2017 / 05 / 19 12:02
-            //may be setDate.DateTime
-            //SerialConnection.RunInstruction("SET -SYS DATE = " + setDate.ToString());
             //outputs as mm/dd/yyyy hh:mm:ss XM
 
-            UpdateProgressWindow(setDate.ToString(), Progress.SetTime);
+            UpdateProgressWindow(setDate.ToString(dateFormat), Progress.SetTime);
+
+            //SerialConnection.RunInstruction("SET - SYS DATE = " + setDate.ToString(dateFormat));
 
             Thread.Sleep(2000);
 
