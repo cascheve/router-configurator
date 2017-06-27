@@ -12,7 +12,6 @@ namespace BetterRouterProgram
 
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
-
             try
             {
                 ConfigurationDirectory = configDir;
@@ -42,9 +41,9 @@ namespace BetterRouterProgram
             {
                 System.Windows.Forms.MessageBox.Show("Error: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show("Original Error: " + e.Message);
+                System.Windows.Forms.MessageBox.Show("Original Error: " + ex.Message);
             }
 
         }
@@ -69,12 +68,12 @@ namespace BetterRouterProgram
             FunctionUtil.StopTftp();
         }
 
-        public static void ResetConnectionBuffers() {
+        private static void ResetConnectionBuffers() {
             SerialPort.DiscardInBuffer();
             SerialPort.DiscardOutBuffer();
         }
 
-        public static string ReadResponse(char endChar) {
+        private static string ReadResponse(char endChar) {
             char currentResponse = ' ';
             string response = "";
 
@@ -112,17 +111,11 @@ namespace BetterRouterProgram
 
             //If the next line output by the router ends with the # char, we know login was successful
             if (ReadResponse('#').Length > 0) {
-                retVal = true;
+                return true;
             }
 
-            return retVal;
+            return false;
         }
-
-
-        //add to other module as well
-        /* methods to add methods "cross-referenced"
-        +prompt_reboot() - calls function to run instruction
-        +run_instructions() - calls run_instruction()*/
 
     }
 }

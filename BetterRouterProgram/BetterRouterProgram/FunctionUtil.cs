@@ -6,6 +6,10 @@ using System.Diagnostics;
 
 namespace BetterRouterProgram
 {
+    /* Functions that have user input:
+    - prompt_reboot: on 
+    - 
+    */
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
@@ -49,30 +53,33 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Login Successful", Progress.Login);
         }
 
-        public static void SetPassword() {
+        public static void SetPassword(string password) {
             UpdateProgressWindow("Setting Password");
 
-         //   password = password.strip(' \t\r\n')
-         //   if password == settings['init_password']  or password == '?init_password':
-		       // print('Can\'t change to the same password, skipping step')
-         //       return
-         //   try:
-		       // if password.startswith('?'):
-			      //  password = settings[password[1:]]
-         //   except KeyError:
-		       // print('{}: no setting with that name, skipping step'.format(password[1:]))
-         //       return
-         //   message = run_instruction('SETDefault -SYS NMPassWord = "{}" "{}" "{}"'.format(settings['init_password'], password, password))
-         //   if 'Invalid password' in message:
-         //           print('Password used doesn\'t meet requirements, skipping step')
-         //       return
-         //   elif 'Password changed' in message:
-         //           print('Password successfully changed')
-	        //else:
-		       // print('Something is wrong with the password used, skipping step')
-         //       return
-         //   run_instruction('setd -ac secret = "{}"'.format(password))
+            password = password.trim([' ', '\t', '\r', '\n']);
+            if(/*password == the initial password]*/false){
+                //print('Can\'t change to the same password, skipping step');
+                return;
+            }
 
+            string message = SerialConnection.RunInstruction(String.Format(
+                "SETDefault -SYS NMPassWord = \"{0}\" \"{1}\" \"{2}\"", "initial_password", password, password
+            ));
+
+            if(message.Contains("Password changed") {
+                // print('Password successfully changed')
+            }
+            else if(message.Contains("Invalid password") {
+                
+                // print('Password used doesn\'t meet requirements, skipping step')
+                return;
+            }
+	        else{
+		        // print('Something is wrong with the password used, skipping step')
+                return;
+            }
+
+            SerialConnection.RunInstruction(String.Format("setd -ac secret = \"{}\"", password));
 
             UpdateProgressWindow("Password Set", Progress.Password);
         }
