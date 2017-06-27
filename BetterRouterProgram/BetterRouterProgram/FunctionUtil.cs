@@ -9,7 +9,7 @@ namespace BetterRouterProgram
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
-        private static string dateFormat = "yyyy/MM/dd HH:mm";
+        private const string dateFormat = "yyyy/MM/dd HH:mm:ss";
 
         private static Process Tftp = null;
 
@@ -25,7 +25,7 @@ namespace BetterRouterProgram
         };
 
         public static void InitializeProgressWindow(ProgressWindow pw) {
-            ProgressWindow = pw;
+            ProgressWindow = pw;        
         }
 
         private static void UpdateProgressWindow(string text, Progress value = Progress.None) {

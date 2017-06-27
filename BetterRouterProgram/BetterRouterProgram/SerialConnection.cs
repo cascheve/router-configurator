@@ -8,12 +8,15 @@ namespace BetterRouterProgram
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
+        private static string ConfigurationDirectory;
 
         public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
         {
 
             try
             {
+                ConfigurationDirectory = configDir;
+
                 //Thread readThread = new Thread(ReadFromConnection);
 
                 InitializeSerialPort(portName);
@@ -24,8 +27,8 @@ namespace BetterRouterProgram
                 pw.Show();
                 FunctionUtil.InitializeProgressWindow(pw);
 
-                FunctionUtil.SetTime();
-                FunctionUtil.PromptReboot();
+                //FunctionUtil.SetTime();
+                //FunctionUtil.PromptReboot();
 
                 //CloseConnection()
             }
@@ -44,6 +47,11 @@ namespace BetterRouterProgram
                 System.Windows.Forms.MessageBox.Show("Original Error: " + e.Message);
             }
 
+        }
+
+        public static string GetConfigDir()
+        {
+            return ConfigurationDirectory;
         }
 
         private static void InitializeSerialPort(string comPort) {
