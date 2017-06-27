@@ -56,7 +56,7 @@ namespace BetterRouterProgram
         public static void SetPassword(string password) {
             UpdateProgressWindow("Setting Password");
 
-            password = password.trim([' ', '\t', '\r', '\n']);
+            password = password.Trim(' ', '\t', '\r', '\n');
             if(/*password == the initial password]*/false){
                 //print('Can\'t change to the same password, skipping step');
                 return;
@@ -66,10 +66,10 @@ namespace BetterRouterProgram
                 "SETDefault -SYS NMPassWord = \"{0}\" \"{1}\" \"{2}\"", "initial_password", password, password
             ));
 
-            if(message.Contains("Password changed") {
+            if(message.Contains("Password changed")) {
                 // print('Password successfully changed')
             }
-            else if(message.Contains("Invalid password") {
+            else if(message.Contains("Invalid password")) {
                 
                 // print('Password used doesn\'t meet requirements, skipping step')
                 return;
