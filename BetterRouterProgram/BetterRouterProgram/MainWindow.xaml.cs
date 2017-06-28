@@ -15,7 +15,7 @@ namespace BetterRouterProgram
 
     public partial class MainWindow : Window
     {
-        private List<int> fileNumbers = new List<int>(5);
+        private List<bool> fileNumbers = new List<bool>(5);
         private List<System.Windows.Controls.CheckBox> checks = new List<System.Windows.Controls.CheckBox>(5);
 
         public MainWindow()
@@ -23,7 +23,7 @@ namespace BetterRouterProgram
             InitializeComponent();
 
             for (int i = 0; i < 5; i++) {
-                fileNumbers.Add(0);
+                fileNumbers.Add(false);
             }
 
             checks.Add(staticRp);
@@ -174,14 +174,12 @@ namespace BetterRouterProgram
                 {
                     if ((bool)check.IsChecked)
                     {
-                        fileNumbers[i] = 1;
+                        fileNumbers[i] = true;
                     }
                     i++;
                 }
 
-                connectButton.Click -= attemptConnection;
                 SerialConnection.Connect(comPort, iString, sString, routerID, configDir, timezone);
-                connectButton.Click += attemptConnection;
             }
 
         }

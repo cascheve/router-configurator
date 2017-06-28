@@ -55,14 +55,15 @@ namespace BetterRouterProgram
 
             password = password.Trim(' ', '\t', '\r', '\n');
             
-            if(password.Equals(SerialConnection.GetSetting("intitial password"))){
+            if(password.Equals(SerialConnection.GetSetting("initial password"))){
                 UpdateProgressWindow("Password cannot be set to the same value. Skipping Step");
                 return;
             }
 
+            //TODO: Change Literal {0}
             string message = SerialConnection.RunInstruction(String.Format(
-                "SETDefault -SYS NMPassWord = \"{0}\" \"{1}\" \"{2}\"", 
-                SerialConnection.GetSetting("intitial password"),
+                "SETDefault -SYS NMPassWord = \"P25CityX2016!\" \"{1}\" \"{2}\"", 
+                SerialConnection.GetSetting("initial password"),
                 password, 
                 password
             ));
@@ -76,18 +77,17 @@ namespace BetterRouterProgram
                 return;
             }
 	        else {
-                UpdateProgressWindow("Something is wrong with the password used, skipping step");
+                UpdateProgressWindow(message);
                 return;
             }
 
-            SerialConnection.RunInstruction(String.Format("setd -ac secret = \"{}\"", password));
+            SerialConnection.RunInstruction(String.Format("setd -ac secret = \"{0}\"", password));
 
-            UpdateProgressWindow("Password Set", Progress.Password);
+            UpdateProgressWindow("Secret Password Set", Progress.Password);
         }
          
         //takes a signed offset which is the number of hours forward or backward the clock must be from CST
         public static void SetTime(string timeZoneString = "") {
-            UpdateProgressWindow("Setting Time");
 
             int offset = 0;
 
@@ -106,13 +106,11 @@ namespace BetterRouterProgram
             //SET - SYS DATE = 2017 / 05 / 19 12:02
             //outputs as mm/dd/yyyy hh:mm:ss XM
 
-            UpdateProgressWindow(setDate.ToString(DateFormat), Progress.SetTime);
+            UpdateProgressWindow("Setting Time: " + setDate.ToString(DateFormat), Progress.SetTime);
 
-            //SerialConnection.RunInstruction("SET - SYS DATE = " + setDate.ToString(DateFormat));
+            SerialConnection.RunInstruction("SET - SYS DATE = " + setDate.ToString(DateFormat));
 
             //Thread.Sleep(2000);
-
-            UpdateProgressWindow("Time Set", Progress.SetTime);
         }
 
         public static void PingTest() {
@@ -182,7 +180,7 @@ namespace BetterRouterProgram
         {
             UpdateProgressWindow("Rebooting", Progress.Reboot - 5);
             
-            //SerialConnection.RunInstruction("rb");
+            SerialConnection.RunInstruction("rb");
             Thread.Sleep(500);
 
             UpdateProgressWindow("Reboot Successful", Progress.Reboot);

@@ -18,7 +18,7 @@ namespace BetterRouterProgram
             Settings = new Dictionary<string, string>()
             {
                 {"port", portName},
-                {"intial password", initPassword},
+                {"initial password", initPassword},
                 {"system password", sysPassword},
                 {"router ID", routerID},
                 {"config directory", configDir},
@@ -38,12 +38,14 @@ namespace BetterRouterProgram
                 FunctionUtil.InitializeProgressWindow(ref pw);
 
                 //change this to root , syspassword/initpassword
-                FunctionUtil.Login("root", "P25CityX2017!");
+                FunctionUtil.Login("root", "P25CityX2016!");
+
+                //FunctionUtil.SetPassword("P25CityX2015!");
 
                 //FunctionUtil.SetTime(timezone);
                 //FunctionUtil.PromptReboot();
 
-                CloseConnection();
+                //CloseConnection();
             }
 
             //TODO: Better Exception Handling
@@ -88,8 +90,12 @@ namespace BetterRouterProgram
         }
 
         private static void ResetConnectionBuffers() {
-            SerialPort.DiscardInBuffer();
-            SerialPort.DiscardOutBuffer();
+            if (SerialPort.IsOpen)
+            {
+                SerialPort.DiscardInBuffer();
+                SerialPort.DiscardOutBuffer();
+            }
+            //TODO: Handle else case -> throw exception??
         }
 
         private static string ReadResponse(char endChar = '#') {
