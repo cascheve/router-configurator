@@ -92,12 +92,22 @@ namespace BetterRouterProgram
         }
          
         //takes a signed offset which is the number of hours forward or backward the clock must be from CST
-        public static void SetTime(int offset = 0) {
+        public static void SetTime(string timeZoneString = "") {
             UpdateProgressWindow("Setting Time");
 
-            //TODO: implement time zones instead of offset            
+            int offset = 0;
 
-            DateTime setDate = DateTime.Now.AddHours(offset);           
+            if (timeZoneString != "")
+            {
+                offset = Int32.Parse(timeZoneString.Substring(4, 3));
+            }
+
+            DateTime setDate = DateTime.UtcNow.AddHours(offset);
+
+            if (!setDate.IsDaylightSavingTime())
+            {
+                setDate = DateTime.UtcNow.AddHours(offset + 1);
+            }
 
             //SET - SYS DATE = 2017 / 05 / 19 12:02
             //outputs as mm/dd/yyyy hh:mm:ss XM
@@ -106,7 +116,7 @@ namespace BetterRouterProgram
 
             //SerialConnection.RunInstruction("SET - SYS DATE = " + setDate.ToString(DateFormat));
 
-            Thread.Sleep(2000);
+            //Thread.Sleep(2000);
 
             UpdateProgressWindow("Time Set", Progress.SetTime);
         }

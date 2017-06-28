@@ -39,7 +39,7 @@ namespace BetterRouterProgram
                 pw.Show();
                 FunctionUtil.InitializeProgressWindow(ref pw);
 
-                FunctionUtil.SetTime();
+                FunctionUtil.SetTime(timezone);
                 FunctionUtil.PromptReboot();
 
                 //CloseConnection()
