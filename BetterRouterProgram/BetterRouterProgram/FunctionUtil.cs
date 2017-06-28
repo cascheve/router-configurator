@@ -150,11 +150,13 @@ namespace BetterRouterProgram
         }
 
         public static void CopyFiles(params string[] files) {
+
             UpdateProgressWindow("Copying Configurations");
-            int progress = (int) Progress.CopyFilesBase;
-            private static string[] FilesToCopy = files;
+
+            int progress = (int)Progress.CopyFilesBase;
+            string[] FilesToCopy = files;
             
-            SerialConnection.RunInstruction('cd');
+            SerialConnection.RunInstruction("cd");
             //        *******update progress bar for each file done
             //        instr = 'copy {}{} {}\r\n'.format(settings['ip_addr'] + ':', hostFile, file) 
             //        *******use setting config directory to prepend to hostFile
