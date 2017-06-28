@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.IO.Ports;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 
 namespace BetterRouterProgram
 {
@@ -199,6 +200,27 @@ namespace BetterRouterProgram
                 Tftp.CloseMainWindow();
                 Tftp.Close();
             }
+        }
+
+        public static string getEthernetIP()
+        {
+            string ethernetIP = "0.0.0.0";
+
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet && ni.Name.Equals("Ethernet"))
+                {
+                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        {
+                            ethernetIP = ip.Address.ToString();
+                        }
+                    }
+                }
+            }
+
+            return ethernetIP;
         }
     }
 }

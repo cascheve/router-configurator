@@ -37,8 +37,7 @@ namespace BetterRouterProgram
                 pw.Show();
                 FunctionUtil.InitializeProgressWindow(ref pw);
 
-                //change this to root , syspassword/initpassword
-                FunctionUtil.Login("root", "P25CityX2016!");
+                FunctionUtil.Login("root", "P25CityX2015!");
 
                 //FunctionUtil.SetPassword("P25CityX2015!");
 
