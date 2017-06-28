@@ -121,7 +121,6 @@ namespace BetterRouterProgram
             
             if (message.Contains("is alive")) {
                 UpdateProgressWindow("Ping Succesful");
-                UpdateProgressWindow(message);
             }
 	        else {
 		        if(message.Contains("Host unreachable")){
