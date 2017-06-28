@@ -6,6 +6,11 @@ using System.Collections.Generic;
 
 namespace BetterRouterProgram
 {
+    /*
+        - add ipaddr to dict
+        - go over ping_test logic
+        - do checkbox stuff
+     */
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
