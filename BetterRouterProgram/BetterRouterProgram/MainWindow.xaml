@@ -81,9 +81,10 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-            <CheckBox Name="staticRp" IsChecked="True" Content="staticRp.cfg" Grid.Row="0"/>
-            <CheckBox Name="anti" IsChecked="True" Content="antiacl.cfg" Grid.Row="0" Grid.Column="1"/>
-            <CheckBox Name="xgsn" IsChecked="True" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2"/>
+
+            <CheckBox Name="staticrp" IsChecked="True" Content="staticRP.cfg" Grid.Row="0"/>
+            <CheckBox Name="antiacl" IsChecked="True" Content="antiacl.cfg" Grid.Row="0" Grid.Column="1"/>
+            <CheckBox Name="xgsn" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2"/>
         </Grid>
 
         <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="14" Click="attemptConnection">

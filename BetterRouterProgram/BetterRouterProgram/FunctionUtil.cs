@@ -13,6 +13,7 @@ namespace BetterRouterProgram
         private static ProgressWindow ProgressWindow = null;
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
+        private static List<string> FilesToCopy = null;
 
         private enum Progress : int {
                 None = 0,
@@ -202,25 +203,17 @@ namespace BetterRouterProgram
             }
         }
 
-        public static string getEthernetIP()
-        {
-            string ethernetIP = "0.0.0.0";
 
-            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+        public static SetFilesToCopy(Dictionary<string, bool> filesToCopy)
+        {
+            FilesToCopy = new List<string>();
+            foreach (var file in myDict.Keys.ToList())
             {
-                if (ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet && ni.Name.Equals("Ethernet"))
+                if(filesToCopy[file] == true)
                 {
-                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
-                    {
-                        if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
-                            ethernetIP = ip.Address.ToString();
-                        }
-                    }
+                    FilesToCopy.Add(file);
                 }
             }
-
-            return ethernetIP;
         }
     }
 }

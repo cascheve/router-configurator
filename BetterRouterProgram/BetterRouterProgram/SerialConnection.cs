@@ -6,6 +6,11 @@ using System.Collections.Generic;
 
 namespace BetterRouterProgram
 {
+    /*
+        - add ipaddr to dict
+        - go over ping_test logic
+        - do checkbox stuff
+     */
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
@@ -13,7 +18,7 @@ namespace BetterRouterProgram
         private static Dictionary<string, string> Settings = null;
 
         public static void Connect(string portName, string initPassword, string sysPassword, 
-            string routerID, string configDir, string timezone)
+            string routerID, string configDir, string timezone, Dictionary<string, bool> filesToCopy)
         {
             Settings = new Dictionary<string, string>()
             {
@@ -28,6 +33,8 @@ namespace BetterRouterProgram
             try
             {
                 ConfigurationDirectory = configDir;
+
+                FunctionUtil.SetFilesToCopy(filesToCopy);
 
                 InitializeSerialPort(portName);
 
