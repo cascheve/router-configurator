@@ -155,7 +155,7 @@ namespace BetterRouterProgram
             }
             else
             {
-                SerialConnection.Connect(comPort, iString, sString, routerID, configDir);
+                SerialConnection.Connect(comPort, iString, sString, routerID, configDir, timezone);
 
             }
 
