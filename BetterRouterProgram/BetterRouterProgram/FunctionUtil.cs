@@ -13,40 +13,30 @@ namespace BetterRouterProgram
 
     //TODO: In // print(...) statements put text in the progress window or a pop up little window
 
-    /*Loading Spinner How To (For CopyToSecondary and CopyFiles):
-    https://stackoverflow.com/questions/6359848/wpf-loading-spinner
-    https://www.google.com/search?q=wpf+loading+animation&source=lnms&sa=X&ved=0ahUKEwjI-Y_q_97UAhUCSz4KHdKgAtoQ_AUICSgA&biw=1536&bih=736&dpr=1.25
-    */
-
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
-        private const string dateFormat = "yyyy/MM/dd HH:mm:ss";
-
+        private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
 
         private enum Progress : int {
                 None = 0,
                 Login = 10, 
                 Ping = 20,
-                CopyFiles = 50,
+                CopyFilesBase = 20,
                 CopySecondary = 70, 
                 SetTime = 80, 
                 Password = 90,
                 Reboot = 100,
         };
 
-        public static void InitializeProgressWindow(ProgressWindow pw) {
+        public static void InitializeProgressWindow(ref ProgressWindow pw) {
             ProgressWindow = pw;
             ProgressWindow.progressBar.Value = (int)Progress.None;
         }
 
         private static void UpdateProgressWindow(string text, Progress value = Progress.None) {
-            if (value == Progress.None)
-            {
-                value = (Progress)ProgressWindow.progressBar.Value;
-            }
-            if(value != (int)Progress.None) {
+            if(value != Progress.None) {
                 ProgressWindow.progressBar.Value = (int)value;
             }
 
@@ -112,9 +102,9 @@ namespace BetterRouterProgram
             //SET - SYS DATE = 2017 / 05 / 19 12:02
             //outputs as mm/dd/yyyy hh:mm:ss XM
 
-            UpdateProgressWindow(setDate.ToString(dateFormat), Progress.SetTime);
+            UpdateProgressWindow(setDate.ToString(DateFormat), Progress.SetTime);
 
-            //SerialConnection.RunInstruction("SET - SYS DATE = " + setDate.ToString(dateFormat));
+            //SerialConnection.RunInstruction("SET - SYS DATE = " + setDate.ToString(DateFormat));
 
             Thread.Sleep(2000);
 
@@ -149,48 +139,18 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Ping Successful", Progress.Ping);
         }
 
-        public static void CopyFiles() {
+        public static void CopyFiles(params string[] files) {
             UpdateProgressWindow("Copying Configurations");
-
-            //    run_instruction('cd')
-            //    # parses each file in the list, checks to see if it is supported
-            //# then it formats the string for the instruction
-            //            for file in files_list:
-            //        hostFile = ''
-            //        file = file.strip(' \t\r\n')
-            //        if file in IMPLICIT_FILES:
-            //            if file == 'staticRP.cfg' or file == 'antiacl.cfg' or file == 'boot.ppc':
-				        //    hostFile = file
-            //            elif file == 'acl.cfg' or file == 'xgsn.cfg':
-				        //    hostFile = settings['router_id'] + '_' + file
-            //            elif file == 'boot.cfg':
-				        //    hostFile = settings['router_id'] + '.cfg'
-		          //  else:
-			         //   print('{}: host file not supported'.format(file))
-            //            continue
-            //        reset_connection_buffers()
+            int progress = (int) Progress.CopyFilesBase;
+            private static string[] FilesToCopy = files;
+            
+            SerialConnection.RunInstruction('cd');
+            //        *******update progress bar for each file done
             //        instr = 'copy {}{} {}\r\n'.format(settings['ip_addr'] + ':', hostFile, file) 
             //        *******use setting config directory to prepend to hostFile
             //        router_connection.write(str_to_byte(instr))
-            //        # waiting animation
-            //            i = 0
-            //        dotcount = 0
-            //        currResponse = ''
-            //        while True:
-			         //   currResponse = router_connection.read().decode("utf-8")
-            //            if '#' == currResponse:
-				        //    break
-            //            elif '.' == currResponse:
-				        //    dotcount += 1
-            //                if dotcount % 2:
-					       //     print('copying file: {} -> {}   [{}]'.format(hostFile, file, spinner[i % len(spinner)]), end = '')
-            //                    sleep(0.05)
-            //                    print('\r', end = '')
-            //                    i += 1
+            
             //        print('copying file: {} -> {}   [ done ]     '.format(hostFile, file))
-            //    print('\n')
-
-            UpdateProgressWindow("File Copying Successful", Progress.CopyFiles);
         }
 
         public static void CopyToSecondary() {

@@ -9,11 +9,11 @@ namespace BetterRouterProgram
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
-        private static string ConfigurationDirectory;
-
+        private static string ConfigurationDirectory = "";
         private static Dictionary<string, string> Settings = null;
 
-        public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir, string timezone)
+        public static void Connect(string portName, string initPassword, string sysPassword, 
+            string routerID, string configDir, string timezone)
         {
             Settings = new Dictionary<string, string>()
             {
@@ -37,7 +37,7 @@ namespace BetterRouterProgram
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
-                FunctionUtil.InitializeProgressWindow(pw);
+                FunctionUtil.InitializeProgressWindow(ref pw);
 
                 FunctionUtil.SetTime();
                 FunctionUtil.PromptReboot();
@@ -52,7 +52,8 @@ namespace BetterRouterProgram
             }
             catch (System.ComponentModel.Win32Exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.");
+                System.Windows.Forms.MessageBox.Show("Error: Could not find the TFTP Client executable in the folder specified. "
+                + "Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.");
             }
             catch (Exception ex)
             {
