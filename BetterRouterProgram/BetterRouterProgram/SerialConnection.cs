@@ -13,7 +13,7 @@ namespace BetterRouterProgram
 
         private static Dictionary<string, string> Settings = null;
 
-        public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir)
+        public static void Connect(string portName, string initPassword, string sysPassword, string routerID, string configDir, string timezone)
         {
             Settings = new Dictionary<string, string>()
             {
@@ -22,6 +22,7 @@ namespace BetterRouterProgram
                 {"system password", sysPassword},
                 {"router ID", routerID},
                 {"config directory", configDir},
+                {"timezone", timezone},
             };
 
             try

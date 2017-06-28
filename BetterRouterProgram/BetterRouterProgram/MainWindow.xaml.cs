@@ -127,6 +127,7 @@ namespace BetterRouterProgram
             string sString = this.sysPassword.Text;
             string routerID = this.routerID.Text;
             string configDir = this.filepathToolTip.Text;
+            string timezone = this.timeZoneDD.Text;
 
             errorText.Text = "";
 
@@ -147,6 +148,10 @@ namespace BetterRouterProgram
             else if (configDir.Equals(""))
             {
                 errorText.Text = "Please fill the Configuration File Directory";
+            }
+            else if (timezone.Equals(""))
+            {
+                errorText.Text = "Please select a Time Zone";
             }
             else
             {
