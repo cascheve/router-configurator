@@ -137,21 +137,21 @@ namespace BetterRouterProgram
             string message = SerialConnection.RunInstruction("ping " + SerialConnection.GetSetting("router ID"));
             
             if (message.Contains("is alive")) {
-                // print('ping successful, local machine connected')
+                UpdateProgressWindow("Ping Succesful");
             }
 	        else {
 		        if(message.Contains("Host unreachable")){
-                    // print('IP address cannot be reached')
+                    UpdateProgressWindow("**IP Address Cannot be Reached**");
                 }
                 else if(message.Contains("Request timed out")) {
-                    //           print('ping timed out')
+                    UpdateProgressWindow("**Connection Timed Out**");
                 }
 
                 //TODO: do something like this but with WPF stuff
                 // print('ping failed to host: {}'.format(settings['ip_addr']))
                 // exit = input('would you like to exit? (y/n): ')
                 // if exit == 'y':
-			        //  close_connection()                  
+                //  close_connection()                  
                 // stop_tftpd()
                 // sys.exit()
             }
