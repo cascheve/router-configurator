@@ -11,7 +11,7 @@ namespace BetterRouterProgram
     - 
     */
 
-    //TODO: In // print(...) statements put text in the progress window or  a pop up little window
+    //TODO: In // print(...) statements put text in the progress window or a pop up little window
 
     /*Loading Spinner How To (For CopyToSecondary and CopyFiles):
     https://stackoverflow.com/questions/6359848/wpf-loading-spinner
@@ -26,22 +26,27 @@ namespace BetterRouterProgram
         private static Process Tftp = null;
 
         private enum Progress : int {
-                None = -1,
+                None = 0,
                 Login = 10, 
                 Ping = 20,
                 CopyFiles = 50,
                 CopySecondary = 70, 
                 SetTime = 80, 
                 Password = 90,
-                Reboot = 100
+                Reboot = 100,
         };
 
         public static void InitializeProgressWindow(ProgressWindow pw) {
-            ProgressWindow = pw;        
+            ProgressWindow = pw;
+            ProgressWindow.progressBar.Value = (int)Progress.None;
         }
 
         private static void UpdateProgressWindow(string text, Progress value = Progress.None) {
-            if(value != Progress.None) {
+            if (value == Progress.None)
+            {
+                value = (Progress)ProgressWindow.progressBar.Value;
+            }
+            if(value != (int)Progress.None) {
                 ProgressWindow.progressBar.Value = (int)value;
             }
 
@@ -119,12 +124,12 @@ namespace BetterRouterProgram
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
             
-            SerialConnection.RunInstruction("ping " + SerialConnection.GetSetting("router ID"));
+            string message = SerialConnection.RunInstruction("ping " + SerialConnection.GetSetting("router ID"));
             
             if (message.Contains("is alive")) {
                 // print('ping successful, local machine connected')
             }
-	        else{
+	        else {
 		        if(message.Contains("Host unreachable")){
                     // print('IP address cannot be reached')
                 }
@@ -193,7 +198,6 @@ namespace BetterRouterProgram
 
             SerialConnection.RunInstruction("cd a:/");
             SerialConnection.RunInstruction("md /secondary");
-            SerialConnection.ResetConnectionBuffers();
             SerialConnection.RunInstruction("copy a:/primary/*.* a:/secondary");
           
             // print('copies created successfully')
