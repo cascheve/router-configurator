@@ -6,12 +6,6 @@ using System.Diagnostics;
 
 namespace BetterRouterProgram
 {
-    /* Functions that have user input:
-    - prompt_reboot: on 
-    - 
-    */
-
-    //TODO: In // print(...) statements put text in the progress window or a pop up little window
 
     public class FunctionUtil
     {
@@ -50,7 +44,7 @@ namespace BetterRouterProgram
             if (!SerialConnection.Login(username, password)) {
                 
                 SerialConnection.CloseConnection();
-                //TODO: EXIT
+                return;
             }
             
             UpdateProgressWindow("Login Successful", Progress.Login);
@@ -62,7 +56,7 @@ namespace BetterRouterProgram
             password = password.Trim(' ', '\t', '\r', '\n');
             
             if(password.Equals(SerialConnection.GetSetting("intitial password"))){
-                //print('Can\'t change to the same password, skipping step');
+                UpdateProgressWindow("Password cannot be set to the same value. Skipping Step");
                 return;
             }
 
@@ -73,16 +67,16 @@ namespace BetterRouterProgram
                 password
             ));
 
-            if(message.Contains("Password changed")) {
-                // print('Password successfully changed')
+            if (message.Contains("Password changed")) {
+                UpdateProgressWindow("Password Succesfully Changed");
             }
-            else if(message.Contains("Invalid password")) {
+            else if (message.Contains("Invalid password")) {
                 
-                // print('Password used doesn\'t meet requirements, skipping step')
+                UpdateProgressWindow("Password used doesn't meet requirements, skipping step");
                 return;
             }
-	        else{
-		        // print('Something is wrong with the password used, skipping step')
+	        else {
+                UpdateProgressWindow("Something is wrong with the password used, skipping step");
                 return;
             }
 
@@ -171,8 +165,8 @@ namespace BetterRouterProgram
             SerialConnection.RunInstruction("cd a:/");
             SerialConnection.RunInstruction("md /secondary");
             SerialConnection.RunInstruction("copy a:/primary/*.* a:/secondary");
-          
-            // print('copies created successfully')
+
+            UpdateProgressWindow("Copies Created Succesfully");
 
             UpdateProgressWindow("Backup Created Successfully", Progress.CopySecondary);
         }
@@ -202,9 +196,11 @@ namespace BetterRouterProgram
 
         public static void StopTftp()
         {
-            //TODO: is tftp open?
-            Tftp.CloseMainWindow();
-            Tftp.Close();
+            if (Tftp != null)
+            {
+                Tftp.CloseMainWindow();
+                Tftp.Close();
+            }
         }
     }
 }

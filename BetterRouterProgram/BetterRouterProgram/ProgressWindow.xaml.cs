@@ -14,15 +14,14 @@ using System.Windows.Shapes;
 
 namespace BetterRouterProgram
 {
-    /// <summary>
-    /// Interaction logic for ProgressWindow.xaml
-    /// </summary>
+  
     public partial class ProgressWindow : Window
     {
         public ProgressWindow()
         {
             InitializeComponent();
             progressBar.Value = 0.5;
+
         }
         private void HandleReboot(object sender, RoutedEventArgs e)
         {

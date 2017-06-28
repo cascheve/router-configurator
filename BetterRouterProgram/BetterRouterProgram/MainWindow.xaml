@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="Router Configurator" Height="290" Width="750">
+        Title="Router Configurator" Height="350" Width="750">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -21,7 +21,9 @@
             <RowDefinition Height="20"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="10"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="50"/>
+
             <RowDefinition Height="30"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
@@ -66,10 +68,31 @@
 
         <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="9" Click="browseFiles" Width="100" HorizontalAlignment="Left"/>
 
-        <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="13" Click="attemptConnection">
+        <TextBlock Text="Files to Transfer: " Grid.Row="13" Grid.Column="1"/>
+        <Grid Grid.Row="13" Grid.Column="3" Grid.ColumnSpan="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="25"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+
+            <CheckBox IsChecked="True" Content="staticRp.cfg" Grid.Row="0"/>
+            <CheckBox IsChecked="True" Content="antiacl.cfg" Grid.Row="1"/>
+            <CheckBox IsChecked="True" Content="boot.cfg" Grid.Row="1" Grid.Column="1"/>
+            <CheckBox IsChecked="True" Content="acl.cfg" Grid.Column="1"/>
+            <CheckBox IsChecked="True" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2"/>
+        </Grid>
+
+        <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="14" Click="attemptConnection">
         </Button>
 
-        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="13" Grid.Column="3"/>
+        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="14" Grid.Column="3"/>
 
     </Grid>
 </Window>

@@ -29,20 +29,21 @@ namespace BetterRouterProgram
             {
                 ConfigurationDirectory = configDir;
 
-                //Thread readThread = new Thread(ReadFromConnection);
-
                 InitializeSerialPort(portName);
 
-                FunctionUtil.StartTftp();
+                //FunctionUtil.StartTftp();
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
                 FunctionUtil.InitializeProgressWindow(ref pw);
 
-                FunctionUtil.SetTime(timezone);
-                FunctionUtil.PromptReboot();
+                //change this to root , syspassword/initpassword
+                FunctionUtil.Login("root", "P25CityX2017!");
 
-                //CloseConnection()
+                //FunctionUtil.SetTime(timezone);
+                //FunctionUtil.PromptReboot();
+
+                CloseConnection();
             }
 
             //TODO: Better Exception Handling
@@ -58,6 +59,7 @@ namespace BetterRouterProgram
             catch (Exception ex)
             {
                 System.Windows.Forms.MessageBox.Show("Original Error: " + ex.Message);
+                CloseConnection();
             }
 
         }
@@ -76,8 +78,11 @@ namespace BetterRouterProgram
         }
 
         public static void CloseConnection() {
-            //TODO: is serial port open?
-            SerialPort.Close();
+
+            if (SerialPort.IsOpen)
+            {
+                SerialPort.Close();
+            }
 
             FunctionUtil.StopTftp();
         }
@@ -112,6 +117,8 @@ namespace BetterRouterProgram
 
         public static bool Login(string username, string password) {
             //TODO: is there a connection?
+            Thread.Sleep(500);
+
             SerialPort.Write("\r\n");
             Thread.Sleep(500);
 

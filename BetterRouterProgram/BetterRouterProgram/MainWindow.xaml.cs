@@ -8,16 +8,22 @@ using System.IO.Ports;
 using System.IO;
 using Microsoft.Win32;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace BetterRouterProgram
 {
 
     public partial class MainWindow : Window
     {
+        private List<int> files = new List<int>(6);
 
         public MainWindow()
         {
             InitializeComponent();
+
+            for (int i = 0; i < 6; i++) {
+                files.Add(1);
+            }
 
             portNameDD.Background = Brushes.LightGray;
 
@@ -120,7 +126,7 @@ namespace BetterRouterProgram
 
         private void attemptConnection(object sender, RoutedEventArgs e)
         {
-            //TODO: Turn off click handler when the main window is currently open -> stops user from opening too many connections
+            //TODO: !!Look below!!Turn off click handler when the main window is currently open -> stops user from opening too many connections
 
             string comPort = this.portNameDD.Text;
             string iString = this.initPassword.Text;
@@ -155,8 +161,9 @@ namespace BetterRouterProgram
             }
             else
             {
+                connectButton.Click -= attemptConnection;
                 SerialConnection.Connect(comPort, iString, sString, routerID, configDir, timezone);
-
+                connectButton.Click += attemptConnection;
             }
 
         }
