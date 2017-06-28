@@ -19,9 +19,10 @@ namespace BetterRouterProgram
         {
             InitializeComponent();
 
-            this.portNameDD.Background = Brushes.LightGray;
+            portNameDD.Background = Brushes.LightGray;
 
             FillPortNames(this);
+            FillTimeZones(this);
         }
 
         public static void FillPortNames(MainWindow m)
@@ -33,6 +34,17 @@ namespace BetterRouterProgram
                 ComboBoxItem cBoxItem = new ComboBoxItem();
                 cBoxItem.Content = s;
                 m.portNameDD.Items.Add(cBoxItem);
+            }
+
+        }
+
+        private static void FillTimeZones(MainWindow m)
+        {
+            foreach (TimeZoneInfo z in TimeZoneInfo.GetSystemTimeZones())
+            {
+                ComboBoxItem tBoxItem = new ComboBoxItem();
+                tBoxItem.Content = z.DisplayName;
+                m.timeZoneDD.Items.Add(tBoxItem);
             }
 
         }
@@ -145,3 +157,5 @@ namespace BetterRouterProgram
         }
     }
 }
+
+

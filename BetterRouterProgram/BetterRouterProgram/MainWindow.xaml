@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="Router Configurator" Height="250" Width="750">
+        Title="Router Configurator" Height="290" Width="750">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -19,6 +19,8 @@
             <RowDefinition Height="20"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="20"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="20"/>
@@ -34,20 +36,20 @@
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" />
+        <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
         <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3" Width="100" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom">
         </ComboBox>
 
         <TextBlock Text="Enter the Initial Password: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom" />
         <TextBox Name="initPassword" Text="" Grid.Row="3" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
-        <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Bottom" />
+        <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
         <TextBox Name="sysPassword" Text="" Grid.Row="5" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
-        <TextBlock Text="Enter the Router ID: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Bottom" />
+        <TextBlock Text="Enter the Router ID: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
         <TextBox Name="routerID" Text="" Grid.Row="7" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
-        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Bottom"></TextBlock>
+        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBlock>
         <TextBlock Name="filepathText" Text="" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Right" Width="280">
             <TextBlock.ToolTip>
                 <ToolTip>
@@ -58,12 +60,16 @@
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
+
+        <TextBlock Name="TimeZoneTitle" Text="Time Zone of the System: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        <ComboBox Name="timeZoneDD" Grid.Row="11" Grid.Column="3" Width="350" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+
         <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="9" Click="browseFiles" Width="100" HorizontalAlignment="Left"/>
 
-        <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="11" Click="attemptConnection">
+        <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="13" Click="attemptConnection">
         </Button>
 
-        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="11" Grid.Column="3"/>
+        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="13" Grid.Column="3"/>
 
     </Grid>
 </Window>

@@ -118,7 +118,7 @@ namespace BetterRouterProgram
 
             Thread.Sleep(2000);
 
-            //UpdateProgressWindow("Time Set", Progress.SetTime);
+            UpdateProgressWindow("Time Set", Progress.SetTime);
         }
 
         public static void PingTest() {

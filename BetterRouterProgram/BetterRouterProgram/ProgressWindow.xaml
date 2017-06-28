@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="Router Progress" Height="300" Width="550">
+        Title="Router Progress" Height="350" Width="550">
     <Grid>
         
         <Grid.RowDefinitions>
@@ -14,7 +14,7 @@
             <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="170"/>
+            <RowDefinition Height="220"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
 
