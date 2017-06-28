@@ -50,7 +50,7 @@ namespace BetterRouterProgram
                 ProgressWindow.progressBar.Value = (int)value;
             }
 
-            ProgressWindow.currentTask.Text = text;
+            ProgressWindow.currentTask.Text += "\n" + text;
         }
 
         public static void Login(string username = "root", string password = "") {
@@ -216,7 +216,7 @@ namespace BetterRouterProgram
         {
             UpdateProgressWindow("Rebooting", Progress.Reboot - 5);
             
-            SerialConnection.RunInstruction("rb");
+            //SerialConnection.RunInstruction("rb");
             Thread.Sleep(500);
 
             UpdateProgressWindow("Reboot Successful", Progress.Reboot);
