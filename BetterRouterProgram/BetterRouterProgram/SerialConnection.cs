@@ -39,6 +39,8 @@ namespace BetterRouterProgram
 
                 FunctionUtil.Login("root", "P25CityX2015!");
 
+                FunctionUtil.PingTest();
+
                 //FunctionUtil.SetPassword("P25CityX2015!");
 
                 //FunctionUtil.SetTime(timezone);

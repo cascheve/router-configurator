@@ -117,10 +117,11 @@ namespace BetterRouterProgram
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
             
-            string message = SerialConnection.RunInstruction("ping " + SerialConnection.GetSetting("router ID"));
+            string message = SerialConnection.RunInstruction("ping " + "10.2.251.100");
             
             if (message.Contains("is alive")) {
                 UpdateProgressWindow("Ping Succesful");
+                UpdateProgressWindow(message);
             }
 	        else {
 		        if(message.Contains("Host unreachable")){
@@ -139,7 +140,7 @@ namespace BetterRouterProgram
                 // sys.exit()
             }
 
-            UpdateProgressWindow("Ping Successful", Progress.Ping);
+            UpdateProgressWindow("Ping Test Completed", Progress.Ping);
         }
 
         public static void CopyFiles(params string[] files) {

@@ -15,28 +15,25 @@ namespace BetterRouterProgram
 
     public partial class MainWindow : Window
     {
-        private List<bool> fileNumbers = new List<bool>(5);
-        private List<System.Windows.Controls.CheckBox> checks = new List<System.Windows.Controls.CheckBox>(5);
+        private List<bool> fileNumbers = new List<bool>(3);
+        private List<System.Windows.Controls.CheckBox> checks = new List<System.Windows.Controls.CheckBox>(3);
 
         public MainWindow()
         {
             InitializeComponent();
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 3; i++) {
                 fileNumbers.Add(false);
             }
 
             checks.Add(staticRp);
             checks.Add(anti);
-            checks.Add(boot);
-            checks.Add(acl);
             checks.Add(xgsn);
 
             portNameDD.Background = Brushes.LightGray;
 
             FillPortNames(this);
             FillTimeZones(this);
-
 
         }
 
