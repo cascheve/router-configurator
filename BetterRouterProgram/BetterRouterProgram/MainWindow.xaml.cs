@@ -157,25 +157,21 @@ namespace BetterRouterProgram
             }
             else
             {
-                int i = 0;
-                foreach(System.Windows.Controls.CheckBox check in checks)
-                {
-                    if ((bool)check.IsChecked)
-                    {
-                        fileNumbers[i] = true;
-                    }
-                    i++;
-                }
 
                 SerialConnection.Connect(comPort, iString, sString, routerID, configDir, timezone, 
                     new Dictionary<string, bool>()
                     {
-                        {staticrp.Text, staticrp.Checked},
-                        {antiacl.Text, antiacl.Checked},
-                        {xgsn.Text, xgsn.Checked}
+                        {staticrp.Content.ToString(),
+                            staticrp.IsChecked.HasValue ? staticrp.IsChecked.Value : false},
+                        {antiacl.Content.ToString(),
+                            antiacl.IsChecked.HasValue ? antiacl.IsChecked.Value : false},
+                        {xgsn.Content.ToString(),
+                            xgsn.IsChecked.HasValue ? xgsn.IsChecked.Value : false}
                     }
                 );
+
             }
+
 
         }
     }

@@ -4,6 +4,7 @@ using System.Threading;
 using System.IO.Ports;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using System.Collections.Generic;
 
 namespace BetterRouterProgram
 {
@@ -204,10 +205,10 @@ namespace BetterRouterProgram
         }
 
 
-        public static SetFilesToCopy(Dictionary<string, bool> filesToCopy)
+        public static void SetFilesToCopy(Dictionary<string, bool> filesToCopy)
         {
             FilesToCopy = new List<string>();
-            foreach (var file in myDict.Keys.ToList())
+            foreach (var file in filesToCopy.Keys)
             {
                 if(filesToCopy[file] == true)
                 {
