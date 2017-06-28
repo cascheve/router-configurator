@@ -82,11 +82,11 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-            <CheckBox IsChecked="True" Content="staticRp.cfg" Grid.Row="0"/>
-            <CheckBox IsChecked="True" Content="antiacl.cfg" Grid.Row="1"/>
-            <CheckBox IsChecked="True" Content="boot.cfg" Grid.Row="1" Grid.Column="1"/>
-            <CheckBox IsChecked="True" Content="acl.cfg" Grid.Column="1"/>
-            <CheckBox IsChecked="True" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2"/>
+            <CheckBox Name="staticRp" IsChecked="True" Content="staticRp.cfg" Grid.Row="0"/>
+            <CheckBox Name="anti" IsChecked="True" Content="antiacl.cfg" Grid.Row="1"/>
+            <CheckBox Name="boot" IsChecked="True" Content="boot.cfg" Grid.Row="1" Grid.Column="1"/>
+            <CheckBox Name="acl" IsChecked="True" Content="acl.cfg" Grid.Column="1"/>
+            <CheckBox Name="xgsn" IsChecked="True" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2"/>
         </Grid>
 
         <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="14" Click="attemptConnection">

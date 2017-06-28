@@ -15,20 +15,29 @@ namespace BetterRouterProgram
 
     public partial class MainWindow : Window
     {
-        private List<int> files = new List<int>(6);
+        private List<int> fileNumbers = new List<int>(5);
+        private List<System.Windows.Controls.CheckBox> checks = new List<System.Windows.Controls.CheckBox>(5);
 
         public MainWindow()
         {
             InitializeComponent();
 
-            for (int i = 0; i < 6; i++) {
-                files.Add(1);
+            for (int i = 0; i < 5; i++) {
+                fileNumbers.Add(0);
             }
+
+            checks.Add(staticRp);
+            checks.Add(anti);
+            checks.Add(boot);
+            checks.Add(acl);
+            checks.Add(xgsn);
 
             portNameDD.Background = Brushes.LightGray;
 
             FillPortNames(this);
             FillTimeZones(this);
+
+
         }
 
         public static void FillPortNames(MainWindow m)
@@ -144,7 +153,6 @@ namespace BetterRouterProgram
             else if (sString.Equals(""))
             {
                 errorText.Text = "Please fill in the System Password";
-
             }
             else if (routerID.Equals(""))
             {
@@ -161,12 +169,23 @@ namespace BetterRouterProgram
             }
             else
             {
+                int i = 0;
+                foreach(System.Windows.Controls.CheckBox check in checks)
+                {
+                    if ((bool)check.IsChecked)
+                    {
+                        fileNumbers[i] = 1;
+                    }
+                    i++;
+                }
+
                 connectButton.Click -= attemptConnection;
                 SerialConnection.Connect(comPort, iString, sString, routerID, configDir, timezone);
                 connectButton.Click += attemptConnection;
             }
 
         }
+      
     }
 }
 
