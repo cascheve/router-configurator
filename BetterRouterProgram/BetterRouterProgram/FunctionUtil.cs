@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.IO.Ports;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 
 namespace BetterRouterProgram
 {
@@ -12,6 +13,7 @@ namespace BetterRouterProgram
         private static ProgressWindow ProgressWindow = null;
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
+        private static List<string> FilesToCopy = null;
 
         private enum Progress : int {
                 None = 0,
@@ -116,10 +118,11 @@ namespace BetterRouterProgram
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
             
-            string message = SerialConnection.RunInstruction("ping " + SerialConnection.GetSetting("router ID"));
+            string message = SerialConnection.RunInstruction("ping " + "10.2.251.100");
             
             if (message.Contains("is alive")) {
                 UpdateProgressWindow("Ping Succesful");
+                UpdateProgressWindow(message);
             }
 	        else {
 		        if(message.Contains("Host unreachable")){
@@ -138,7 +141,7 @@ namespace BetterRouterProgram
                 // sys.exit()
             }
 
-            UpdateProgressWindow("Ping Successful", Progress.Ping);
+            UpdateProgressWindow("Ping Test Completed", Progress.Ping);
         }
 
         public static void CopyFiles(params string[] files) {
@@ -198,6 +201,19 @@ namespace BetterRouterProgram
             {
                 Tftp.CloseMainWindow();
                 Tftp.Close();
+            }
+        }
+
+
+        public static SetFilesToCopy(Dictionary<string, bool> filesToCopy)
+        {
+            FilesToCopy = new List<string>();
+            foreach (var file in myDict.Keys.ToList())
+            {
+                if(filesToCopy[file] == true)
+                {
+                    FilesToCopy.Add(file);
+                }
             }
         }
     }

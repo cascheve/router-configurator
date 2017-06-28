@@ -15,22 +15,10 @@ namespace BetterRouterProgram
 
     public partial class MainWindow : Window
     {
-        private List<bool> fileNumbers = new List<bool>(5);
-        private List<System.Windows.Controls.CheckBox> checks = new List<System.Windows.Controls.CheckBox>(5);
 
         public MainWindow()
         {
             InitializeComponent();
-
-            for (int i = 0; i < 5; i++) {
-                fileNumbers.Add(false);
-            }
-
-            checks.Add(staticRp);
-            checks.Add(anti);
-            checks.Add(boot);
-            checks.Add(acl);
-            checks.Add(xgsn);
 
             portNameDD.Background = Brushes.LightGray;
 
@@ -179,11 +167,17 @@ namespace BetterRouterProgram
                     i++;
                 }
 
-                SerialConnection.Connect(comPort, iString, sString, routerID, configDir, timezone);
+                SerialConnection.Connect(comPort, iString, sString, routerID, configDir, timezone, 
+                    new Dictionary<string, bool>()
+                    {
+                        {staticrp.Text, staticrp.Checked},
+                        {antiacl.Text, antiacl.Checked},
+                        {xgsn.Text, xgsn.Checked}
+                    }
+                );
             }
 
         }
-      
     }
 }
 

@@ -18,7 +18,7 @@ namespace BetterRouterProgram
         private static Dictionary<string, string> Settings = null;
 
         public static void Connect(string portName, string initPassword, string sysPassword, 
-            string routerID, string configDir, string timezone)
+            string routerID, string configDir, string timezone, Dictionary<string, bool> filesToCopy)
         {
             Settings = new Dictionary<string, string>()
             {
@@ -34,6 +34,8 @@ namespace BetterRouterProgram
             {
                 ConfigurationDirectory = configDir;
 
+                FunctionUtil.SetFilesToCopy(filesToCopy);
+
                 InitializeSerialPort(portName);
 
                 //FunctionUtil.StartTftp();
@@ -42,8 +44,9 @@ namespace BetterRouterProgram
                 pw.Show();
                 FunctionUtil.InitializeProgressWindow(ref pw);
 
-                //change this to root , syspassword/initpassword
-                FunctionUtil.Login("root", "P25CityX2016!");
+                FunctionUtil.Login("root", "P25CityX2015!");
+
+                FunctionUtil.PingTest();
 
                 //FunctionUtil.SetPassword("P25CityX2015!");
 
