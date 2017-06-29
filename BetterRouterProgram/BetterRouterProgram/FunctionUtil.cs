@@ -41,17 +41,18 @@ namespace BetterRouterProgram
             ProgressWindow.currentTask.Text += "\n" + text;
         }
 
-        public static void Login(string username = "root", string password = "") {
+        public static bool Login(string username = "root", string password = "") {
             UpdateProgressWindow("Logging In");
 
             //if the serial connection fails using the username and password specified
             if (!SerialConnection.Login(username, password)) {
                 
                 SerialConnection.CloseConnection();
-                return;
+                return false;
             }
             
             UpdateProgressWindow("Login Successful", Progress.Login);
+            return true;
         }
 
         public static void SetPassword(string password) {
@@ -201,8 +202,13 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Creating Back-Up Files");
 
             SerialConnection.RunInstruction("cd a:/");
-            SerialConnection.RunInstruction("md /secondary");
-            SerialConnection.RunInstruction("copy a:/primary/*.* a:/secondary");
+            Thread.Sleep(500);
+
+            SerialConnection.RunInstruction("md /test2");
+            Thread.Sleep(500);
+
+            SerialConnection.RunInstruction("copy a:/primary/*.* a:/test2");
+            Thread.Sleep(500);
 
             UpdateProgressWindow("Copies Created Succesfully");
 
