@@ -44,16 +44,22 @@ namespace BetterRouterProgram
                 pw.Show();
                 FunctionUtil.InitializeProgressWindow(ref pw);
 
-                FunctionUtil.Login("root", "P25CityX2015!");
+                if (FunctionUtil.Login("root", "P25CityX2015!"))
+                {
 
-                FunctionUtil.PingTest();
+                    //FunctionUtil.PingTest();
 
-                //FunctionUtil.SetPassword("P25CityX2015!");
+                    //FunctionUtil.SetPassword("P25CityX2015!");
 
-                //FunctionUtil.SetTime(timezone);
-                //FunctionUtil.PromptReboot();
+                    //FunctionUtil.CopyFiles();
 
-                //CloseConnection();
+                    //FunctionUtil.SetTime(timezone);
+                    //FunctionUtil.PromptReboot();
+
+                    FunctionUtil.CopyToSecondary();
+
+                    //CloseConnection();
+                }
             }
 
             //TODO: Better Exception Handling
