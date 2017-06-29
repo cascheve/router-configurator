@@ -14,14 +14,14 @@ namespace BetterRouterProgram
         private static ProgressWindow ProgressWindow = null;
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
-        private static List<string> FilesToCopy = null;
+        private static ArrayList<string> FilesToTransfer = null;
 
         private enum Progress : int {
                 None = 0,
                 Login = 10, 
                 Ping = 20,
-                CopyFilesBase = 20,
-                CopySecondary = 70, 
+                TransferFilesStart = 20,
+                CopyToSecondary = 70, 
                 SetTime = 80, 
                 Password = 90,
                 Reboot = 100,
@@ -32,9 +32,10 @@ namespace BetterRouterProgram
             ProgressWindow.progressBar.Value = (int)Progress.None;
         }
 
-        private static void UpdateProgressWindow(string text, Progress value = Progress.None) {
+        private static void UpdateProgressWindow(string text, Progress value = Progress.None, double toAdd = 0) {
             if(value != Progress.None) {
                 ProgressWindow.progressBar.Value = (int)value;
+                ProgressWindow.progressBar.Value += toAdd;
             }
 
             ProgressWindow.currentTask.Text += "\n" + text;
@@ -144,14 +145,50 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Ping Test Completed", Progress.Ping);
         }
 
-        public static void CopyFiles(params string[] files) {
+        private static FormatHostFile(string file) {
+            string filename = "";
+            if(file.Equals("staticRP.cfg") || file.Equals("anitacl.cfg") || file.Equals("boot.ppc")) {
+                filename = file;
+            }
+            else if(file.Equals("acl.cfg") || file.Equals("xgsn.cfg")) {
+                filename = SerialConnection.GetSetting("router ID") + "_" + file;
+            }
+            else if(file.Equals("boot.cfg")) {
+                filename = SerialConnection.GetSetting("router ID") + ".cfg";
+            }
 
-            UpdateProgressWindow("Copying Configurations");
+            return filename;
+        }
 
-            int progress = (int)Progress.CopyFilesBase;
-            string[] FilesToCopy = files;
+        public static void TransferFiles(params string[] files) {
+            double total = 50;
+
+            UpdateProgressWindow("Transfering Configurations");
+
+            int progress = (int)Progress.TransferFilesStart;
             
             SerialConnection.RunInstruction("cd");
+
+            int i = 0;
+            string copyFileInstruction = "";
+            string hostFile = "";
+            foreach (var file in FilesToTransfer)
+            {
+                //print('copying {file})
+                hostFileFormatHostFile(file)
+                UpdateProgressWindow(String.Format("Transferring File: {0} -> {1}", hostFile, file));
+                /*SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}", 
+                    SerialConnection.GetSetting("host ip address"), 
+                    SerialConnection.GetSetting("config directory"),
+                    hostFile, file
+                ));*/
+                UpdateProgressWindow(
+                    String.Format("File: {0} Transferred", hostFile), 
+                    Progress.TransferFilesStart, 
+                    (((double) 50)/FilesToTransfer.Count)*(i++)
+                );
+            }
+
             //        *******update progress bar for each file done
             //        instr = 'copy {}{} {}\r\n'.format(settings['ip_addr'] + ':', hostFile, file) 
             //        *******use setting config directory to prepend to hostFile
@@ -169,7 +206,7 @@ namespace BetterRouterProgram
 
             UpdateProgressWindow("Copies Created Succesfully");
 
-            UpdateProgressWindow("Backup Created Successfully", Progress.CopySecondary);
+            UpdateProgressWindow("Backup Created Successfully", Progress.CopyToSecondary);
         }
 
         public static void PromptReboot() {
@@ -205,14 +242,18 @@ namespace BetterRouterProgram
         }
 
 
-        public static void SetFilesToCopy(Dictionary<string, bool> filesToCopy)
+        public static void SetFilesToTransfer(Dictionary<string, bool> filesToTransfer)
         {
-            FilesToCopy = new List<string>();
-            foreach (var file in filesToCopy.Keys)
+            FilesToTransfer = new ArrayList<string>(6);
+            FilesToTransfer.Add("boot.ppc");
+            FilesToTransfer.Add("boot.cfg");
+            FilesToTransfer.Add("acl.cfg")
+
+            foreach (var file in filesToTransfer.Keys)
             {
-                if(filesToCopy[file] == true)
+                if(filesToTransfer[file] == true)
                 {
-                    FilesToCopy.Add(file);
+                    FilesToTransfer.Add(file);
                 }
             }
         }

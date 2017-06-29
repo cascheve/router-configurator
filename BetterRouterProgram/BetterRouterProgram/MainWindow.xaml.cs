@@ -158,7 +158,8 @@ namespace BetterRouterProgram
             else
             {
 
-                SerialConnection.Connect(comPort, iString, sString, routerID, configDir, timezone, 
+                SerialConnection.Connect(comPort, iString, sString, routerID, 
+                    configDir, timezone, /*TODO place some variable for host ip*/"10.1.1.2",
                     new Dictionary<string, bool>()
                     {
                         {staticrp.Content.ToString(),
@@ -171,8 +172,6 @@ namespace BetterRouterProgram
                 );
 
             }
-
-
         }
     }
 }
