@@ -149,8 +149,9 @@ namespace BetterRouterProgram
         private static string FormatHostFile(string file) {
 
             string filename = "";
+            file = file.Trim();
 
-            if(file.Equals("staticRP.cfg") || file.Equals("anitacl.cfg") || file.Equals("boot.ppc")) {
+            if(file.Equals("staticRP.cfg") || file.Equals("antiacl.cfg") || file.Equals("boot.ppc")) {
                 filename = file;
             }
             else if(file.Equals("acl.cfg") || file.Equals("xgsn.cfg")) {
@@ -180,11 +181,15 @@ namespace BetterRouterProgram
                 //print('copying {file})
                 hostFile = FormatHostFile(file);
                 UpdateProgressWindow(String.Format("Transferring File: {0} -> {1}", hostFile, file));
-                /*SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}", 
+
+                UpdateProgressWindow(String.Format("copy {0}:{1}\\{2} {3}", 
                     SerialConnection.GetSetting("host ip address"), 
                     SerialConnection.GetSetting("config directory"),
                     hostFile, file
-                ));*/
+                ));
+
+                UpdateProgressWindow("Progress: " + (((double)50) / FilesToTransfer.Count) * (i++));
+
                 UpdateProgressWindow(
                     String.Format("File: {0} Transferred", hostFile), 
                     Progress.TransferFilesStart, 

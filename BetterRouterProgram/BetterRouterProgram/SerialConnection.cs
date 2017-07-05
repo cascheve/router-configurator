@@ -59,7 +59,9 @@ namespace BetterRouterProgram
                     //FunctionUtil.SetTime(timezone);
                     //FunctionUtil.PromptReboot();
 
-                    FunctionUtil.CopyToSecondary();
+                    FunctionUtil.TransferFiles();
+
+                    //FunctionUtil.CopyToSecondary();
 
                     //CloseConnection();
                 }
