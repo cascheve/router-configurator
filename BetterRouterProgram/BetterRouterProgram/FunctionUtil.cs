@@ -14,7 +14,7 @@ namespace BetterRouterProgram
         private static ProgressWindow ProgressWindow = null;
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
-        private static ArrayList<string> FilesToTransfer = null;
+        private static List <string> FilesToTransfer = null;
 
         private enum Progress : int {
                 None = 0,
@@ -146,8 +146,10 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Ping Test Completed", Progress.Ping);
         }
 
-        private static FormatHostFile(string file) {
+        private static string FormatHostFile(string file) {
+
             string filename = "";
+
             if(file.Equals("staticRP.cfg") || file.Equals("anitacl.cfg") || file.Equals("boot.ppc")) {
                 filename = file;
             }
@@ -176,7 +178,7 @@ namespace BetterRouterProgram
             foreach (var file in FilesToTransfer)
             {
                 //print('copying {file})
-                hostFileFormatHostFile(file)
+                hostFile = FormatHostFile(file);
                 UpdateProgressWindow(String.Format("Transferring File: {0} -> {1}", hostFile, file));
                 /*SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}", 
                     SerialConnection.GetSetting("host ip address"), 
@@ -250,10 +252,10 @@ namespace BetterRouterProgram
 
         public static void SetFilesToTransfer(Dictionary<string, bool> filesToTransfer)
         {
-            FilesToTransfer = new ArrayList<string>(6);
+            FilesToTransfer = new List<string>(6);
             FilesToTransfer.Add("boot.ppc");
             FilesToTransfer.Add("boot.cfg");
-            FilesToTransfer.Add("acl.cfg")
+            FilesToTransfer.Add("acl.cfg");
 
             foreach (var file in filesToTransfer.Keys)
             {
