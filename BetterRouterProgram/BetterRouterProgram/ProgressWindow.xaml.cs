@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,11 @@ namespace BetterRouterProgram
         private void HandleReboot(object sender, RoutedEventArgs e)
         {
             FunctionUtil.HandleReboot();
+        }
+
+        void DataWindow_Closing(object sender, CancelEventArgs e)
+        {
+            SerialConnection.CloseConnection();
         }
     }
 }

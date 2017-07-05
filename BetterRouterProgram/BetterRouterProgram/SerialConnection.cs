@@ -52,16 +52,15 @@ namespace BetterRouterProgram
 
                     //FunctionUtil.PingTest();
 
-                    //FunctionUtil.SetPassword("P25CityX2015!");
-
-                    //FunctionUtil.CopyFiles();
-
-                    //FunctionUtil.SetTime(timezone);
-                    //FunctionUtil.PromptReboot();
-
                     FunctionUtil.TransferFiles();
 
                     //FunctionUtil.CopyToSecondary();
+
+                    //FunctionUtil.SetTime(timezone);
+
+                    //FunctionUtil.SetPassword("P25CityX2015!");
+
+                    //FunctionUtil.PromptReboot();
 
                     //CloseConnection();
                 }
