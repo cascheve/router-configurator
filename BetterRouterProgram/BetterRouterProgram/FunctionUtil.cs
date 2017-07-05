@@ -16,14 +16,15 @@ namespace BetterRouterProgram
         private static Process Tftp = null;
         private static ArrayList<string> FilesToTransfer = null;
 
+        //end progress of all parts of configuration
         private enum Progress : int {
                 None = 0,
-                Login = 10, 
-                Ping = 20,
-                TransferFilesStart = 20,
-                CopyToSecondary = 70, 
-                SetTime = 80, 
-                Password = 90,
+                Login = 5, 
+                Ping = 10,
+                TransferFilesStart = 10, //goes to 60 - length: 50
+                CopyToSecondary = 80, 
+                SetTime = 85, 
+                Password = 95,
                 Reboot = 100,
         };
 
@@ -32,9 +33,9 @@ namespace BetterRouterProgram
             ProgressWindow.progressBar.Value = (int)Progress.None;
         }
 
-        private static void UpdateProgressWindow(string text, Progress value = Progress.None, double toAdd = 0) {
+        private static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0) {
             if(value != Progress.None) {
-                ProgressWindow.progressBar.Value = (int)value;
+                ProgressWindow.progressBar.Value = (int)setValue;   
                 ProgressWindow.progressBar.Value += toAdd;
             }
 
@@ -165,28 +166,26 @@ namespace BetterRouterProgram
             double totalProgress = 50;
 
             UpdateProgressWindow("Transfering Configuration Files");
-
-            int progress = (int)Progress.TransferFilesStart;
             
             SerialConnection.RunInstruction("cd");
 
             int i = 0;
-            string copyFileInstruction = "";
             string hostFile = "";
             foreach (var file in FilesToTransfer)
             {
                 //print('copying {file})
                 hostFileFormatHostFile(file)
-                UpdateProgressWindow(String.Format("Transferring File: {0} -> {1}", hostFile, file));
+                //UpdateProgressWindow(String.Format("Transferring File: {0} -> {1}", hostFile, file));
                 /*SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}", 
                     SerialConnection.GetSetting("host ip address"), 
                     SerialConnection.GetSetting("config directory"),
                     hostFile, file
                 ));*/
+
                 UpdateProgressWindow(
                     String.Format("File: {0} Transferred", hostFile), 
                     Progress.TransferFilesStart, 
-                    (((double) totalProgress)/FilesToTransfer.Count)*(i++)
+                    (((double) totalProgress)/FilesToTransfer.Count)*(++i)
                 );
             }
 
@@ -202,13 +201,10 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Creating Back-Up Files");
 
             SerialConnection.RunInstruction("cd a:/");
-            Thread.Sleep(500);
 
             SerialConnection.RunInstruction("md /test2");
-            Thread.Sleep(500);
 
             SerialConnection.RunInstruction("copy a:/primary/*.* a:/test2");
-            Thread.Sleep(500);
 
             UpdateProgressWindow("Copies Created Succesfully");
 
@@ -227,7 +223,6 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Rebooting", Progress.Reboot - 5);
             
             SerialConnection.RunInstruction("rb");
-            Thread.Sleep(500);
 
             UpdateProgressWindow("Reboot Successful", Progress.Reboot);
 
