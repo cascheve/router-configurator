@@ -162,9 +162,9 @@ namespace BetterRouterProgram
         }
 
         public static void TransferFiles(params string[] files) {
-            double total = 50;
+            double totalProgress = 50;
 
-            UpdateProgressWindow("Transfering Configurations");
+            UpdateProgressWindow("Transfering Configuration Files");
 
             int progress = (int)Progress.TransferFilesStart;
             
@@ -186,7 +186,7 @@ namespace BetterRouterProgram
                 UpdateProgressWindow(
                     String.Format("File: {0} Transferred", hostFile), 
                     Progress.TransferFilesStart, 
-                    (((double) 50)/FilesToTransfer.Count)*(i++)
+                    (((double) totalProgress)/FilesToTransfer.Count)*(i++)
                 );
             }
 
