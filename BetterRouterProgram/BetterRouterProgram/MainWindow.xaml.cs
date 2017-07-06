@@ -54,7 +54,7 @@ namespace BetterRouterProgram
         private void FillID_DD(string directory)
         {
 
-            string[] config_files = Directory.GetFiles(directory, "t*");
+            string[] config_files = Directory.GetFiles(directory, "z*");
 
             foreach (string c in config_files)
             {
@@ -63,6 +63,10 @@ namespace BetterRouterProgram
                 routerID_DD.Items.Add(cBoxItem);
             }
 
+        }
+        private void DepopulateID_DD()
+        {
+            routerID_DD.Items.Clear();
         }
 
         private void browseFiles(object sender, RoutedEventArgs e)
@@ -84,6 +88,7 @@ namespace BetterRouterProgram
                     {
                         //Selected Path is the Absolute path selected (as a string)
                         filepathToolTip.Text = fbd.SelectedPath;
+                        DepopulateID_DD();
                         FillID_DD(fbd.SelectedPath);
 
                         if (fbd.SelectedPath.Length > 35)
@@ -106,32 +111,6 @@ namespace BetterRouterProgram
             {
                 System.Windows.Forms.MessageBox.Show("There was an Error Displaying the application window. Please exit and try again.");
             }
-
-            /*
-            Microsoft.Win32.OpenFileDialog openFileDialog1 = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog1.InitialDirectory = "c:\\";
-            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 2;
-            openFileDialog1.RestoreDirectory = true;
-
-            //DialogResult.OK
-            if (openFileDialog1.ShowDialog() == false)
-            {
-                try
-                {
-                    if ((myStream = openFileDialog1.OpenFile()) != null)
-                    {
-                        using (myStream)
-                        {
-                            // Insert code to read the stream here.
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Windows.Forms.MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
-                }
-            }*/
 
         }
 

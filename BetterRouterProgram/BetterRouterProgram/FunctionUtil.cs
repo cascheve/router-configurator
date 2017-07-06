@@ -69,7 +69,7 @@ namespace BetterRouterProgram
             //TODO: Change Literal {0} was P25CityX2016!
             string message = SerialConnection.RunInstruction(
                 $"SETDefault -SYS NMPassWord = \"{SerialConnection.GetSetting("initial password")}\" \"{password}\" \"{password}\""
-            ));
+            );
 
             if (message.Contains("Password changed")) {
                 UpdateProgressWindow("Password Succesfully Changed");
