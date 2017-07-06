@@ -30,7 +30,7 @@
 
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="12" TextDecorations="{x:Null}" VerticalAlignment="Center" />
+        <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="16" TextDecorations="{x:Null}" VerticalAlignment="Center" HorizontalAlignment="Center" />
         <TextBlock x:Name="statusText" Grid.Row="1" Grid.Column="2"/>
         <ProgressBar Name="progressBar" Grid.Row="1" Grid.Column="2" Height="20"/>
        
@@ -39,7 +39,7 @@
         </Button>
 
         <Button Name="DisconnectButton" Grid.Row="3" Grid.Column="1" IsEnabled="False" Click="HandleDisconnect">
-            <TextBlock Name ="DisconnectText" Text="Reboot" Opacity="0.6"/>
+            <TextBlock Name ="DisconnectText" Text="Disconnect" Opacity="0.6"/>
         </Button>
 
         <ScrollViewer Grid.Row="5" Grid.Column="2" Background="White">

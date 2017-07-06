@@ -25,7 +25,6 @@ namespace BetterRouterProgram
             FillPortNames(this);
             FillTimeZones(this);
 
-
         }
 
         public static void FillPortNames(MainWindow m)
@@ -50,6 +49,20 @@ namespace BetterRouterProgram
                 m.timeZoneDD.Items.Add(tBoxItem);
             }
 
+        }   
+
+        private void FillID_DD(string directory)
+        {
+
+            string[] config_files = Directory.GetFiles(directory, "t*");
+
+            foreach (string c in config_files)
+            {
+                ComboBoxItem cBoxItem = new ComboBoxItem();
+                cBoxItem.Content = Path.GetFileName(c);
+                routerID_DD.Items.Add(cBoxItem);
+            }
+
         }
 
         private void browseFiles(object sender, RoutedEventArgs e)
@@ -71,6 +84,7 @@ namespace BetterRouterProgram
                     {
                         //Selected Path is the Absolute path selected (as a string)
                         filepathToolTip.Text = fbd.SelectedPath;
+                        FillID_DD(fbd.SelectedPath);
 
                         if (fbd.SelectedPath.Length > 35)
                         {
@@ -126,7 +140,7 @@ namespace BetterRouterProgram
             string comPort = this.portNameDD.Text;
             string iString = this.currentPassword.Text;
             string sString = this.sysPassword.Text;
-            string routerID = this.routerID.Text;
+            string routerID = this.routerID_DD.Text;
             string configDir = this.filepathToolTip.Text;
             string timezone = this.timeZoneDD.Text;
 
