@@ -66,12 +66,9 @@ namespace BetterRouterProgram
                 return;
             }
 
-            //TODO: Change Literal {0}
-            string message = SerialConnection.RunInstruction(String.Format(
-                "SETDefault -SYS NMPassWord = \"P25CityX2016!\" \"{1}\" \"{2}\"", 
-                SerialConnection.GetSetting("initial password"),
-                password, 
-                password
+            //TODO: Change Literal {0} was P25CityX2016!
+            string message = SerialConnection.RunInstruction(
+                $"SETDefault -SYS NMPassWord = \"{SerialConnection.GetSetting("initial password")}\" \"{password}\" \"{password}\""
             ));
 
             if (message.Contains("Password changed")) {
