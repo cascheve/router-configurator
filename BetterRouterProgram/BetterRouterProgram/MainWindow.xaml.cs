@@ -9,6 +9,7 @@ using System.IO;
 using Microsoft.Win32;
 using System.Threading;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BetterRouterProgram
 {

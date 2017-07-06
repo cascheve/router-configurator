@@ -70,7 +70,7 @@ namespace BetterRouterProgram
             string message = SerialConnection.RunInstruction(
                 $"SETDefault -SYS NMPassWord = \"{SerialConnection.GetSetting("initial password")}\"" + 
                 $" \"{password}\" \"{password}\""
-            ));
+            );
 
             if (message.Contains("Password changed")) {
                 UpdateProgressWindow("Password Succesfully Changed");
