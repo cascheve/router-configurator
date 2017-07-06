@@ -68,7 +68,8 @@ namespace BetterRouterProgram
 
             //TODO: Change Literal {0} was P25CityX2016!
             string message = SerialConnection.RunInstruction(
-                $"SETDefault -SYS NMPassWord = \"{SerialConnection.GetSetting("initial password")}\" \"{password}\" \"{password}\""
+                $"SETDefault -SYS NMPassWord = \"{SerialConnection.GetSetting("initial password")}\"" + 
+                $" \"{password}\" \"{password}\""
             ));
 
             if (message.Contains("Password changed")) {
@@ -84,7 +85,7 @@ namespace BetterRouterProgram
                 return;
             }
 
-            SerialConnection.RunInstruction(String.Format("setd -ac secret = \"{0}\"", password));
+            SerialConnection.RunInstruction($"setd -ac secret = \"{password}\"");
 
             UpdateProgressWindow("Secret Password Set", Progress.Password);
         }
@@ -176,7 +177,7 @@ namespace BetterRouterProgram
 
                 hostFile = FormatHostFile(file);
 
-                UpdateProgressWindow(String.Format("Transferring File: {0} -> {1}", hostFile, file));
+                UpdateProgressWindow($"Transferring File: {hostFile} -> {file}");
 
                 SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}", 
                     SerialConnection.GetSetting("host ip address"), 
@@ -185,7 +186,7 @@ namespace BetterRouterProgram
                 ));
 
                 UpdateProgressWindow(
-                    String.Format("File: {0} Transferred", hostFile), 
+                    $"File: {hostFile} Transferred", 
                     Progress.TransferFilesStart, 
                     (((double) totalProgress)/FilesToTransfer.Count)*(++i)
                 );
@@ -227,8 +228,8 @@ namespace BetterRouterProgram
         public static void StartTftp()
         {
             Tftp = new Process();
-            Tftp.StartInfo.Arguments = "C:/";
-            Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + "\\tftpd32.exe";
+            Tftp.StartInfo.Arguments = @"C:\";
+            Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
             Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
             
             Tftp.Start();
