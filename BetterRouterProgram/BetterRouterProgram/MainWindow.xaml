@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
+        Background="AliceBlue"
         Title="Router Configurator" Height="350" Width="750">
 
     <Grid>
@@ -42,8 +43,8 @@
         <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3" Width="100" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom">
         </ComboBox>
 
-        <TextBlock Text="Enter the Initial Password: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom" />
-        <TextBox Name="initPassword" Text="" Grid.Row="3" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
+        <TextBlock Text="Enter the Current Password: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom" />
+        <TextBox Name="currentPassword" Text="" Grid.Row="3" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
         <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
         <TextBox Name="sysPassword" Text="" Grid.Row="5" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>

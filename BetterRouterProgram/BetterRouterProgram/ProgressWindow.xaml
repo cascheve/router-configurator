@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Title="Router Progress" Height="350" Width="550"
+        Background="AliceBlue"
+        Title="Router Progress" Height="350" Width="570"
         Closing="DataWindow_Closing">
 
     <Grid>
@@ -22,7 +23,7 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="70" />
             <ColumnDefinition Width="400" />
             <ColumnDefinition Width="70" />
             <ColumnDefinition Width="10" />
@@ -37,7 +38,11 @@
             <TextBlock Name ="RebootText" Text="Reboot" Opacity="0.6"/>
         </Button>
 
-        <ScrollViewer Grid.Row="5" Grid.Column="2">
+        <Button Name="DisconnectButton" Grid.Row="3" Grid.Column="1" IsEnabled="False" Click="HandleDisconnect">
+            <TextBlock Name ="DisconnectText" Text="Reboot" Opacity="0.6"/>
+        </Button>
+
+        <ScrollViewer Grid.Row="5" Grid.Column="2" Background="White">
             <Border BorderBrush="Gray" BorderThickness="2" Padding="2, 2, 2, 2">
                 <TextBlock Name="currentTask" Text="Attempting to Connect" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             </Border>

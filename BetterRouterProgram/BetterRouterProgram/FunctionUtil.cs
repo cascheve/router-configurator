@@ -229,7 +229,12 @@ namespace BetterRouterProgram
 
         public static void StartTftp()
         {
-            Tftp = Process.Start(SerialConnection.GetSetting("config directory") + "\\tftpd32.exe");
+            Tftp = new Process();
+            Tftp.StartInfo.Arguments = "C:/";
+            Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + "\\tftpd32.exe";
+            Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
+            
+            Tftp.Start();
         }
 
         public static void StopTftp()
