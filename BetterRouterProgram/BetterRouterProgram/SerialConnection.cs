@@ -41,7 +41,7 @@ namespace BetterRouterProgram
 
                 InitializeSerialPort(portName);
 
-                //FunctionUtil.StartTftp();
+                FunctionUtil.StartTftp();
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
@@ -52,7 +52,7 @@ namespace BetterRouterProgram
 
                     //FunctionUtil.PingTest();
 
-                    FunctionUtil.TransferFiles();
+                    //FunctionUtil.TransferFiles();
 
                     //FunctionUtil.CopyToSecondary();
 
@@ -62,7 +62,7 @@ namespace BetterRouterProgram
 
                     //FunctionUtil.PromptReboot();
 
-                    //CloseConnection();
+                    CloseConnection();
                 }
             }
 

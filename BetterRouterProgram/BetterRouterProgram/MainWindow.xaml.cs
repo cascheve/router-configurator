@@ -90,7 +90,7 @@ namespace BetterRouterProgram
             }
             else
             {
-                //TODO: If the Dialog Fails, Handle
+                System.Windows.Forms.MessageBox.Show("There was an Error Displaying the application window. Please exit and try again.");
             }
 
             /*
@@ -123,10 +123,8 @@ namespace BetterRouterProgram
 
         private void attemptConnection(object sender, RoutedEventArgs e)
         {
-            //TODO: !!Look below!!Turn off click handler when the main window is currently open -> stops user from opening too many connections
-
             string comPort = this.portNameDD.Text;
-            string iString = this.initPassword.Text;
+            string iString = this.currentPassword.Text;
             string sString = this.sysPassword.Text;
             string routerID = this.routerID.Text;
             string configDir = this.filepathToolTip.Text;

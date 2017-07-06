@@ -24,9 +24,17 @@ namespace BetterRouterProgram
             progressBar.Value = 0.5;
 
         }
+
         private void HandleReboot(object sender, RoutedEventArgs e)
         {
             FunctionUtil.HandleReboot();
+        }
+
+        private void HandleDisconnect(object sender, RoutedEventArgs e)
+        {
+            //TODO: Handle a Disconnect
+            //SerialConnection.CloseConnection();
+            this.Close();
         }
 
         void DataWindow_Closing(object sender, CancelEventArgs e)
