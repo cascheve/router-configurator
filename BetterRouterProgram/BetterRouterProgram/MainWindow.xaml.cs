@@ -53,16 +53,20 @@ namespace BetterRouterProgram
 
         private void FillID_DD(string directory)
         {
+            string[] configFiles = Directory.GetFiles(directory);
 
-            string[] config_files = Directory.GetFiles(directory, "z*");
+            List<string> validRouterIDs = 
+                (from file in configFiles
+                where (file.StartsWith("z0") || file.StartsWith("cen"))  && file.EndsWith(".cfg")
+                orderby file ascending
+                select file.Split('_')[0]).Distinct().ToList();
 
-            foreach (string c in config_files)
+            foreach (string c in validRouterIDs)
             {
                 ComboBoxItem cBoxItem = new ComboBoxItem();
-                cBoxItem.Content = Path.GetFileName(c);
+                cBoxItem.Content = c;
                 routerID_DD.Items.Add(cBoxItem);
             }
-
         }
         private void DepopulateID_DD()
         {
@@ -123,6 +127,8 @@ namespace BetterRouterProgram
             string configDir = this.filepathToolTip.Text;
             string timezone = this.timeZoneDD.Text;
 
+
+
             errorText.Text = "";
 
             if (comPort.Equals(""))
@@ -148,6 +154,10 @@ namespace BetterRouterProgram
             }
             else
             {
+                //getting full router id
+                
+
+
 
                 SerialConnection.Connect(comPort, iString, sString, routerID, 
                     configDir, timezone, /*TODO place some variable for host ip*/"10.1.1.2",
