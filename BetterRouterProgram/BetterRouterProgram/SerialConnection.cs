@@ -41,7 +41,7 @@ namespace BetterRouterProgram
 
                 InitializeSerialPort(portName);
 
-                FunctionUtil.StartTftp();
+                //FunctionUtil.StartTftp();
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
