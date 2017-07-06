@@ -54,11 +54,11 @@ namespace BetterRouterProgram
 
         private void FillID_DD(string directory)
         {
-            string[] configFiles = Directory.GetFiles(directory);
+            string[] configFiles = Directory.GetFiles(directory, "*.cfg");
 
             List<string> validRouterIDs = 
                 (from file in configFiles
-                where (file.StartsWith("z0") || file.StartsWith("cen"))  && file.EndsWith(".cfg")
+                where file.StartsWith("z0") || file.StartsWith("cen")
                 orderby file ascending
                 select file.Split('_')[0]).Distinct().ToList();
 
@@ -80,7 +80,7 @@ namespace BetterRouterProgram
             String myStream = null;
             FolderBrowserDialog fbd = new FolderBrowserDialog();
 
-            fbd.Description = "Select the Directory holding the Configuration Files";
+            fbd.Description = "Select the Directory holding the Configuration (.cfg) Files";
             fbd.ShowNewFolderButton = true;
             errorText.Text = fbd.SelectedPath;
 
@@ -156,7 +156,12 @@ namespace BetterRouterProgram
             else
             {
                 //getting full router id
-                
+                string[] configFiles = Directory.GetFiles(directory, "*.cfg");
+                foreach(var file in configFiles) {
+                    if(file.StartsWith(routerID) && !file.Contains("_acl")) {
+                        routerID = file.Substring(0, file.Length - ".cfg".Length);
+                    }
+                }
 
 
 
