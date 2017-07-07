@@ -32,11 +32,13 @@ namespace BetterRouterProgram
 
         private void HandleDisconnect(object sender, RoutedEventArgs e)
         {
-            //TODO: Handle a Disconnect
-            //SerialConnection.CloseConnection();
-            this.Close();
+            SerialConnection.CloseConnection();
+
+            //close the window
+            Close();
         }
 
+        //if the window is clsoed by the user
         void DataWindow_Closing(object sender, CancelEventArgs e)
         {
             SerialConnection.CloseConnection();

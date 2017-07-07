@@ -5,6 +5,7 @@ using System.IO.Ports;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Collections.Generic;
+using System.Windows.Media;
 
 namespace BetterRouterProgram
 {
@@ -15,6 +16,8 @@ namespace BetterRouterProgram
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
         private static List <string> FilesToTransfer = null;
+        private static SolidColorBrush RegularBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
+        private static SolidColorBrush ErrorBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0));
 
         //end progress of all parts of configuration
         private enum Progress : int {
@@ -33,13 +36,20 @@ namespace BetterRouterProgram
             ProgressWindow.progressBar.Value = (int)Progress.None;
         }
 
-        private static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0) {
+        private static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0, bool isError = false) {
             if(setValue != Progress.None) {
                 ProgressWindow.progressBar.Value = (int)setValue;   
                 ProgressWindow.progressBar.Value += toAdd;
             }
 
+            if (isError)
+            {
+                ProgressWindow.currentTask.Foreground = ErrorBrush;
+            }
+
             ProgressWindow.currentTask.Text += "\n" + text;
+
+            ProgressWindow.currentTask.Foreground = RegularBrush;
         }
 
         public static bool Login(string username = "root", string password = "") {
@@ -47,7 +57,9 @@ namespace BetterRouterProgram
 
             //if the serial connection fails using the username and password specified
             if (!SerialConnection.Login(username, password)) {
-                
+
+                UpdateProgressWindow("Login Unsuccessful", Progress.None, 0, true);
+
                 SerialConnection.CloseConnection();
                 return false;
             }
@@ -127,19 +139,11 @@ namespace BetterRouterProgram
             }
 	        else {
 		        if(message.Contains("Host unreachable")){
-                    UpdateProgressWindow("**IP Address Cannot be Reached**");
+                    UpdateProgressWindow("**Host IP Address Cannot be Reached**");
                 }
                 else if(message.Contains("Request timed out")) {
-                    UpdateProgressWindow("**Connection Timed Out**");
+                    UpdateProgressWindow("**Connection Attempt has Timed Out**");
                 }
-
-                //TODO: do something like this but with WPF stuff
-                // print('ping failed to host: {}'.format(settings['ip_addr']))
-                // exit = input('would you like to exit? (y/n): ')
-                // if exit == 'y':
-                //  close_connection()                  
-                // stop_tftpd()
-                // sys.exit()
             }
 
             UpdateProgressWindow("Ping Test Completed", Progress.Ping);
@@ -166,12 +170,13 @@ namespace BetterRouterProgram
         public static void TransferFiles(params string[] files) {
             double totalProgress = 50;
 
-            UpdateProgressWindow("Transfering Configuration Files");
+            UpdateProgressWindow("Transferring Configuration Files");
             
             SerialConnection.RunInstruction("cd");
 
             int i = 0;
             string hostFile = "";
+
             foreach (var file in FilesToTransfer)
             {
 
@@ -179,29 +184,47 @@ namespace BetterRouterProgram
 
                 UpdateProgressWindow($"Transferring File: {hostFile} -> {file}");
 
-                SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}", 
-                    SerialConnection.GetSetting("host ip address"), 
+                //attempt to copy the files from the host to the machine
+                SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}",
+                    SerialConnection.GetSetting("host ip address"),
                     SerialConnection.GetSetting("config directory"),
                     hostFile, file
                 ));
 
+                //get a list of all the files in the primary folder
+                string message = SerialConnection.RunInstruction("df A:/Primary");
+
+                //determine whether the file was actually transferred
+                string status = " Successfully";
+
+                //if the file was not transferred
+                if (!message.Contains(file))
+                {
+                    status = " Could not be";
+                }
+
+                //update the progress window according to the file's transfer status
                 UpdateProgressWindow(
-                    $"File: {hostFile} Transferred", 
-                    Progress.TransferFilesStart, 
-                    (((double) totalProgress)/FilesToTransfer.Count)*(++i)
+                    $"File: {hostFile} {status} Transferred",
+                    Progress.TransferFilesStart,
+                    (((double)totalProgress) / FilesToTransfer.Count) * (++i)
                 );
 
+                SerialConnection.RunInstruction("q");
             }
         }
 
         public static void CopyToSecondary() {
             UpdateProgressWindow("Creating Back-Up Files");
 
+            //TODO: Check to see how many files were actually moved --> what if some weren't moved?
             SerialConnection.RunInstruction("cd a:/");
 
             SerialConnection.RunInstruction("md /test2");
 
             SerialConnection.RunInstruction("copy a:/primary/*.* a:/test2");
+
+            //TODO: Check if files were actually copied
 
             UpdateProgressWindow("Copies Created Succesfully");
 

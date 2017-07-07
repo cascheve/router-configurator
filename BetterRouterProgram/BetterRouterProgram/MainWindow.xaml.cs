@@ -52,10 +52,12 @@ namespace BetterRouterProgram
 
         }   
 
+        //fill the router d dropdown list with router IDs
         private void FillID_DD(string directory)
         {
-            string[] configFiles = Directory.GetFiles(directory, "*.cfg");
+            string[] configFiles = Directory.GetFiles(directory);
 
+            //use LINQueries to select only valid router IDs
             List<string> validRouterIDs = 
                 (from file in configFiles
                 where file.StartsWith("z0") || file.StartsWith("cen")
@@ -69,6 +71,7 @@ namespace BetterRouterProgram
                 routerID_DD.Items.Add(cBoxItem);
             }
         }
+
         private void DepopulateID_DD()
         {
             routerID_DD.Items.Clear();
@@ -93,9 +96,12 @@ namespace BetterRouterProgram
                     {
                         //Selected Path is the Absolute path selected (as a string)
                         filepathToolTip.Text = fbd.SelectedPath;
+
+                        //refill the router ID list with valid router IDs
                         DepopulateID_DD();
                         FillID_DD(fbd.SelectedPath);
 
+                        //shortens the path for cleanliness
                         if (fbd.SelectedPath.Length > 35)
                         {
                             filepathText.Text = fbd.SelectedPath.Substring(0, 35) + "...";
@@ -109,7 +115,7 @@ namespace BetterRouterProgram
                 catch (Exception ex)
                 {
                     //TODO: Better Exception Handling
-                    System.Windows.Forms.MessageBox.Show("Error: Could not read Folder from disk. Original error: " + ex.Message);
+                    System.Windows.Forms.MessageBox.Show("Error selecting the given folder: " + ex.Message);
                 }
             }
             else
@@ -127,8 +133,7 @@ namespace BetterRouterProgram
             string routerID = this.routerID_DD.Text;
             string configDir = this.filepathToolTip.Text;
             string timezone = this.timeZoneDD.Text;
-
-
+            string hostIP = "10.1.1.2";
 
             errorText.Text = "";
 
@@ -156,17 +161,15 @@ namespace BetterRouterProgram
             else
             {
                 //getting full router id
-                string[] configFiles = Directory.GetFiles(directory, "*.cfg");
+                string[] configFiles = Directory.GetFiles(configDir, "*.cfg");
                 foreach(var file in configFiles) {
                     if(file.StartsWith(routerID) && !file.Contains("_acl")) {
                         routerID = file.Substring(0, file.Length - ".cfg".Length);
                     }
                 }
 
-
-
                 SerialConnection.Connect(comPort, iString, sString, routerID, 
-                    configDir, timezone, /*TODO place some variable for host ip*/"10.1.1.2",
+                    configDir, timezone, hostIP,
                     new Dictionary<string, bool>()
                     {
                         {staticrp.Content.ToString(),

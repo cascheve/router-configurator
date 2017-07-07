@@ -41,7 +41,6 @@ namespace BetterRouterProgram
 
                 InitializeSerialPort(portName);
 
-                //FunctionUtil.StartTftp();
 
                 ProgressWindow pw = new ProgressWindow();
                 pw.Show();
@@ -49,6 +48,7 @@ namespace BetterRouterProgram
 
                 if (FunctionUtil.Login("root", "P25CityX2015!"))
                 {
+                    //FunctionUtil.StartTftp();
 
                     //FunctionUtil.PingTest();
 
@@ -88,6 +88,7 @@ namespace BetterRouterProgram
             return Settings[setting];
         }
 
+        //TODO: make a bool guy
         private static void InitializeSerialPort(string comPort) {
             SerialPort = new SerialPort(comPort, 9600);
 
@@ -140,21 +141,24 @@ namespace BetterRouterProgram
         }
 
         public static bool Login(string username, string password) {
-            //TODO: is there a connection?
-            Thread.Sleep(500);
+            if (SerialPort.IsOpen)
+            {
+                Thread.Sleep(500);
 
-            SerialPort.Write("\r\n");
-            Thread.Sleep(500);
+                SerialPort.Write("\r\n");
+                Thread.Sleep(500);
 
-            SerialPort.Write(username + "\r\n");
-            Thread.Sleep(500);
+                SerialPort.Write(username + "\r\n");
+                Thread.Sleep(500);
 
-            SerialPort.Write(password + "\r\n");
-            Thread.Sleep(500);
+                SerialPort.Write(password + "\r\n");
+                Thread.Sleep(500);
 
-            //If the next line output by the router ends with the # char, we know login was successful
-            if (ReadResponse('#').Length > 0) {
-                return true;
+                //If the next line output by the router ends with the # char, we know login was successful
+                if (ReadResponse('#').Length > 0)
+                {
+                    return true;
+                }
             }
 
             return false;
