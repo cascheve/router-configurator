@@ -55,14 +55,21 @@ namespace BetterRouterProgram
         //fill the router d dropdown list with router IDs
         private void FillID_DD(string directory)
         {
-            string[] configFiles = Directory.GetFiles(directory);
+            string[] tempFiles = Directory.GetFiles(directory);
+            List<string> configFiles = new List<string>();
+            
+            foreach (string t in tempFiles)
+            {
+                configFiles.Add(Path.GetFileName(t));
+            }
 
             //use LINQueries to select only valid router IDs
             List<string> validRouterIDs = 
                 (from file in configFiles
-                where file.StartsWith("z0") || file.StartsWith("cen")
+                where file.Contains("z0") || file.Contains("cen")
                 orderby file ascending
                 select file.Split('_')[0]).Distinct().ToList();
+
 
             foreach (string c in validRouterIDs)
             {

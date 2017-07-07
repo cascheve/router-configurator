@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,6 +34,8 @@ namespace BetterRouterProgram
         private void HandleDisconnect(object sender, RoutedEventArgs e)
         {
             SerialConnection.CloseConnection();
+
+            Thread.Sleep(250);
 
             //close the window
             Close();

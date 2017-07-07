@@ -25,6 +25,7 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="70" />
             <ColumnDefinition Width="400" />
+            
             <ColumnDefinition Width="70" />
             <ColumnDefinition Width="10" />
 
@@ -38,7 +39,7 @@
             <TextBlock Name ="RebootText" Text="Reboot" Opacity="0.6"/>
         </Button>
 
-        <Button Name="DisconnectButton" Grid.Row="3" Grid.Column="1" IsEnabled="False" Click="HandleDisconnect">
+        <Button Name="DisconnectButton" Grid.Row="3" Grid.Column="2" IsEnabled="False" Click="HandleDisconnect" Width="70" HorizontalAlignment="Right" Margin="0,0,10,0">
             <TextBlock Name ="DisconnectText" Text="Disconnect" Opacity="0.6"/>
         </Button>
 

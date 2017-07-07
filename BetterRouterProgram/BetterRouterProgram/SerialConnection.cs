@@ -62,7 +62,7 @@ namespace BetterRouterProgram
 
                     //FunctionUtil.PromptReboot();
 
-                    CloseConnection();
+                    FunctionUtil.PromptDisconnect();
                 }
             }
 

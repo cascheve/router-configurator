@@ -36,20 +36,14 @@ namespace BetterRouterProgram
             ProgressWindow.progressBar.Value = (int)Progress.None;
         }
 
-        private static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0, bool isError = false) {
+        private static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0) {
             if(setValue != Progress.None) {
                 ProgressWindow.progressBar.Value = (int)setValue;   
                 ProgressWindow.progressBar.Value += toAdd;
             }
 
-            if (isError)
-            {
-                ProgressWindow.currentTask.Foreground = ErrorBrush;
-            }
-
             ProgressWindow.currentTask.Text += "\n" + text;
 
-            ProgressWindow.currentTask.Foreground = RegularBrush;
         }
 
         public static bool Login(string username = "root", string password = "") {
@@ -58,7 +52,7 @@ namespace BetterRouterProgram
             //if the serial connection fails using the username and password specified
             if (!SerialConnection.Login(username, password)) {
 
-                UpdateProgressWindow("Login Unsuccessful", Progress.None, 0, true);
+                UpdateProgressWindow("**Login Unsuccessful**", Progress.None);
 
                 SerialConnection.CloseConnection();
                 return false;
@@ -74,7 +68,7 @@ namespace BetterRouterProgram
             password = password.Trim(' ', '\t', '\r', '\n');
             
             if(password.Equals(SerialConnection.GetSetting("initial password"))){
-                UpdateProgressWindow("Password cannot be set to the same value. Skipping Step");
+                UpdateProgressWindow("**Password cannot be set to the same value. Skipping Step**");
                 return;
             }
 
@@ -89,11 +83,11 @@ namespace BetterRouterProgram
             }
             else if (message.Contains("Invalid password")) {
                 
-                UpdateProgressWindow("Password used doesn't meet requirements, skipping step");
+                UpdateProgressWindow("**Password used doesn't meet requirements, skipping step**");
                 return;
             }
 	        else {
-                UpdateProgressWindow(message);
+                UpdateProgressWindow($"**{message}**");
                 return;
             }
 
@@ -135,7 +129,7 @@ namespace BetterRouterProgram
             string message = SerialConnection.RunInstruction("ping " + "10.2.251.100");
             
             if (message.Contains("is alive")) {
-                UpdateProgressWindow("Ping Succesful");
+                UpdateProgressWindow("Ping Successful");
             }
 	        else {
 		        if(message.Contains("Host unreachable")){
@@ -195,17 +189,17 @@ namespace BetterRouterProgram
                 string message = SerialConnection.RunInstruction("df A:/Primary");
 
                 //determine whether the file was actually transferred
-                string status = " Successfully";
+                string status = $"File: {hostFile} Successfully Transferred";
 
                 //if the file was not transferred
                 if (!message.Contains(file))
                 {
-                    status = " Could not be";
+                    status = $"**File: {hostFile} could not be Transferred**";
                 }
 
                 //update the progress window according to the file's transfer status
                 UpdateProgressWindow(
-                    $"File: {hostFile} {status} Transferred",
+                    status,
                     Progress.TransferFilesStart,
                     (((double)totalProgress) / FilesToTransfer.Count) * (++i)
                 );
@@ -229,6 +223,15 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Copies Created Succesfully");
 
             UpdateProgressWindow("Backup Created Successfully", Progress.CopyToSecondary);
+        }
+
+        public static void PromptDisconnect()
+        {
+
+            ProgressWindow.DisconnectButton.IsEnabled = true;
+            ProgressWindow.DisconnectText.Opacity = 1.0;
+
+            UpdateProgressWindow("All operations have been run. Please Disconnect.");
         }
 
         public static void PromptReboot() {
