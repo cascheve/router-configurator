@@ -53,20 +53,42 @@ namespace BetterRouterProgram
 
         }   
 
+        private void ToggleFiles(string[] configFiles, string routerID) {
+            bool staticrpCheck = false;
+            bool antiaclCheck = false;
+            bool xgsnCheck = false;
+
+            foreach(var file in configFiles) {
+                if(file.StartsWith("staticRP")) {
+                   staticrpCheck = true;
+                }
+                else if(file.StartsWith("antiacl")) {
+                    antiaclCheck = true;
+                }
+                else if(file.EndsWith("_xgsn.cfg")) {
+                    xgsnCheck = true;
+                }
+            }
+
+            if(!staticrpCheck) {
+                staticrp.AutoCheck = false;
+            }
+            else if(!antiaclCheck) {
+                antiacl.AutoCheck = false;
+            }
+            else if(!xgsnCheck) {
+                xgsn.AutoCheck = false;
+            }
+        }
+
         //fill the router d dropdown list with router IDs
         private void FillID_DD(string directory)
         {
-            string[] tempFiles = Directory.GetFiles(directory);
-            List<string> configFiles = new List<string>();
             
-            foreach (string t in tempFiles)
-            {
-                configFiles.Add(Path.GetFileName(t));
-            }
+            string[] files = Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName).ToArray();
 
-            //use LINQueries to select only valid router IDs
             List<string> validRouterIDs = 
-                (from file in configFiles
+                (from file in files
                 where file.Contains("z0") || file.Contains("cen")
                 orderby file ascending
                 select file.Split('_')[0]).Distinct().ToList();
@@ -78,6 +100,9 @@ namespace BetterRouterProgram
                 cBoxItem.Content = c;
                 routerID_DD.Items.Add(cBoxItem);
             }
+
+
+
         }
 
         private void DepopulateID_DD()
@@ -169,10 +194,12 @@ namespace BetterRouterProgram
             else
             {
                 //getting full router id
-                string[] configFiles = Directory.GetFiles(configDir, "*.cfg");
+                string[] configFiles = Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray();
+
                 foreach(var file in configFiles) {
                     if(file.StartsWith(routerID) && !file.Contains("_acl")) {
                         routerID = file.Substring(0, file.Length - ".cfg".Length);
+                        break;
                     }
                 }
 
