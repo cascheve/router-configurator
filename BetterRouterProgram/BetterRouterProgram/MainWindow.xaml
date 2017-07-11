@@ -101,7 +101,7 @@
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <ComboBox x:Name="routerID_DD" Grid.Row="9" Grid.Column="3" Width="250" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+        <ComboBox x:Name="routerID_DD" Grid.Row="9" Grid.Column="3" Width="250" Height="22" SelectionChanged="routerID_DD_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Bottom">
         </ComboBox>
 
         <TextBlock Name="TimeZoneTitle" Text="Time Zone of the System: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
@@ -133,9 +133,9 @@
             </Grid.ColumnDefinitions>
 
 
-            <CheckBox Name="staticrp" IsChecked="True" Content="staticRP.cfg" Grid.Row="0" VerticalAlignment="Center"/>
-            <CheckBox Name="antiacl" IsChecked="True" Content="antiacl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-            <CheckBox Name="xgsn" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+            <CheckBox Name="staticrp" IsEnabled="False" IsChecked="False" Content="staticRP.cfg" Grid.Row="0" VerticalAlignment="Center"/>
+            <CheckBox Name="antiacl" IsEnabled="False" IsChecked="False" Content="antiacl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
         </Grid>
 
         <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="14" Click="attemptConnection">

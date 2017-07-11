@@ -13,8 +13,6 @@ using System.Linq;
 
 namespace BetterRouterProgram
 {
-    //TODO: For the file checkboxes at the bottom, verify that the files exist before allowing the user to select the files
-
     public partial class MainWindow : Window
     {
 
@@ -65,19 +63,19 @@ namespace BetterRouterProgram
                 else if(file.StartsWith("antiacl")) {
                     antiaclCheck = true;
                 }
-                else if(file.EndsWith("_xgsn.cfg")) {
+                else if(file.StartsWith(routerID) && file.Contains("_xgsn")) {
                     xgsnCheck = true;
                 }
             }
 
             if(!staticrpCheck) {
-                staticrp.AutoCheck = false;
+                staticrp.IsEnabled = false;
             }
             else if(!antiaclCheck) {
-                antiacl.AutoCheck = false;
+                antiacl.IsEnabled = false;
             }
             else if(!xgsnCheck) {
-                xgsn.AutoCheck = false;
+                xgsn.IsEnabled = false;
             }
         }
 
@@ -100,8 +98,6 @@ namespace BetterRouterProgram
                 cBoxItem.Content = c;
                 routerID_DD.Items.Add(cBoxItem);
             }
-
-
 
         }
 
@@ -216,6 +212,50 @@ namespace BetterRouterProgram
                     }
                 );
 
+            }
+        }
+
+        private void routerID_DD_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!filepathToolTip.Text.Equals("") && !routerID_DD.Text.Equals(""))
+            {
+                string[] files = Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray();
+
+                bool staticrpCheck = false;
+                bool antiaclCheck = false;
+                bool xgsnCheck = false;
+
+                foreach (var file in files)
+                {
+                    if (file.StartsWith("staticRP"))
+                    {
+                        staticrpCheck = true;
+                    }
+                    else if (file.StartsWith("antiacl"))
+                    {
+                        antiaclCheck = true;
+                    }
+                    else if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
+                    {
+                        xgsnCheck = true;
+                    }
+                }
+
+                if (!staticrpCheck)
+                {
+                    staticrp.IsEnabled = false;
+                    staticrp.IsChecked = false;
+                }
+                if (!antiaclCheck)
+                {
+                    antiacl.IsEnabled = false;
+                    antiacl.IsChecked = false;
+                }
+                if (!xgsnCheck)
+                {
+                    xgsn.IsEnabled = false;
+                    xgsn.IsChecked = false;
+                }
             }
         }
     }

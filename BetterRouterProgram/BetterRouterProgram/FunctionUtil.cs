@@ -178,47 +178,47 @@ namespace BetterRouterProgram
 
                 UpdateProgressWindow($"Transferring File: {hostFile} -> {file}");
 
+                //TODO: useful error/success messages from file transfer -> run instruction
+                //file bad? connection bad? file successfully transferred?
+
                 //attempt to copy the files from the host to the machine
-                SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}",
+                string message = SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}",
                     SerialConnection.GetSetting("host ip address"),
                     SerialConnection.GetSetting("config directory"),
                     hostFile, file
                 ));
 
                 //get a list of all the files in the primary folder
-                string message = SerialConnection.RunInstruction("df A:/Primary");
+                //string message = SerialConnection.RunInstruction("df A:/Primary");
 
                 //determine whether the file was actually transferred
-                string status = $"File: {hostFile} Successfully Transferred";
+                //string status = $"File: {hostFile} Successfully Transferred";
 
                 //if the file was not transferred
-                if (!message.Contains(file))
+                /*if (!message.Contains(file))
                 {
                     status = $"**File: {hostFile} could not be Transferred**";
-                }
+                }*/
 
                 //update the progress window according to the file's transfer status
                 UpdateProgressWindow(
-                    status,
+                    message,
                     Progress.TransferFilesStart,
                     (((double)totalProgress) / FilesToTransfer.Count) * (++i)
                 );
 
-                SerialConnection.RunInstruction("q");
+                //SerialConnection.RunInstruction("q");
             }
         }
 
         public static void CopyToSecondary() {
             UpdateProgressWindow("Creating Back-Up Files");
 
-            //TODO: Check to see how many files were actually moved --> what if some weren't moved?
             SerialConnection.RunInstruction("cd a:/");
 
             SerialConnection.RunInstruction("md /test2");
 
             SerialConnection.RunInstruction("copy a:/primary/*.* a:/test2");
-
-            //TODO: Check if files were actually copied
 
             UpdateProgressWindow("Copies Created Succesfully");
 

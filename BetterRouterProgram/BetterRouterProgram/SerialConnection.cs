@@ -52,7 +52,7 @@ namespace BetterRouterProgram
 
                         //FunctionUtil.PingTest();
 
-                        //FunctionUtil.TransferFiles();
+                        FunctionUtil.TransferFiles();
 
                         //FunctionUtil.CopyToSecondary();
 
@@ -76,15 +76,19 @@ namespace BetterRouterProgram
             //TODO: Better Exception Handling
             catch (System.IO.FileNotFoundException)
             {
-                pw.currentTask.Text += "\n" + "Unable to locate the Specified File, please try again.";
+                pw.currentTask.Text += "\nUnable to locate the Specified File, please try again.";
             }
             catch (System.ComponentModel.Win32Exception)
             {
-                pw.currentTask.Text += "\n" + "Error: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.";
+                pw.currentTask.Text += "\nError: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.";
+            }
+            catch (TimeoutException)
+            {
+                pw.currentTask.Text += "\nConnection Attempt timed out. \nCheck your Serial Connection and try again.";
             }
             catch (Exception ex)
             {
-                pw.currentTask.Text += "\n" + "Original Error: " + ex.Message;
+                pw.currentTask.Text += "\nOriginal Error: " + ex.Message;
                 CloseConnection();
             }
 
@@ -107,7 +111,7 @@ namespace BetterRouterProgram
 
                 return true;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
