@@ -13,6 +13,7 @@ using System.Linq;
 
 namespace BetterRouterProgram
 {
+    //TODO: For the file checkboxes at the bottom, verify that the files exist before allowing the user to select the files
 
     public partial class MainWindow : Window
     {

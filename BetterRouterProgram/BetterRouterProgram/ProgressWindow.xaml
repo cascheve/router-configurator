@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
         Background="AliceBlue"
-        Title="Router Progress" Height="350" Width="570"
+        Icon="icon1.ico"
+        Title="Router Progress" 
+        Height="350" 
+        Width="570"
         Closing="DataWindow_Closing">
 
     <Grid>

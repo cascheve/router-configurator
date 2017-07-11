@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
         Background="AliceBlue"
-        Title="Router Configurator" Height="335" Width="750">
+        Icon="icon1.ico"
+        Title="Router Configurator" 
+        Height="335" 
+        Width="750">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -38,18 +41,46 @@
             <ColumnDefinition Width="100" />
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
+        
+        <TextBlock Text="Mouse over the option titles for help" Grid.Row="15" Grid.Column="3" />
 
-        <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <TextBlock.ToolTip>
+                    <ToolTip>
+                        <TextBlock TextWrapping="Wrap" Width="300">Select the COM Port that the router is plugged into. 
+                            The available COM Ports are detected automatically. 
+                            If the desired COM Port does not appear, please try a different USB Port on the host machine or restart the program.</TextBlock>
+                    </ToolTip>
+                </TextBlock.ToolTip>
+        </TextBlock>
         <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3" Width="100" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom">
         </ComboBox>
 
-        <TextBlock Text="Enter the Current Password: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" />
+        <TextBlock Text="Enter the Current Password: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" >
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="300">Enter the password this Router currently looks for when authenticating a login.</TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
         <TextBox Name="currentPassword" Text="" Grid.Row="3" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
-        <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="300">Enter the password that the Router will use for future login authentication.</TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
         <TextBox Name="sysPassword" Text="" Grid.Row="5" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
 
-        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"></TextBlock>
+        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="320">Browse for the folder that contains the configuration file(s) required to configure the Router.</TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
         <TextBlock Name="filepathText" Text="" Grid.Row="7" Grid.Column="3" HorizontalAlignment="Right" Width="280">
             <TextBlock.ToolTip>
                 <ToolTip>
@@ -63,14 +94,32 @@
 
         <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="7" Click="browseFiles" Width="100" HorizontalAlignment="Left"/>
 
-        <TextBlock Text="Select the Router ID: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" />
+        <TextBlock Text="Select the Router ID: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="300">Select the ID of the Router you would like to configure. If the Router's ID does not appear in the list, make sure the configuration files exist in the given path and try again.</TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
         <ComboBox x:Name="routerID_DD" Grid.Row="9" Grid.Column="3" Width="250" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom">
         </ComboBox>
 
-        <TextBlock Name="TimeZoneTitle" Text="Time Zone of the System: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        <TextBlock Name="TimeZoneTitle" Text="Time Zone of the System: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="300">Indicate which time zone this router will reside in when the system is shipped out. </TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
         <ComboBox Name="timeZoneDD" Grid.Row="11" Grid.Column="3" Width="350" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
 
-        <TextBlock Text="Files to Transfer: " Grid.Row="13" Grid.Column="1" VerticalAlignment="Center"/>
+        <TextBlock Text="Files to Transfer: " Grid.Row="13" Grid.Column="1" VerticalAlignment="Center">
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="300">Select which of the files to the right should be installed during the configuration process.</TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
         <Grid Grid.Row="13" Grid.Column="3" Grid.ColumnSpan="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>

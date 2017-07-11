@@ -62,8 +62,10 @@ namespace BetterRouterProgram
 
                     //FunctionUtil.PromptReboot();
 
-                    FunctionUtil.PromptDisconnect();
                 }
+
+                FunctionUtil.PromptDisconnect();
+
             }
 
             //TODO: Better Exception Handling
