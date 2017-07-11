@@ -134,8 +134,8 @@
             </Grid.ColumnDefinitions>
 
 
-            <CheckBox Name="staticrp" IsEnabled="False" IsChecked="False" Content="staticRP.cfg" Grid.Row="0" VerticalAlignment="Center"/>
-            <CheckBox Name="antiacl" IsEnabled="False" IsChecked="False" Content="antiacl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="staticrp" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="0" VerticalAlignment="Center"/>
+            <CheckBox Name="antiacl" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
             <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
         </Grid>
 

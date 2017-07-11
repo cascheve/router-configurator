@@ -3,23 +3,19 @@ using System.Threading;
 using System.IO.Ports;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace BetterRouterProgram
 {
-    /*TODO
-        - add ipaddr to dict
-        - go over ping_test logic
-        - do checkbox stuff
-        - go over python script and look at where prompts are needed
-     */
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
         private static string ConfigurationDirectory = "";
         private static Dictionary<string, string> Settings = null;
+        private static BackgroundWorker bw = new BackgroundWorker();
 
-        public static void Connect(string portName, string initPassword, string sysPassword, 
-            string routerID, string configDir, string timezone, 
+        public static void Connect(string portName, string initPassword, string sysPassword,
+            string routerID, string configDir, string timezone,
             string hostIpAddr, Dictionary<string, bool> filesToTransfer)
         {
             Settings = new Dictionary<string, string>()
@@ -37,10 +33,10 @@ namespace BetterRouterProgram
             pw.Show();
             FunctionUtil.InitializeProgressWindow(ref pw);
 
-            FunctionUtil.StartTftp();
-
             try
             {
+                FunctionUtil.StartTftp();
+
                 ConfigurationDirectory = configDir;
 
                 FunctionUtil.SetFilesToTransfer(filesToTransfer);
@@ -53,28 +49,30 @@ namespace BetterRouterProgram
 
                         //FunctionUtil.PingTest();
 
-                        //FunctionUtil.TransferFiles();
-
-                        //FunctionUtil.CopyToSecondary();
-
                         //FunctionUtil.SetTime(timezone);
 
                         //FunctionUtil.SetPassword("P25CityX2015!");
 
+                        FunctionUtil.TransferFiles();
+
+                        //FunctionUtil.CopyToSecondary();
+                            
                         //FunctionUtil.PromptReboot();
 
                     }
-                    //TODO: What happens if login fails?
+                    else
+                    {
+                        pw.currentTask.Text += "\nThere was an Error logging into the Router. Check your login information and try again.";
+                    }
 
                     FunctionUtil.PromptDisconnect();
                 }
                 else
                 {
-                    pw.currentTask.Text += "\n" + "There was an Error establishing a connection to the Serial Port. Please check your connection and try again";
+                    pw.currentTask.Text += "\nThere was an Error establishing a connection to the Serial Port. Please check your connection and try again";
                 }
             }
 
-            //TODO: Better Exception Handling
             catch (System.IO.FileNotFoundException)
             {
                 pw.currentTask.Text += "\nUnable to locate the Specified File, please try again.";
@@ -95,17 +93,19 @@ namespace BetterRouterProgram
 
         }
 
-        public static string GetSetting(string setting) {
+        public static string GetSetting(string setting)
+        {
             return Settings[setting];
         }
 
-        private static bool InitializeSerialPort(string comPort) {
+        private static bool InitializeSerialPort(string comPort)
+        {
             //copy 10.10.10.100:/eos_enc_cd_16.7.1.22/router_setup_template.txt boot.txt
             try
             {
                 SerialPort = new SerialPort(comPort, 9600);
 
-                SerialPort.ReadTimeout = 500;
+                SerialPort.ReadTimeout = 50000;
                 SerialPort.WriteTimeout = 500;
 
                 SerialPort.Open();
@@ -118,42 +118,45 @@ namespace BetterRouterProgram
             }
         }
 
-        public static void CloseConnection() {
+        public static void CloseConnection()
+        {
 
             if (SerialPort.IsOpen)
             {
                 SerialPort.Close();
             }
-
-            //FunctionUtil.StopTftp();
         }
 
-        private static void ResetConnectionBuffers() {
+        private static void ResetConnectionBuffers()
+        {
             if (SerialPort.IsOpen)
             {
                 SerialPort.DiscardInBuffer();
                 SerialPort.DiscardOutBuffer();
             }
-            //TODO: Handle else case -> throw exception??
         }
 
-        private static string ReadResponse(char endChar = '#') {
+        private static string ReadResponse(char endChar = '#')
+        {
             char currentResponse = ' ';
             string response = "";
 
-            while (true){
+            while (true)
+            {
                 currentResponse = (char)(SerialPort.ReadChar());
                 response += currentResponse;
 
-		        if(currentResponse == endChar){
-			        break;
-                }   
+                if (currentResponse == endChar)
+                {
+                    break;
+                }
             }
 
             return response;
         }
 
-        public static string RunInstruction(string instruction) {
+        public static string RunInstruction(string instruction)
+        {
 
             string retVal = "Unable to Run: No Connection to the Serial Port";
 
@@ -167,7 +170,8 @@ namespace BetterRouterProgram
             return retVal;
         }
 
-        public static bool Login(string username, string password) {
+        public static bool Login(string username, string password)
+        {
             if (SerialPort.IsOpen)
             {
                 Thread.Sleep(500);
@@ -192,4 +196,5 @@ namespace BetterRouterProgram
         }
 
     }
+
 }

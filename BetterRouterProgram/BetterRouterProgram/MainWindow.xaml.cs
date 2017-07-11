@@ -128,6 +128,7 @@ namespace BetterRouterProgram
                         //refill the router ID list with valid router IDs
                         DepopulateID_DD();
                         FillID_DD(fbd.SelectedPath);
+                        updateFileOptions();
 
                         //shortens the path for cleanliness
                         if (fbd.SelectedPath.Length > 35)
@@ -142,7 +143,6 @@ namespace BetterRouterProgram
                 }
                 catch (Exception ex)
                 {
-                    //TODO: Better Exception Handling
                     System.Windows.Forms.MessageBox.Show("Error selecting the given folder: " + ex.Message);
                 }
             }
@@ -161,7 +161,7 @@ namespace BetterRouterProgram
             string routerID = this.routerID_DD.Text;
             string configDir = this.filepathToolTip.Text;
             string timezone = this.timeZoneDD.Text;
-            string hostIP = "10.1.1.2";
+            string hostIP = "10.10.10.100";
 
             errorText.Text = "";
 
@@ -214,47 +214,52 @@ namespace BetterRouterProgram
             }
         }
 
+        private void updateFileOptions()
+        {
+            string[] files = Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray();
+
+            bool staticrpCheck = false;
+            bool antiaclCheck = false;
+
+            foreach (var file in files)
+            {
+                if (file.StartsWith("staticRP"))
+                {
+                    staticrpCheck = true;
+                }
+                else if (file.StartsWith("antiacl"))
+                {
+                    antiaclCheck = true;
+                }
+            }
+
+            staticrp.IsEnabled = staticrpCheck;
+            staticrp.IsChecked = false;
+
+            antiacl.IsEnabled = antiaclCheck;
+            antiacl.IsChecked = false;
+
+        }
+
         private void routerID_DD_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!filepathToolTip.Text.Equals("") && !routerID_DD.Text.Equals(""))
             {
                 string[] files = Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray();
-
-                bool staticrpCheck = false;
-                bool antiaclCheck = false;
+                
                 bool xgsnCheck = false;
 
                 foreach (var file in files)
                 {
-                    if (file.StartsWith("staticRP"))
-                    {
-                        staticrpCheck = true;
-                    }
-                    else if (file.StartsWith("antiacl"))
-                    {
-                        antiaclCheck = true;
-                    }
-                    else if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
+                    if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
                     {
                         xgsnCheck = true;
                     }
                 }
 
-                if (!staticrpCheck)
-                {
-                    staticrp.IsEnabled = false;
-                    staticrp.IsChecked = false;
-                }
-                if (!antiaclCheck)
-                {
-                    antiacl.IsEnabled = false;
-                    antiacl.IsChecked = false;
-                }
-                if (!xgsnCheck)
-                {
-                    xgsn.IsEnabled = false;
-                    xgsn.IsChecked = false;
-                }
+                xgsn.IsEnabled = xgsnCheck;
+                xgsn.IsChecked = false;
+
             }
         }
 

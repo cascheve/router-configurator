@@ -23,7 +23,6 @@ namespace BetterRouterProgram
         {
             InitializeComponent();
             progressBar.Value = 0.5;
-
         }
 
         private void HandleReboot(object sender, RoutedEventArgs e)

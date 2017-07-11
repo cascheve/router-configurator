@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Collections.Generic;
 using System.Windows.Media;
 using System.IO;
+using System.ComponentModel;
 
 namespace BetterRouterProgram
 {
@@ -17,8 +18,7 @@ namespace BetterRouterProgram
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
         private static List <string> FilesToTransfer = null;
-        private static SolidColorBrush RegularBrush = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-        private static SolidColorBrush ErrorBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+        BackgroundWorker bw = new BackgroundWorker();
 
         //end progress of all parts of configuration
         private enum Progress : int {
@@ -44,7 +44,6 @@ namespace BetterRouterProgram
             }
 
             ProgressWindow.currentTask.Text += "\n" + text;
-
         }
 
         public static bool Login(string username = "root", string password = "") {
@@ -73,7 +72,6 @@ namespace BetterRouterProgram
                 return;
             }
 
-            //TODO: Change Literal {0} was P25CityX2016!
             string message = SerialConnection.RunInstruction(
                 $"SETDefault -SYS NMPassWord = \"{SerialConnection.GetSetting("initial password")}\"" + 
                 $" \"{password}\" \"{password}\""
@@ -167,7 +165,7 @@ namespace BetterRouterProgram
 
             UpdateProgressWindow("Transferring Configuration Files");
             
-            SerialConnection.RunInstruction("cd");
+            SerialConnection.RunInstruction("cd a:\test\test1");
 
             int i = 0;
             string hostFile = "";
@@ -179,36 +177,30 @@ namespace BetterRouterProgram
 
                 UpdateProgressWindow($"Transferring File: {hostFile} -> {file}");
 
-                //TODO: useful error/success messages from file transfer -> run instruction
-                //file bad? connection bad? file successfully transferred?
-
                 //attempt to copy the files from the host to the machine
-                string message = SerialConnection.RunInstruction(String.Format("copy {0}:{1}\\{2} {3}",
+                string message = SerialConnection.RunInstruction(String.Format("copy {0}:{1} {2}",
                     SerialConnection.GetSetting("host ip address"),
-                    SerialConnection.GetSetting("config directory"),
                     hostFile, file
                 ));
 
-                //get a list of all the files in the primary folder
-                //string message = SerialConnection.RunInstruction("df A:/Primary");
-
-                //determine whether the file was actually transferred
-                //string status = $"File: {hostFile} Successfully Transferred";
-
-                //if the file was not transferred
-                /*if (!message.Contains(file))
+                if (message.Contains("File not found"))
                 {
-                    status = $"**File: {hostFile} could not be Transferred**";
-                }*/
+                    UpdateProgressWindow($"Error: {hostFile} not found in host configuration directory");
+                }
+                else if (message.Contains("Cannot route"))
+                {
+                    UpdateProgressWindow("Cannot connect to the Router via TFTP. \nCheck your ethernet connection.");
+                }
+                else
+                {
 
-                //update the progress window according to the file's transfer status
-                UpdateProgressWindow(
-                    message,
-                    Progress.TransferFilesStart,
-                    (((double)totalProgress) / FilesToTransfer.Count) * (++i)
-                );
-
-                //SerialConnection.RunInstruction("q");
+                    //update the progress window according to the file's transfer status
+                    UpdateProgressWindow(
+                        $"{hostFile} Successfully Transferred",
+                        Progress.TransferFilesStart,
+                        (((double)totalProgress) / FilesToTransfer.Count) * (++i)
+                    );
+                }
             }
         }
 
@@ -259,15 +251,13 @@ namespace BetterRouterProgram
             Process.Start("CMD.exe", strCmdText);
             Thread.Sleep(200);
 
-            if (Tftp == null)
-            {
-                Tftp = new Process();
-                Tftp.StartInfo.Arguments = @"C:\";
-                Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
-                Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
+            Tftp = new Process();
+            Tftp.StartInfo.Arguments = @"C:\";
+            Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
+            Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
 
-                Tftp.Start();
-            }
+            Tftp.Start();
+            
         }
 
         public static void StopTftp()
