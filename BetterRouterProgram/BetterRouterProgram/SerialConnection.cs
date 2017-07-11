@@ -33,54 +33,58 @@ namespace BetterRouterProgram
                 {"host ip address", hostIpAddr}
             };
 
+            ProgressWindow pw = new ProgressWindow();
+            pw.Show();
+            FunctionUtil.InitializeProgressWindow(ref pw);
+
             try
             {
                 ConfigurationDirectory = configDir;
 
                 FunctionUtil.SetFilesToTransfer(filesToTransfer);
 
-                InitializeSerialPort(portName);
-
-
-                ProgressWindow pw = new ProgressWindow();
-                pw.Show();
-                FunctionUtil.InitializeProgressWindow(ref pw);
-
-                if (FunctionUtil.Login("root", "P25CityX2015!"))
+                if (InitializeSerialPort(portName))
                 {
-                    //FunctionUtil.StartTftp();
 
-                    //FunctionUtil.PingTest();
+                    if (FunctionUtil.Login("root", "P25CityX2015!"))
+                    {
+                        //FunctionUtil.StartTftp();
 
-                    //FunctionUtil.TransferFiles();
+                        //FunctionUtil.PingTest();
 
-                    //FunctionUtil.CopyToSecondary();
+                        //FunctionUtil.TransferFiles();
 
-                    //FunctionUtil.SetTime(timezone);
+                        //FunctionUtil.CopyToSecondary();
 
-                    //FunctionUtil.SetPassword("P25CityX2015!");
+                        //FunctionUtil.SetTime(timezone);
 
-                    //FunctionUtil.PromptReboot();
+                        //FunctionUtil.SetPassword("P25CityX2015!");
 
+                        //FunctionUtil.PromptReboot();
+
+                    }
+                    //TODO: What happens if login fails?
+
+                    FunctionUtil.PromptDisconnect();
                 }
-
-                FunctionUtil.PromptDisconnect();
-
+                else
+                {
+                    pw.currentTask.Text += "\n" + "There was an Error establishing a connection to the Serial Port. Please check your connection and try again";
+                }
             }
 
             //TODO: Better Exception Handling
             catch (System.IO.FileNotFoundException)
             {
-                System.Windows.Forms.MessageBox.Show("Unable to locate the Specified File, please try again.");
+                pw.currentTask.Text += "\n" + "Unable to locate the Specified File, please try again.";
             }
             catch (System.ComponentModel.Win32Exception)
             {
-                System.Windows.Forms.MessageBox.Show("Error: Could not find the TFTP Client executable in the folder specified. "
-                + "Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.");
+                pw.currentTask.Text += "\n" + "Error: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.";
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show("Original Error: " + ex.Message);
+                pw.currentTask.Text += "\n" + "Original Error: " + ex.Message;
                 CloseConnection();
             }
 
@@ -90,14 +94,23 @@ namespace BetterRouterProgram
             return Settings[setting];
         }
 
-        //TODO: make a bool guy
-        private static void InitializeSerialPort(string comPort) {
-            SerialPort = new SerialPort(comPort, 9600);
+        private static bool InitializeSerialPort(string comPort) {
 
-            SerialPort.ReadTimeout = 500;
-            SerialPort.WriteTimeout = 500;
+            try
+            {
+                SerialPort = new SerialPort(comPort, 9600);
 
-            SerialPort.Open();
+                SerialPort.ReadTimeout = 500;
+                SerialPort.WriteTimeout = 500;
+
+                SerialPort.Open();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public static void CloseConnection() {
@@ -136,10 +149,17 @@ namespace BetterRouterProgram
         }
 
         public static string RunInstruction(string instruction) {
-            //TODO: is there a connection?
-            ResetConnectionBuffers();
-	        SerialPort.Write(instruction + "\r\n");
-            return ReadResponse();
+
+            string retVal = "Unable to Run: No Connection to the Serial Port";
+
+            if (SerialPort.IsOpen)
+            {
+                ResetConnectionBuffers();
+                SerialPort.Write(instruction + "\r\n");
+                retVal = ReadResponse();
+            }
+
+            return retVal;
         }
 
         public static bool Login(string username, string password) {

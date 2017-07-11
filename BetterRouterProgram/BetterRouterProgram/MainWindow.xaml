@@ -85,7 +85,7 @@
             <TextBlock.ToolTip>
                 <ToolTip>
                     <StackPanel>
-                        <TextBlock FontWeight="Bold">Browse for Configuration Folder</TextBlock>
+                        <TextBlock FontWeight="Bold">Selected Configuration Folder</TextBlock>
                         <TextBlock Name="filepathToolTip"></TextBlock>
                     </StackPanel>
                 </ToolTip>
