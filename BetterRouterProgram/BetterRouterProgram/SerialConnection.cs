@@ -37,6 +37,8 @@ namespace BetterRouterProgram
             pw.Show();
             FunctionUtil.InitializeProgressWindow(ref pw);
 
+            FunctionUtil.StartTftp();
+
             try
             {
                 ConfigurationDirectory = configDir;
@@ -46,13 +48,12 @@ namespace BetterRouterProgram
                 if (InitializeSerialPort(portName))
                 {
 
-                    if (FunctionUtil.Login("root", "P25CityX2015!"))
+                    if (FunctionUtil.Login("root", ""))
                     {
-                        //FunctionUtil.StartTftp();
 
                         //FunctionUtil.PingTest();
 
-                        FunctionUtil.TransferFiles();
+                        //FunctionUtil.TransferFiles();
 
                         //FunctionUtil.CopyToSecondary();
 
@@ -99,7 +100,7 @@ namespace BetterRouterProgram
         }
 
         private static bool InitializeSerialPort(string comPort) {
-
+            //copy 10.10.10.100:/eos_enc_cd_16.7.1.22/router_setup_template.txt boot.txt
             try
             {
                 SerialPort = new SerialPort(comPort, 9600);
@@ -124,7 +125,7 @@ namespace BetterRouterProgram
                 SerialPort.Close();
             }
 
-            FunctionUtil.StopTftp();
+            //FunctionUtil.StopTftp();
         }
 
         private static void ResetConnectionBuffers() {

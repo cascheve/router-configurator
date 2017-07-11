@@ -24,7 +24,6 @@ namespace BetterRouterProgram
 
             FillPortNames(this);
             FillTimeZones(this);
-
         }
 
         public static void FillPortNames(MainWindow m)
@@ -257,6 +256,11 @@ namespace BetterRouterProgram
                     xgsn.IsChecked = false;
                 }
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            FunctionUtil.StopTftp();
         }
     }
 }

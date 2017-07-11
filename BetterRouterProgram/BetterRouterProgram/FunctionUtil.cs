@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Collections.Generic;
 using System.Windows.Media;
+using System.IO;
 
 namespace BetterRouterProgram
 {
@@ -253,12 +254,20 @@ namespace BetterRouterProgram
 
         public static void StartTftp()
         {
-            Tftp = new Process();
-            Tftp.StartInfo.Arguments = @"C:\";
-            Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
-            Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
-            
-            Tftp.Start();
+            //Directory.Move(@"C:\Motorola\SDM3000\Common\TFTP", @"C:\Motorola\SDM3000\Common\temp_TFTP");
+            string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename TFTP temp_TFTP";
+            Process.Start("CMD.exe", strCmdText);
+            Thread.Sleep(200);
+
+            if (Tftp == null)
+            {
+                Tftp = new Process();
+                Tftp.StartInfo.Arguments = @"C:\";
+                Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
+                Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
+
+                Tftp.Start();
+            }
         }
 
         public static void StopTftp()
@@ -267,6 +276,12 @@ namespace BetterRouterProgram
             {
                 Tftp.CloseMainWindow();
                 Tftp.Close();
+                Tftp = null;
+
+                //Directory.Move(@"C:\Motorola\SDM3000\Common\temp_TFTP", @"C:\Motorola\SDM3000\Common\TFTP");
+                string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP";
+                Process.Start("CMD.exe", strCmdText);
+                Thread.Sleep(200);
             }
         }
 
