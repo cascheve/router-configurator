@@ -3,13 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BetterRouterProgram"
+        xmlns:local="clr-namespace:BetterRouterProgram" 
         mc:Ignorable="d"
         Background="AliceBlue"
         Icon="icon1.ico"
         Title="Router Configurator" 
-        Height="335" 
-        Width="750"
+        Height="370" 
+        Width="650"
         Closing="Window_Closing">
 
     <Grid>
@@ -17,20 +17,23 @@
             <RowDefinition Height="10"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="25"/>
-            <RowDefinition Height="15"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
+
+            <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
 
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -39,13 +42,20 @@
             <ColumnDefinition Width="10" />
             <ColumnDefinition Width="400" />
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="100" />
-            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
         
-        <TextBlock Text="Mouse over the option titles for help" Grid.Row="15" Grid.Column="3" />
+        <TextBlock Text="Mouse over the option titles for help" Foreground="DodgerBlue"  Grid.Row="18" Grid.Column="1" VerticalAlignment="Center" />
 
-        <TextBlock Text="Choose the Serial Port: " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <TextBlock Text="Enter your Ethernet IP Address " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" >
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="300">Make sure to change your Ethernet Adapter IP Setting in order to interface with the router. Enter the IP Address here to continue.</TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
+        <TextBox Name="hostIP" Text="" Grid.Row="1" Grid.Column="3" Width="150" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+
+        <TextBlock Text="Choose the Serial Port: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
                 <TextBlock.ToolTip>
                     <ToolTip>
                         <TextBlock TextWrapping="Wrap" Width="300">Select the COM Port that the router is plugged into. 
@@ -54,35 +64,35 @@
                     </ToolTip>
                 </TextBlock.ToolTip>
         </TextBlock>
-        <ComboBox x:Name="portNameDD" Grid.Row="1" Grid.Column="3" Width="100" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+        <ComboBox x:Name="portNameDD" Grid.Row="3" Grid.Column="3" Width="100" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
-        <TextBlock Text="Enter the Current Password: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" >
+        <TextBlock Text="Enter the Current Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" >
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Enter the password this Router currently looks for when authenticating a login.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <TextBox Name="currentPassword" Text="" Grid.Row="3" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
+        <TextBox Name="currentPassword" Text="" Grid.Row="5" Grid.Column="3" Width="250" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
 
-        <TextBlock Text="Enter the System Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
+        <TextBlock Text="Enter the System Password: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Enter the password that the Router will use for future login authentication.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <TextBox Name="sysPassword" Text="" Grid.Row="5" Grid.Column="3" Width="250" HorizontalAlignment="Left"></TextBox>
+        <TextBox Name="sysPassword" Text="" Grid.Row="7" Grid.Column="3" Width="250" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
 
-        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="320">Browse for the folder that contains the configuration file(s) required to configure the Router.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <TextBlock Name="filepathText" Text="" Grid.Row="7" Grid.Column="3" HorizontalAlignment="Right" Width="280">
+        <TextBlock Name="filepathText" Text="" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Right" Width="280">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <StackPanel>
@@ -93,35 +103,35 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="7" Click="browseFiles" Width="100" HorizontalAlignment="Left"/>
+        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="9" Click="browseFiles" Width="100" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-        <TextBlock Text="Select the Router ID: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
+        <TextBlock Text="Select the Router ID: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Select the ID of the Router you would like to configure. If the Router's ID does not appear in the list, make sure the configuration files exist in the given path and try again.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <ComboBox x:Name="routerID_DD" Grid.Row="9" Grid.Column="3" Width="250" Height="22" SelectionChanged="routerID_DD_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+        <ComboBox x:Name="routerID_DD" Grid.Row="11" Grid.Column="3" Width="250" Height="22" SelectionChanged="routerID_DD_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
-        <TextBlock Name="TimeZoneTitle" Text="Time Zone of the System: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <TextBlock Name="TimeZoneTitle" Text="Time Zone of the System: " Grid.Row="13" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Indicate which time zone this router will reside in when the system is shipped out. </TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <ComboBox Name="timeZoneDD" Grid.Row="11" Grid.Column="3" Width="350" Height="22" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+        <ComboBox Name="timeZoneDD" Grid.Row="13" Grid.Column="3" Width="350" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
-        <TextBlock Text="Files to Transfer: " Grid.Row="13" Grid.Column="1" VerticalAlignment="Center">
+        <TextBlock Text="Files to Transfer: " Grid.Row="15" Grid.Column="1" VerticalAlignment="Center">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Select which of the files to the right should be installed during the configuration process.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <Grid Grid.Row="13" Grid.Column="3" Grid.ColumnSpan="1">
+        <Grid Grid.Row="15" Grid.Column="3" Grid.ColumnSpan="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>
@@ -139,10 +149,10 @@
             <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
         </Grid>
 
-        <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="14" Click="attemptConnection">
+        <Button Name="connectButton" Content="Connect" Width="100" Grid.Column="3" Grid.Row="17" Click="attemptConnection" HorizontalAlignment="Right">
         </Button>
 
-        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="14" Grid.Column="3"/>
+        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="17" Grid.Column="3"/>
 
     </Grid>
 </Window>
