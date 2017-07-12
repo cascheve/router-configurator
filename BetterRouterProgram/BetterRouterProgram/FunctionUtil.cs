@@ -17,11 +17,10 @@ namespace BetterRouterProgram
         private static ProgressWindow ProgressWindow = null;
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
-        public static List <string> FilesToTransfer = null;
-        BackgroundWorker bw = new BackgroundWorker();
+        private static List <string> FilesToTransfer = null;
+        private static BackgroundWorker bw = new BackgroundWorker();
 
-        //end progress of all parts of configuration
-        public enum Progress : int {
+        private enum Progress : int {
                 None = 0,
                 Login = 5, 
                 Ping = 10,
@@ -31,6 +30,10 @@ namespace BetterRouterProgram
                 Password = 95,
                 Reboot = 100,
         };
+
+        public static List<string> GetFilesToTransfer() {
+            return FilesToTransfer.AsReadOnly();
+        }
 
         public static void InitializeProgressWindow(ref ProgressWindow pw) {
             ProgressWindow = pw;
@@ -54,7 +57,6 @@ namespace BetterRouterProgram
 
                 UpdateProgressWindow("**Login Unsuccessful**", Progress.None);
 
-                SerialConnection.CloseConnection();
                 return false;
             }
             
@@ -72,10 +74,11 @@ namespace BetterRouterProgram
                 return;
             }
 
-            string message = SerialConnection.RunInstruction(
-                $"SETDefault -SYS NMPassWord = \"{SerialConnection.GetSetting("initial password")}\"" + 
-                $" \"{password}\" \"{password}\""
-            );
+            string message = SerialConnection.RunInstruction(String.Format(
+                $"SETDefault -SYS NMPassWord = \"{0}\" \"{1}\" \"{2}\"",
+                SerialConnection.GetSetting("initial password"),
+                password, password
+            ));
 
             if (message.Contains("Password changed")) {
                 UpdateProgressWindow("Password Succesfully Changed");
@@ -91,41 +94,35 @@ namespace BetterRouterProgram
             }
 
             SerialConnection.RunInstruction($"setd -ac secret = \"{password}\"");
-
             UpdateProgressWindow("Secret Password Set", Progress.Password);
         }
          
         //takes a signed offset which is the number of hours forward or backward the clock must be from CST
-        public static void SetTime(string timeZoneString = "") {
-
+        public static void SetTime(string timeZoneString = "") 
+        {
             int offset = 0;
 
-            if (timeZoneString != "")
+            if (!timeZoneString.Empty)
             {
                 offset = Int32.Parse(timeZoneString.Substring(4, 3));
             }
 
             DateTime setDate = DateTime.UtcNow.AddHours(offset);
-
             if (!setDate.IsDaylightSavingTime())
             {
                 setDate = DateTime.UtcNow.AddHours(offset + 1);
             }
 
-            //SET - SYS DATE = 2017 / 05 / 19 12:02
             //outputs as mm/dd/yyyy hh:mm:ss XM
-
             UpdateProgressWindow("Setting Time: " + setDate.ToString(DateFormat), Progress.SetTime);
 
-            SerialConnection.RunInstruction("SET - SYS DATE = " + setDate.ToString(DateFormat));
-
-            //Thread.Sleep(2000);
+            SerialConnection.RunInstruction($"SET - SYS DATE = {setDate.ToString(DateFormat)}");
         }
 
         public static void PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
             
-            string message = SerialConnection.RunInstruction("ping " + "10.2.251.100");
+            string message = SerialConnection.RunInstruction($"ping {SerialConnection.GetSetting("router ID")}");
             
             if (message.Contains("is alive")) {
                 UpdateProgressWindow("Ping Successful");
@@ -142,7 +139,7 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Ping Test Completed", Progress.Ping);
         }
 
-        public static string FormatHostFile(string file) {
+        private static string FormatHostFile(string file) {
 
             string filename = "";
             file = file.Trim();
@@ -168,19 +165,14 @@ namespace BetterRouterProgram
             SerialConnection.RunInstruction(@"cd a:\test\test1");
 
             int i = 0;
-            string hostFile = "";
-
             foreach (var file in FilesToTransfer)
             {
-
-                hostFile = FormatHostFile(file);
-
                 UpdateProgressWindow($"Transferring File: {hostFile} -> {file}");
 
                 //attempt to copy the files from the host to the machine
                 string message = SerialConnection.RunInstruction(String.Format("copy {0}:{1} {2}",
                     SerialConnection.GetSetting("host ip address"),
-                    hostFile, file
+                    FormatHostFile(file), file
                 ));
 
                 if (message.Contains("File not found"))
@@ -193,8 +185,6 @@ namespace BetterRouterProgram
                 }
                 else
                 {
-
-                    //update the progress window according to the file's transfer status
                     UpdateProgressWindow(
                         $"{hostFile} Successfully Transferred",
                         Progress.TransferFilesStart,
@@ -204,52 +194,44 @@ namespace BetterRouterProgram
             }
         }
 
+        //TODO: change paths for testing
         public static void CopyToSecondary() {
-            UpdateProgressWindow("Creating Back-Up Files");
+            UpdateProgressWindow("Creating Back-Up Directory");
 
             SerialConnection.RunInstruction("cd a:/");
-
             SerialConnection.RunInstruction("md /test2");
-
             SerialConnection.RunInstruction("copy a:/primary/*.* a:/test2");
-
-            UpdateProgressWindow("Copies Created Succesfully");
 
             UpdateProgressWindow("Backup Created Successfully", Progress.CopyToSecondary);
         }
 
         public static void PromptDisconnect()
         {
-
             ProgressWindow.DisconnectButton.IsEnabled = true;
             ProgressWindow.DisconnectText.Opacity = 1.0;
 
             UpdateProgressWindow("All operations have been run. Please Disconnect.");
         }
 
-        public static void PromptReboot() {
-
+        public static void PromptReboot() 
+        {
             ProgressWindow.RebootButton.IsEnabled = true;
             ProgressWindow.RebootText.Opacity = 1.0;
-            UpdateProgressWindow("Please Reboot Router", Progress.Reboot - 5);
+            UpdateProgressWindow("Please Reboot Router");
         }
 
         public static void HandleReboot()
         {
-            UpdateProgressWindow("Rebooting", Progress.Reboot - 5);
+            UpdateProgressWindow("Rebooting");
             
             SerialConnection.RunInstruction("rb");
 
             UpdateProgressWindow("Reboot Successful", Progress.Reboot);
-
         }
 
         public static void StartTftp()
         {
-            //Directory.Move(@"C:\Motorola\SDM3000\Common\TFTP", @"C:\Motorola\SDM3000\Common\temp_TFTP");
-            string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename TFTP temp_TFTP";
-            Process.Start("CMD.exe", strCmdText);
-            Thread.Sleep(200);
+            Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename TFTP temp_TFTP");
 
             Tftp = new Process();
             Tftp.EnableRaisingEvents = true;
@@ -257,14 +239,12 @@ namespace BetterRouterProgram
             Tftp.StartInfo.Arguments = @"C:\";
             Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
             Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
-
             Tftp.Start();
-            
         }
 
         private static void Tftp_Exited(object sender, EventArgs e)
         {
-            UpdateProgressWindow("TFTP was closed. This can errors with file transferring.");
+            UpdateProgressWindow("TFTP was closed. This can cause errors with file transferring.");
         }
 
         public static void StopTftp()
@@ -274,26 +254,21 @@ namespace BetterRouterProgram
                 Tftp.CloseMainWindow();
                 Tftp.Close();
                 Tftp = null;
-
-                //Directory.Move(@"C:\Motorola\SDM3000\Common\temp_TFTP", @"C:\Motorola\SDM3000\Common\TFTP");
             }
 
-            string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP";
-            Process.Start("CMD.exe", strCmdText);
-            Thread.Sleep(200);
+            Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP");
         }
 
-
-        public static void SetFilesToTransfer(Dictionary<string, bool> filesToTransfer)
+        public static void SetFilesToTransfer(Dictionary<string, bool> extraFilesToTransfer)
         {
-            FilesToTransfer = new List<string>(6);
+            FilesToTransfer = new List<string>();
             FilesToTransfer.Add("boot.ppc");
             FilesToTransfer.Add("boot.cfg");
             FilesToTransfer.Add("acl.cfg");
 
-            foreach (var file in filesToTransfer.Keys)
+            foreach (var file in extraFilesToTransfer.Keys)
             {
-                if(filesToTransfer[file] == true)
+                if(extraFilesToTransfer[file])
                 {
                     FilesToTransfer.Add(file);
                 }

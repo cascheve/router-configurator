@@ -15,7 +15,6 @@ namespace BetterRouterProgram
 {
     public partial class MainWindow : Window
     {
-
         public MainWindow()
         {
             InitializeComponent();
@@ -26,17 +25,14 @@ namespace BetterRouterProgram
             FillTimeZones(this);
         }
 
-        public static void FillPortNames(MainWindow m)
+        private static void FillPortNames(MainWindow m)
         {
-
-            //Console.WriteLine("Available Ports:");
             foreach (string s in SerialPort.GetPortNames())
             {
                 ComboBoxItem cBoxItem = new ComboBoxItem();
                 cBoxItem.Content = s;
                 m.portNameDD.Items.Add(cBoxItem);
             }
-
         }
 
         private static void FillTimeZones(MainWindow m)
@@ -47,41 +43,10 @@ namespace BetterRouterProgram
                 tBoxItem.Content = z.DisplayName;
                 m.timeZoneDD.Items.Add(tBoxItem);
             }
-
-        }   
-
-        private void ToggleFiles(string[] configFiles, string routerID) {
-            bool staticrpCheck = false;
-            bool antiaclCheck = false;
-            bool xgsnCheck = false;
-
-            foreach(var file in configFiles) {
-                if(file.StartsWith("staticRP")) {
-                   staticrpCheck = true;
-                }
-                else if(file.StartsWith("antiacl")) {
-                    antiaclCheck = true;
-                }
-                else if(file.StartsWith(routerID) && file.Contains("_xgsn")) {
-                    xgsnCheck = true;
-                }
-            }
-
-            if(!staticrpCheck) {
-                staticrp.IsEnabled = false;
-            }
-            else if(!antiaclCheck) {
-                antiacl.IsEnabled = false;
-            }
-            else if(!xgsnCheck) {
-                xgsn.IsEnabled = false;
-            }
         }
 
-        //fill the router d dropdown list with router IDs
         private void FillID_DD(string directory)
         {
-            
             string[] files = Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName).ToArray();
 
             List<string> validRouterIDs = 
@@ -90,14 +55,12 @@ namespace BetterRouterProgram
                 orderby file ascending
                 select file.Split('_')[0]).Distinct().ToList();
 
-
-            foreach (string c in validRouterIDs)
+            foreach (var id in validRouterIDs)
             {
                 ComboBoxItem cBoxItem = new ComboBoxItem();
-                cBoxItem.Content = c;
+                cBoxItem.Content = id;
                 routerID_DD.Items.Add(cBoxItem);
             }
-
         }
 
         private void DepopulateID_DD()
@@ -105,22 +68,20 @@ namespace BetterRouterProgram
             routerID_DD.Items.Clear();
         }
 
-        private void browseFiles(object sender, RoutedEventArgs e)
+        private void BrowseFiles(object sender, RoutedEventArgs e)
         {
-
             String myStream = null;
             FolderBrowserDialog fbd = new FolderBrowserDialog();
 
-            fbd.Description = "Select the Directory holding the Configuration (.cfg) Files";
+            fbd.Description = "Select the directory holding the configuration (.cfg) files";
             fbd.ShowNewFolderButton = true;
             errorText.Text = fbd.SelectedPath;
 
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                //Get folder name
                 try
                 {
-                    if ((myStream = fbd.SelectedPath) != null && (myStream != ""))
+                    if (!(myStream = fbd.SelectedPath).IsNullOrEmpty())
                     {
                         //Selected Path is the Absolute path selected (as a string)
                         filepathToolTip.Text = fbd.SelectedPath;
@@ -128,17 +89,11 @@ namespace BetterRouterProgram
                         //refill the router ID list with valid router IDs
                         DepopulateID_DD();
                         FillID_DD(fbd.SelectedPath);
-                        updateFileOptions();
+                        UpdateFileOptions();
 
                         //shortens the path for cleanliness
-                        if (fbd.SelectedPath.Length > 35)
-                        {
-                            filepathText.Text = fbd.SelectedPath.Substring(0, 35) + "...";
-                        }
-                        else
-                        {
-                            filepathText.Text = fbd.SelectedPath;
-                        }
+                        filepathText.Text = fbd.SelectedPath.Length > 35? 
+                            fbd.SelectedPath.Substring(0, 35) + "..." : fbd.SelectedPath;
                     }
                 }
                 catch (Exception ex)
@@ -150,10 +105,10 @@ namespace BetterRouterProgram
             {
                 System.Windows.Forms.MessageBox.Show("There was an Error Displaying the application window. Please exit and try again.");
             }
-
         }
 
-        private void attemptConnection(object sender, RoutedEventArgs e)
+        //TODO: make input text box for ip address
+        private void AttemptConnection(object sender, RoutedEventArgs e)
         {
             string comPort = this.portNameDD.Text;
             string iString = this.currentPassword.Text;
@@ -165,35 +120,37 @@ namespace BetterRouterProgram
 
             errorText.Text = "";
 
-            if (comPort.Equals(""))
+            if (comPort.Empty)
             {
                 errorText.Text = "Please fill in the Port Number";
             }
-            else if (sString.Equals(""))
+            else if (sString.Empty)
             {
                 errorText.Text = "Please fill in the System Password";
             }
-            else if (routerID.Equals(""))
+            else if (routerID.Empty)
             {
-                errorText.Text = "Please fill in the Router's ID";
-
+                errorText.Text = "Please select the Router's ID";
             }
-            else if (configDir.Equals(""))
+            else if (configDir.Empty)
             {
                 errorText.Text = "Please fill the Configuration File Directory";
             }
-            else if (timezone.Equals(""))
+            else if (timezone.Empty)
             {
                 errorText.Text = "Please select a Time Zone";
             }
+            else if (hostIP.Empty)
+            {
+                errorText.Text = "Please fill in the host IP address";
+            }
             else
             {
-                //getting full router id
                 string[] configFiles = Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray();
 
                 foreach(var file in configFiles) {
                     if(file.StartsWith(routerID) && !file.Contains("_acl")) {
-                        routerID = file.Substring(0, file.Length - ".cfg".Length);
+                        routerID = file.Substring(0, file.Length - 4);
                         break;
                     }
                 }
@@ -210,18 +167,17 @@ namespace BetterRouterProgram
                             xgsn.IsChecked.HasValue ? xgsn.IsChecked.Value : false}
                     }
                 );
-
             }
         }
 
-        private void updateFileOptions()
+        private void UpdateFileOptions()
         {
-            string[] files = Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray();
+            string[] configFiles = Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray();
 
             bool staticrpCheck = false;
             bool antiaclCheck = false;
 
-            foreach (var file in files)
+            foreach (var file in configFiles)
             {
                 if (file.StartsWith("staticRP"))
                 {
@@ -238,29 +194,29 @@ namespace BetterRouterProgram
 
             antiacl.IsEnabled = antiaclCheck;
             antiacl.IsChecked = false;
-
         }
 
         private void routerID_DD_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!filepathToolTip.Text.Equals("") && !routerID_DD.Text.Equals(""))
+            if (filepathToolTip.Text.Empty || routerID_DD.Text.Empty)
             {
-                string[] files = Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray();
-                
-                bool xgsnCheck = false;
-
-                foreach (var file in files)
-                {
-                    if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
-                    {
-                        xgsnCheck = true;
-                    }
-                }
-
-                xgsn.IsEnabled = xgsnCheck;
-                xgsn.IsChecked = false;
-
+                return;
             }
+
+            string[] files = Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray();
+            
+            bool xgsnCheck = false;
+
+            foreach (var file in files)
+            {
+                if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
+                {
+                    xgsnCheck = true;
+                }
+            }
+
+            xgsn.IsEnabled = xgsnCheck;
+            xgsn.IsChecked = false;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

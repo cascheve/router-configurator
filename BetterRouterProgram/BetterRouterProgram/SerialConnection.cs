@@ -15,15 +15,21 @@ namespace BetterRouterProgram
         private static BackgroundWorker transferWorker = new BackgroundWorker();
         private static ProgressWindow pw = new ProgressWindow();
 
-        public class progressMessage
+        private class ProgressMessage
         {
-            public string message;
-            public double amountToAdd;
+            public string Message {get; set;};
+            public double AmountToAdd {get; set;};
+
+            public ProgressMessage(string message = "", double amountToAdd = 0)
+            {
+                Message = message;
+                AmountToAdd = amountToAdd;
+            }
         }
 
         public static void Connect(string portName, string initPassword, string sysPassword,
             string routerID, string configDir, string timezone,
-            string hostIpAddr, Dictionary<string, bool> filesToTransfer)
+            string hostIpAddr, Dictionary<string, bool> extraFilesToTransfer)
         {
             Settings = new Dictionary<string, string>()
             {
@@ -52,23 +58,21 @@ namespace BetterRouterProgram
 
                 ConfigurationDirectory = configDir;
 
-                FunctionUtil.SetFilesToTransfer(filesToTransfer);
+                FunctionUtil.SetFilesToTransfer(extraFilesToTransfer);
 
                 if (InitializeSerialPort(portName))
                 {
-
                     if (FunctionUtil.Login("root", ""))
                     {
-
                         //FunctionUtil.PingTest();
 
                         transferWorker.RunWorkerAsync();
                         //FunctionUtil.TransferFiles();
-
                     }
                     else
                     {
                         FunctionUtil.UpdateProgressWindow("There was an Error logging into the Router. Check your login information and try again.");
+                        CloseConnection();
                     }
                 }
                 else
@@ -76,7 +80,6 @@ namespace BetterRouterProgram
                     FunctionUtil.UpdateProgressWindow("There was an Error establishing a connection to the Serial Port. Please check your connection and try again");
                 }
             }
-
             catch (System.IO.FileNotFoundException)
             {
                 FunctionUtil.UpdateProgressWindow("Unable to locate the Specified File, please try again.");
@@ -94,83 +97,60 @@ namespace BetterRouterProgram
                 FunctionUtil.UpdateProgressWindow($"Original Error: {ex.Message}");
                 CloseConnection();
             }
-
         }
 
         private static void transferWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            //handle when the progress is reported
-
-            progressMessage pm = e.UserState as progressMessage;
+            ProgressMessage pm = e.UserState as ProgressMessage;
 
             FunctionUtil.UpdateProgressWindow(
-                pm.message, 
+                pm.Message, 
                 FunctionUtil.Progress.TransferFilesStart, 
-                pm.amountToAdd
-                );
+                pm.AmountToAdd
+            );
         }
 
         private static void transferWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             // run all background tasks here
-
             double totalProgress = 50;
 
-            //UpdateProgressWindow("Transferring Configuration Files");
-            progressMessage pm = new progressMessage();
-            pm.message = "Transferring Configuration Files";
-            pm.amountToAdd = 0;
+            ProgressMessage pm = new ProgressMessage("Transferring Configuration Files");
 
             transferWorker.ReportProgress(0, pm);
 
+            //TODO: change back after testing
             RunInstruction(@"cd a:\test\test1");
 
             int i = 0;
-            string hostFile = "";
-
-            foreach (var file in FunctionUtil.FilesToTransfer)
+            foreach (var file in FunctionUtil.GetFilesToTransfer())
             {
-
-                hostFile = FunctionUtil.FormatHostFile(file);
-
                 //UpdateProgressWindow($"Transferring File: {hostFile} -> {file}");
-                pm.message = $"Transferring File: {hostFile} -> {file}";
+                pm.Message = $"Transferring File: {hostFile} -> {file}";
                 transferWorker.ReportProgress(0, pm);
-
 
                 //attempt to copy the files from the host to the machine
                 string message = SerialConnection.RunInstruction(String.Format("copy {0}:{1} {2}",
                     GetSetting("host ip address"),
-                    hostFile, file
+                    FunctionUtil.FormatHostFile(file), file
                 ));
 
                 if (message.Contains("File not found"))
                 {
-                    //UpdateProgressWindow($"Error: {hostFile} not found in host configuration directory");
-                    pm.message = $"Error: {hostFile} not found in host configuration directory";
+                    pm.Message = $"Error: {hostFile} not found in host configuration directory";
                     transferWorker.ReportProgress(0, pm);
-
                 }
                 else if (message.Contains("Cannot route"))
                 {
-                    //UpdateProgressWindow("Cannot connect to the Router via TFTP. \nCheck your ethernet connection.");
-                    pm.message = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
+                    pm.Message = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
                     transferWorker.ReportProgress(0, pm);
-
                 }
                 else
                 {
-
                     //update the progress window according to the file's transfer status
-                    pm.message = $"{hostFile} Successfully Transferred";
+                    pm.Message = $"{hostFile} Successfully Transferred";
                     pm.amountToAdd = (((double)totalProgress) / FunctionUtil.FilesToTransfer.Count) * (++i);
-                    /*UpdateProgressWindow(
-                        $"{hostFile} Successfully Transferred",
-                        Progress.TransferFilesStart,
-                        (((double)totalProgress) / FilesToTransfer.Count) * (++i)
-                    );*/
                     transferWorker.ReportProgress(0, pm);
-
                 }
             }
         }
@@ -181,6 +161,7 @@ namespace BetterRouterProgram
 
             //FunctionUtil.SetTime(timezone);
 
+            //TODO: change to setting after testing
             //FunctionUtil.SetPassword("P25CityX2015!");
 
             FunctionUtil.PromptReboot();
@@ -196,14 +177,11 @@ namespace BetterRouterProgram
 
         private static bool InitializeSerialPort(string comPort)
         {
-            //copy 10.10.10.100:/eos_enc_cd_16.7.1.22/router_setup_template.txt boot.txt
             try
             {
                 SerialPort = new SerialPort(comPort, 9600);
-
                 SerialPort.ReadTimeout = 50000;
                 SerialPort.WriteTimeout = 500;
-
                 SerialPort.Open();
 
                 return true;
@@ -216,7 +194,6 @@ namespace BetterRouterProgram
 
         public static void CloseConnection()
         {
-
             if (SerialPort.IsOpen)
             {
                 SerialPort.Close();
@@ -281,7 +258,6 @@ namespace BetterRouterProgram
                 SerialPort.Write(password + "\r\n");
                 Thread.Sleep(500);
 
-                //If the next line output by the router ends with the # char, we know login was successful
                 if (ReadResponse('#').Length > 0)
                 {
                     return true;

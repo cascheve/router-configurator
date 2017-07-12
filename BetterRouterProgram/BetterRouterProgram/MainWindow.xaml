@@ -93,7 +93,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="7" Click="browseFiles" Width="100" HorizontalAlignment="Left"/>
+        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="7" Click="BrowseFiles" Width="100" HorizontalAlignment="Left"/>
 
         <TextBlock Text="Select the Router ID: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
@@ -139,7 +139,7 @@
             <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
         </Grid>
 
-        <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="14" Click="attemptConnection">
+        <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="14" Click="AttemptConnection">
         </Button>
 
         <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="14" Grid.Column="3"/>
