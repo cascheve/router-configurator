@@ -12,7 +12,14 @@ namespace BetterRouterProgram
         private static SerialPort SerialPort = null;
         private static string ConfigurationDirectory = "";
         private static Dictionary<string, string> Settings = null;
-        private static BackgroundWorker bw = new BackgroundWorker();
+        private static BackgroundWorker transferWorker = new BackgroundWorker();
+        private static ProgressWindow pw = new ProgressWindow();
+
+        public class progressMessage
+        {
+            public string message;
+            public double amountToAdd;
+        }
 
         public static void Connect(string portName, string initPassword, string sysPassword,
             string routerID, string configDir, string timezone,
@@ -29,13 +36,19 @@ namespace BetterRouterProgram
                 {"host ip address", hostIpAddr}
             };
 
-            ProgressWindow pw = new ProgressWindow();
             pw.Show();
             FunctionUtil.InitializeProgressWindow(ref pw);
 
             try
             {
+                //TODO: make the reference to the TFTP window more resilient
                 FunctionUtil.StartTftp();
+                pw.Topmost = true;
+
+                transferWorker.DoWork += transferWorker_DoWork;
+                transferWorker.RunWorkerCompleted += transferWorker_RunWorkerCompleted;
+                transferWorker.ProgressChanged += transferWorker_ProgressChanged;
+                transferWorker.WorkerReportsProgress = true;
 
                 ConfigurationDirectory = configDir;
 
@@ -49,47 +62,130 @@ namespace BetterRouterProgram
 
                         //FunctionUtil.PingTest();
 
-                        //FunctionUtil.SetTime(timezone);
-
-                        //FunctionUtil.SetPassword("P25CityX2015!");
-
-                        FunctionUtil.TransferFiles();
-
-                        //FunctionUtil.CopyToSecondary();
-                            
-                        //FunctionUtil.PromptReboot();
+                        transferWorker.RunWorkerAsync();
+                        //FunctionUtil.TransferFiles();
 
                     }
                     else
                     {
-                        pw.currentTask.Text += "\nThere was an Error logging into the Router. Check your login information and try again.";
+                        FunctionUtil.UpdateProgressWindow("There was an Error logging into the Router. Check your login information and try again.");
                     }
-
-                    FunctionUtil.PromptDisconnect();
                 }
                 else
                 {
-                    pw.currentTask.Text += "\nThere was an Error establishing a connection to the Serial Port. Please check your connection and try again";
+                    FunctionUtil.UpdateProgressWindow("There was an Error establishing a connection to the Serial Port. Please check your connection and try again");
                 }
             }
 
             catch (System.IO.FileNotFoundException)
             {
-                pw.currentTask.Text += "\nUnable to locate the Specified File, please try again.";
+                FunctionUtil.UpdateProgressWindow("Unable to locate the Specified File, please try again.");
             }
             catch (System.ComponentModel.Win32Exception)
             {
-                pw.currentTask.Text += "\nError: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.";
+                FunctionUtil.UpdateProgressWindow("Error: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.");
             }
             catch (TimeoutException)
             {
-                pw.currentTask.Text += "\nConnection Attempt timed out. \nCheck your Serial Connection and try again.";
+                FunctionUtil.UpdateProgressWindow("Connection Attempt timed out. \nCheck your Serial Connection and try again.");
             }
             catch (Exception ex)
             {
-                pw.currentTask.Text += "\nOriginal Error: " + ex.Message;
+                FunctionUtil.UpdateProgressWindow($"Original Error: {ex.Message}");
                 CloseConnection();
             }
+
+        }
+
+        private static void transferWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            //handle when the progress is reported
+
+            progressMessage pm = e.UserState as progressMessage;
+
+            FunctionUtil.UpdateProgressWindow(
+                pm.message, 
+                FunctionUtil.Progress.TransferFilesStart, 
+                pm.amountToAdd
+                );
+        }
+
+        private static void transferWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // run all background tasks here
+
+            double totalProgress = 50;
+
+            //UpdateProgressWindow("Transferring Configuration Files");
+            progressMessage pm = new progressMessage();
+            pm.message = "Transferring Configuration Files";
+            pm.amountToAdd = 0;
+
+            transferWorker.ReportProgress(0, pm);
+
+            RunInstruction(@"cd a:\test\test1");
+
+            int i = 0;
+            string hostFile = "";
+
+            foreach (var file in FunctionUtil.FilesToTransfer)
+            {
+
+                hostFile = FunctionUtil.FormatHostFile(file);
+
+                //UpdateProgressWindow($"Transferring File: {hostFile} -> {file}");
+                pm.message = $"Transferring File: {hostFile} -> {file}";
+                transferWorker.ReportProgress(0, pm);
+
+
+                //attempt to copy the files from the host to the machine
+                string message = SerialConnection.RunInstruction(String.Format("copy {0}:{1} {2}",
+                    GetSetting("host ip address"),
+                    hostFile, file
+                ));
+
+                if (message.Contains("File not found"))
+                {
+                    //UpdateProgressWindow($"Error: {hostFile} not found in host configuration directory");
+                    pm.message = $"Error: {hostFile} not found in host configuration directory";
+                    transferWorker.ReportProgress(0, pm);
+
+                }
+                else if (message.Contains("Cannot route"))
+                {
+                    //UpdateProgressWindow("Cannot connect to the Router via TFTP. \nCheck your ethernet connection.");
+                    pm.message = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
+                    transferWorker.ReportProgress(0, pm);
+
+                }
+                else
+                {
+
+                    //update the progress window according to the file's transfer status
+                    pm.message = $"{hostFile} Successfully Transferred";
+                    pm.amountToAdd = (((double)totalProgress) / FunctionUtil.FilesToTransfer.Count) * (++i);
+                    /*UpdateProgressWindow(
+                        $"{hostFile} Successfully Transferred",
+                        Progress.TransferFilesStart,
+                        (((double)totalProgress) / FilesToTransfer.Count) * (++i)
+                    );*/
+                    transferWorker.ReportProgress(0, pm);
+
+                }
+            }
+        }
+
+        private static void transferWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //FunctionUtil.CopyToSecondary();
+
+            //FunctionUtil.SetTime(timezone);
+
+            //FunctionUtil.SetPassword("P25CityX2015!");
+
+            FunctionUtil.PromptReboot();
+
+            FunctionUtil.PromptDisconnect();
 
         }
 

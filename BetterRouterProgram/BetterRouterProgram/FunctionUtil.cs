@@ -17,11 +17,11 @@ namespace BetterRouterProgram
         private static ProgressWindow ProgressWindow = null;
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
-        private static List <string> FilesToTransfer = null;
+        public static List <string> FilesToTransfer = null;
         BackgroundWorker bw = new BackgroundWorker();
 
         //end progress of all parts of configuration
-        private enum Progress : int {
+        public enum Progress : int {
                 None = 0,
                 Login = 5, 
                 Ping = 10,
@@ -37,7 +37,7 @@ namespace BetterRouterProgram
             ProgressWindow.progressBar.Value = (int)Progress.None;
         }
 
-        private static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0) {
+        public static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0) {
             if(setValue != Progress.None) {
                 ProgressWindow.progressBar.Value = (int)setValue;   
                 ProgressWindow.progressBar.Value += toAdd;
@@ -142,7 +142,7 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Ping Test Completed", Progress.Ping);
         }
 
-        private static string FormatHostFile(string file) {
+        public static string FormatHostFile(string file) {
 
             string filename = "";
             file = file.Trim();
@@ -165,7 +165,7 @@ namespace BetterRouterProgram
 
             UpdateProgressWindow("Transferring Configuration Files");
             
-            SerialConnection.RunInstruction("cd a:\test\test1");
+            SerialConnection.RunInstruction(@"cd a:\test\test1");
 
             int i = 0;
             string hostFile = "";
@@ -252,12 +252,19 @@ namespace BetterRouterProgram
             Thread.Sleep(200);
 
             Tftp = new Process();
+            Tftp.EnableRaisingEvents = true;
+            Tftp.Exited += Tftp_Exited;
             Tftp.StartInfo.Arguments = @"C:\";
             Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
             Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
 
             Tftp.Start();
             
+        }
+
+        private static void Tftp_Exited(object sender, EventArgs e)
+        {
+            UpdateProgressWindow("TFTP was closed. This can errors with file transferring.");
         }
 
         public static void StopTftp()
@@ -269,10 +276,11 @@ namespace BetterRouterProgram
                 Tftp = null;
 
                 //Directory.Move(@"C:\Motorola\SDM3000\Common\temp_TFTP", @"C:\Motorola\SDM3000\Common\TFTP");
-                string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP";
-                Process.Start("CMD.exe", strCmdText);
-                Thread.Sleep(200);
             }
+
+            string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP";
+            Process.Start("CMD.exe", strCmdText);
+            Thread.Sleep(200);
         }
 
 
