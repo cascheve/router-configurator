@@ -157,6 +157,7 @@ namespace BetterRouterProgram
             return filename;
         }
 
+        /*
         public static void TransferFiles(params string[] files) {
             double totalProgress = 50;
 
@@ -193,6 +194,7 @@ namespace BetterRouterProgram
                 }
             }
         }
+        */
 
         //TODO: change paths for testing
         public static void CopyToSecondary() {
@@ -231,7 +233,9 @@ namespace BetterRouterProgram
 
         public static void StartTftp()
         {
-            Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename TFTP temp_TFTP");
+            if (Directory.Exists(@"C:\Motorola\SDM3000\Common\TFTP")){
+                 Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename TFTP temp_TFTP");
+            }
 
             Tftp = new Process();
             Tftp.EnableRaisingEvents = true;
@@ -244,19 +248,23 @@ namespace BetterRouterProgram
 
         private static void Tftp_Exited(object sender, EventArgs e)
         {
-            UpdateProgressWindow("TFTP was closed. This can cause errors with file transferring.");
+            //TODO: Make TFTP Reference more dynamic/resilient
+            //UpdateProgressWindow("TFTP was closed. This can errors with file transferring.");
         }
 
         public static void StopTftp()
         {
+            if (Directory.Exists(@"C:\Motorola\SDM3000\Common\temp_TFTP"))
+            {
+                Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP");
+            }
+
             if (Tftp != null)
             {
                 Tftp.CloseMainWindow();
                 Tftp.Close();
                 Tftp = null;
             }
-
-            Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP");
         }
 
         public static void SetFilesToTransfer(Dictionary<string, bool> extraFilesToTransfer)
