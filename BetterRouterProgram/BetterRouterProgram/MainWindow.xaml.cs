@@ -163,6 +163,8 @@ namespace BetterRouterProgram
             string timezone = this.timeZoneDD.Text;
             string hostIP = "10.10.10.100";
 
+//            string hostIP = this.hostIP.Text;
+
             errorText.Text = "";
 
             if (comPort.Equals(""))
@@ -185,6 +187,10 @@ namespace BetterRouterProgram
             else if (timezone.Equals(""))
             {
                 errorText.Text = "Please select a Time Zone";
+            }
+            else if (hostIP.Equals(""))
+            {
+                errorText.Text = "Please enter your Computer's IP Address";
             }
             else
             {

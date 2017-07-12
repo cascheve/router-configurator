@@ -160,6 +160,7 @@ namespace BetterRouterProgram
             return filename;
         }
 
+        /*
         public static void TransferFiles(params string[] files) {
             double totalProgress = 50;
 
@@ -203,6 +204,7 @@ namespace BetterRouterProgram
                 }
             }
         }
+        */
 
         public static void CopyToSecondary() {
             UpdateProgressWindow("Creating Back-Up Files");
@@ -247,9 +249,13 @@ namespace BetterRouterProgram
         public static void StartTftp()
         {
             //Directory.Move(@"C:\Motorola\SDM3000\Common\TFTP", @"C:\Motorola\SDM3000\Common\temp_TFTP");
-            string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename TFTP temp_TFTP";
-            Process.Start("CMD.exe", strCmdText);
-            Thread.Sleep(200);
+            //if file exists! otherwise you get a weird hanging issue!!!
+
+            if (Directory.Exists("C:\\Motorola\\SDM3000\\Common\\TFTP")){
+                string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename TFTP temp_TFTP";
+                Process.Start("CMD.exe", strCmdText);
+                Thread.Sleep(200);
+            }
 
             Tftp = new Process();
             Tftp.EnableRaisingEvents = true;
@@ -264,11 +270,19 @@ namespace BetterRouterProgram
 
         private static void Tftp_Exited(object sender, EventArgs e)
         {
-            UpdateProgressWindow("TFTP was closed. This can errors with file transferring.");
+            //TODO: Make TFTP Reference more dynamic/resilient
+            //UpdateProgressWindow("TFTP was closed. This can errors with file transferring.");
         }
 
         public static void StopTftp()
         {
+            if (Directory.Exists(@"C:\Motorola\SDM3000\Common\temp_TFTP"))
+            {
+                string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP";
+                Process.Start("CMD.exe", strCmdText);
+                Thread.Sleep(200);
+            }
+
             if (Tftp != null)
             {
                 Tftp.CloseMainWindow();
@@ -277,10 +291,7 @@ namespace BetterRouterProgram
 
                 //Directory.Move(@"C:\Motorola\SDM3000\Common\temp_TFTP", @"C:\Motorola\SDM3000\Common\TFTP");
             }
-
-            string strCmdText = @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP";
-            Process.Start("CMD.exe", strCmdText);
-            Thread.Sleep(200);
+            
         }
 
 

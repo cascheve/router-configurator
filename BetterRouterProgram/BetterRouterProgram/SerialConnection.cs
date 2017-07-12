@@ -21,15 +21,15 @@ namespace BetterRouterProgram
             public double amountToAdd;
         }
 
-        public static void Connect(string portName, string initPassword, string sysPassword,
+        public static void Connect(string portName, string currentPassword, string systemPassword,
             string routerID, string configDir, string timezone,
             string hostIpAddr, Dictionary<string, bool> filesToTransfer)
         {
             Settings = new Dictionary<string, string>()
             {
                 {"port", portName},
-                {"initial password", initPassword},
-                {"system password", sysPassword},
+                {"initial password", currentPassword},
+                {"system password", systemPassword},
                 {"router ID", routerID},
                 {"config directory", configDir},
                 {"timezone", timezone},
@@ -43,8 +43,12 @@ namespace BetterRouterProgram
             {
                 //TODO: make the reference to the TFTP window more resilient
                 FunctionUtil.StartTftp();
+
+                //sets the progress window to the top, "most visible" element
                 pw.Topmost = true;
 
+                //a separate worker thread that takes care of the transferring of files
+                //this is done to allow responsive GUI updates
                 transferWorker.DoWork += transferWorker_DoWork;
                 transferWorker.RunWorkerCompleted += transferWorker_RunWorkerCompleted;
                 transferWorker.ProgressChanged += transferWorker_ProgressChanged;
@@ -56,11 +60,11 @@ namespace BetterRouterProgram
 
                 if (InitializeSerialPort(portName))
                 {
-
+                    //FunctionUtil.Login("root", currentPassword)
                     if (FunctionUtil.Login("root", ""))
                     {
-
-                        //FunctionUtil.PingTest();
+                        //TODO: Make Pingtest another backgroundWorker? -> cannot transfer files otherwise (no idea why)
+                        FunctionUtil.PingTest();
 
                         //this will run, and upon completion the worker will proceed with the remaining functions
                         transferWorker.RunWorkerAsync();
@@ -125,6 +129,7 @@ namespace BetterRouterProgram
             int i = 0;
             string hostFile = "";
 
+           
             foreach (var file in FunctionUtil.FilesToTransfer)
             {
 
@@ -133,7 +138,7 @@ namespace BetterRouterProgram
                 pm.message = $"Transferring File: {hostFile} -> {file}";
                 transferWorker.ReportProgress(0, pm);
 
-                string message = SerialConnection.RunInstruction(String.Format("copy {0}:{1} {2}",
+                string message = RunInstruction(String.Format("copy {0}:{1} {2}",
                     GetSetting("host ip address"),
                     hostFile, file
                 ));
@@ -152,8 +157,10 @@ namespace BetterRouterProgram
 
                 else
                 {
+                    
                     pm.message = $"{hostFile} Successfully Transferred";
                     pm.amountToAdd = (((double)totalProgress) / FunctionUtil.FilesToTransfer.Count) * (++i);
+                    
                     transferWorker.ReportProgress(0, pm);
                 }
             }
@@ -165,7 +172,7 @@ namespace BetterRouterProgram
 
             //FunctionUtil.SetTime(timezone);
 
-            //FunctionUtil.SetPassword("P25CityX2015!");
+            //FunctionUtil.SetPassword(systemPassword);
 
             FunctionUtil.PromptReboot();
 
