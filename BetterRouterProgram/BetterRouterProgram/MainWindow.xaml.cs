@@ -45,7 +45,12 @@ namespace BetterRouterProgram
             }
         }
 
-        private void FillID_DD(string directory)
+        private void DepopulateIDs()
+        {
+            routerID_DD.Items.Clear();
+        }
+
+        private void PopulateIDs(string directory)
         {
             List<string> validRouterIDs = 
                 (from file in Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName).ToArray()
@@ -61,9 +66,25 @@ namespace BetterRouterProgram
             }
         }
 
-        private void DepopulateID_DD()
+        private void RouterIDSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            routerID_DD.Items.Clear();
+            if (filepathToolTip.Text.Equals(string.Empty) || routerID_DD.Text.Equals(string.Empty))
+            {
+                return;
+            }
+
+            bool xgsnCheck = false;
+
+            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray())
+            {
+                if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
+                {
+                    xgsnCheck = true;
+                }
+            }
+
+            xgsn.IsEnabled = xgsnCheck;
+            xgsn.IsChecked = false;
         }
 
         private void BrowseFiles(object sender, RoutedEventArgs e)
@@ -106,6 +127,35 @@ namespace BetterRouterProgram
                     System.Windows.Forms.MessageBox.Show("Please Select a Configuration Folder.");
                 }
             }
+        }
+
+        private void UpdateFileOptions()
+        {
+            bool staticrpCheck = false;
+            bool antiaclCheck = false;
+
+            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray())
+            {
+                if (file.StartsWith("staticRP"))
+                {
+                    staticrpCheck = true;
+                }
+                else if (file.StartsWith("antiacl"))
+                {
+                    antiaclCheck = true;
+                }
+            }
+
+            staticrp.IsEnabled = staticrpCheck;
+            staticrp.IsChecked = false;
+
+            antiacl.IsEnabled = antiaclCheck;
+            antiacl.IsChecked = false;
+        }
+
+        private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            FunctionUtil.StopTftp();
         }
 
         private void AttemptConnection(object sender, RoutedEventArgs e)
@@ -159,7 +209,8 @@ namespace BetterRouterProgram
                     }
                 }
 
-                SerialConnection.Connect(comPort, iString, sString, routerID, 
+                SerialConnection.Connect(
+                    comPort, iString, sString, routerID, 
                     configDir, timezone, hostIP,
                     new Dictionary<string, bool>()
                     {
@@ -172,57 +223,6 @@ namespace BetterRouterProgram
                     }
                 );
             }
-        }
-
-        private void UpdateFileOptions()
-        {
-
-            bool staticrpCheck = false;
-            bool antiaclCheck = false;
-
-            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray())
-            {
-                if (file.StartsWith("staticRP"))
-                {
-                    staticrpCheck = true;
-                }
-                else if (file.StartsWith("antiacl"))
-                {
-                    antiaclCheck = true;
-                }
-            }
-
-            staticrp.IsEnabled = staticrpCheck;
-            staticrp.IsChecked = false;
-
-            antiacl.IsEnabled = antiaclCheck;
-            antiacl.IsChecked = false;
-        }
-
-        private void routerID_DD_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (filepathToolTip.Text.Equals(string.Empty) || routerID_DD.Text.Equals(string.Empty))
-            {
-                return;
-            }
-
-            bool xgsnCheck = false;
-
-            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray())
-            {
-                if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
-                {
-                    xgsnCheck = true;
-                }
-            }
-
-            xgsn.IsEnabled = xgsnCheck;
-            xgsn.IsChecked = false;
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            FunctionUtil.StopTftp();
         }
     }
 }

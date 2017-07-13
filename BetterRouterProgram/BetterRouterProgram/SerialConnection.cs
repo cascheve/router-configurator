@@ -10,10 +10,9 @@ namespace BetterRouterProgram
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
-        private static string ConfigurationDirectory = "";
         private static Dictionary<string, string> Settings = null;
-        private static BackgroundWorker transferWorker = null;
-        private static ProgressWindow pw = null;
+        private static List <string> FilesToTransfer = null;
+        private static BackgroundWorker TransferWorker = null;
 
         private class ProgressMessage
         {
@@ -27,54 +26,23 @@ namespace BetterRouterProgram
             }
         }
 
-        public static void Connect(string portName, string currentPassword, string systemPassword,
-            string routerID, string configDir, string timezone,
-            string hostIpAddr, Dictionary<string, bool> extraFilesToTransfer)
+        public static string GetSetting(string setting)
         {
-            Settings = new Dictionary<string, string>()
-            {
-                {"port", portName},
-                {"initial password", currentPassword},
-                {"system password", systemPassword},
-                {"router ID", routerID},
-                {"config directory", configDir},
-                {"timezone", timezone},
-                {"host ip address", hostIpAddr}
-            };
+            return Settings[setting];
+        }
 
-            pw = new ProgressWindow();
-            FunctionUtil.InitializeProgressWindow(ref pw);
-            pw.Show();
-
-            transferWorker = new BackgroundWorker();
-
+        public static void InitializeAndConnect(params string[] settings, Dictionary<string, bool> extraFilesToTransfer)
+        {
             try
             {
-                //TODO: make the reference to the TFTP window more resilient
-                FunctionUtil.StartTftp();
-
-                //sets the progress window to the top, "most visible" element
-                pw.Topmost = true;
-
-                //a separate worker thread that takes care of the transferring of files
-                //this is done to allow responsive GUI updates
-                transferWorker.DoWork += transferWorker_DoWork;
-                transferWorker.RunWorkerCompleted += transferWorker_RunWorkerCompleted;
-                transferWorker.ProgressChanged += transferWorker_ProgressChanged;
-                transferWorker.WorkerReportsProgress = true;
-
-                ConfigurationDirectory = configDir;
-
-                FunctionUtil.SetFilesToTransfer(extraFilesToTransfer);
-
-                if (InitializeSerialPort(portName))
+                if (InitializeConnection(settings))
                 {
-                    //FunctionUtil.Login("root", currentPassword)
-                    if (FunctionUtil.Login("root", "P25LACleco2016!"))
+                    //Login("root", currentPassword)
+                    if (Login("root", "P25LACleco2016!"))
                     {
                         if (FunctionUtil.PingTest()){
                             //this will run, and upon completion the worker will proceed with the remaining functions
-                            transferWorker.RunWorkerAsync();
+                            TransferWorker.RunWorkerAsync();
                         }
                         else
                         {
@@ -111,7 +79,86 @@ namespace BetterRouterProgram
             }
         }
 
-        private static void transferWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private static bool Login(string username, string password)
+        {
+            FunctionUtil.UpdateProgressWindow("Logging In");
+
+            if (SerialPort.IsOpen)
+            {
+                FunctionUtil.UpdateProgressWindow("**Login Unsuccessful**", Progress.None);
+                return false;
+            }
+            
+            Thread.Sleep(500);
+
+            SerialPort.Write("\r\n");
+            Thread.Sleep(500);
+
+            SerialPort.Write(username + "\r\n");
+            Thread.Sleep(500);
+
+            SerialPort.Write(password + "\r\n");
+            Thread.Sleep(500);
+
+            //if the serial connection fails using the username and password specified
+            if (ReadResponse('#').Length > 0) {
+                return false;
+            }
+            
+            FunctionUtil.UpdateProgressWindow("Login Successful", Progress.Login);
+
+            return true;
+        }
+
+        private static void transferWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            double totalProgress = 50;
+
+            ProgressMessage pm = new ProgressMessage("Transferring Configuration Files");
+            TransferWorker.ReportProgress(0, pm);
+
+            //TODO: change back after testing
+            RunInstruction(@"cd a:\test3");
+
+            int i = 0;
+
+            foreach (var file in FilesToTransfer())
+            {
+                Thread.Sleep(500);
+                pm.MessageString = $"Transferring File: {FormatHostFile(file)} -> {file}";
+                Thread.Sleep(500);
+                TransferWorker.ReportProgress(0, pm);
+                Thread.Sleep(500);
+
+                //attempt to copy the files from the host to the machine
+                string message = RunInstruction(
+                    String.Format("copy {0}:{1} {2}",
+                    GetSetting("host ip address"),
+                    FormatHostFile(file), file
+                ));
+
+                //update the progress window according to the file's transfer status
+                if (message.Contains("File not found"))
+                {
+                    pm.MessageString = $"Error: {FormatHostFile(file)} not found in host configuration directory";
+                    TransferWorker.ReportProgress(0, pm);
+                }
+                else if (message.Contains("Cannot route"))
+                {
+                    pm.MessageString = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
+                    TransferWorker.ReportProgress(0, pm);
+                }
+                else
+                {
+                    pm.MessageString = $"{FormatHostFile(file)} Successfully Transferred";
+                    pm.AmountToAdd = ((totalProgress) / FilesToTransfer().Count) * (++i);
+
+                    TransferWorker.ReportProgress(0, pm);
+                }
+            }
+        }
+
+        private static void TransferWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             ProgressMessage pm = e.UserState as ProgressMessage;
 
@@ -124,54 +171,7 @@ namespace BetterRouterProgram
             Thread.Sleep(200);
         }
 
-        private static void transferWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            double totalProgress = 50;
-
-            ProgressMessage pm = new ProgressMessage("Transferring Configuration Files");
-            transferWorker.ReportProgress(0, pm);
-
-            //TODO: change back after testing
-            RunInstruction(@"cd a:\test3");
-
-            int i = 0;
-
-            foreach (var file in FunctionUtil.GetFilesToTransfer())
-            {
-                Thread.Sleep(500);
-                pm.MessageString = $"Transferring File: {FunctionUtil.FormatHostFile(file)} -> {file}";
-                Thread.Sleep(500);
-                transferWorker.ReportProgress(0, pm);
-                Thread.Sleep(500);
-
-                //attempt to copy the files from the host to the machine
-                string message = RunInstruction(String.Format("copy {0}:{1} {2}",
-                    GetSetting("host ip address"),
-                    FunctionUtil.FormatHostFile(file), file
-                ));
-
-                //update the progress window according to the file's transfer status
-                if (message.Contains("File not found"))
-                {
-                    pm.MessageString = $"Error: {FunctionUtil.FormatHostFile(file)} not found in host configuration directory";
-                    transferWorker.ReportProgress(0, pm);
-                }
-                else if (message.Contains("Cannot route"))
-                {
-                    pm.MessageString = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
-                    transferWorker.ReportProgress(0, pm);
-                }
-                else
-                {
-                    pm.MessageString = $"{FunctionUtil.FormatHostFile(file)} Successfully Transferred";
-                    pm.AmountToAdd = ((totalProgress) / FunctionUtil.GetFilesToTransfer().Count) * (++i);
-
-                    transferWorker.ReportProgress(0, pm);
-                }
-            }
-        }
-
-        private static void transferWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private static void TransferWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //FunctionUtil.CopyToSecondary();
 
@@ -182,28 +182,6 @@ namespace BetterRouterProgram
             FunctionUtil.PromptReboot();
 
             FunctionUtil.PromptDisconnect();
-        }
-
-        public static string GetSetting(string setting)
-        {
-            return Settings[setting];
-        }
-
-        private static bool InitializeSerialPort(string comPort)
-        {
-            try
-            {
-                SerialPort = new SerialPort(comPort, 9600);
-                SerialPort.ReadTimeout = 50000;
-                SerialPort.WriteTimeout = 500;
-                SerialPort.Open();
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         public static void CloseConnection()
@@ -256,30 +234,108 @@ namespace BetterRouterProgram
             return retVal;
         }
 
-        public static bool Login(string username, string password)
+        private static bool InitializeSerialPort(string comPort)
         {
-            if (SerialPort.IsOpen)
+            try
             {
-                Thread.Sleep(500);
+                SerialPort = new SerialPort(comPort, 9600);
+                SerialPort.ReadTimeout = 50000;
+                SerialPort.WriteTimeout = 500;
+                SerialPort.Open();
 
-                SerialPort.Write("\r\n");
-                Thread.Sleep(500);
-
-                SerialPort.Write(username + "\r\n");
-                Thread.Sleep(500);
-
-                SerialPort.Write(password + "\r\n");
-                Thread.Sleep(500);
-
-                if (ReadResponse('#').Length > 0)
-                {
-                    return true;
-                }
+                return true;
             }
-
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
+        private static void InitializeConnection(string[] settings) {
+            Settings = new Dictionary<string, string>()
+            {
+                {"port", settings[0]},
+                {"initial password", settings[1]},
+                {"system password", settings[2]},
+                {"router ID", settings[3]},
+                {"config directory", settings[4]},
+                {"timezone", settings[5]},
+                {"host ip address", settings[6]}
+            };
+
+            FunctionUtil.InitializeProgressWindow();
+
+            TransferWorker = new BackgroundWorker();
+
+            try 
+            {
+                FunctionUtil.StartTftp();
+                    
+                //a separate worker thread that takes care of the transferring of files
+                //this is done to allow responsive GUI updates
+                TransferWorker.DoWork += TransferWorker_DoWork;
+                TransferWorker.RunWorkerCompleted += TransferWorker_RunWorkerCompleted;
+                TransferWorker.ProgressChanged += TransferWorker_ProgressChanged;
+                TransferWorker.WorkerReportsProgress = true;
+
+                SetFilesToTransfer(extraFilesToTransfer);
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                FunctionUtil.UpdateProgressWindow("Unable to locate the Specified File, please try again.");
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                FunctionUtil.UpdateProgressWindow("Error: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.");
+            }
+            catch (TimeoutException)
+            {
+                FunctionUtil.UpdateProgressWindow("Connection Attempt timed out. \nCheck your Serial Connection and try again.");
+            }
+            catch (Exception ex)
+            {
+                FunctionUtil.UpdateProgressWindow($"Original Error: {ex.Message}");
+                CloseConnection();
+            }
+            finally 
+            {
+                return InitializeSerialPort(settings[0])
+            }
+        }
+
+        private static void SetFilesToTransfer(Dictionary<string, bool> extraFilesToTransfer)
+        {
+            FilesToTransfer = new List<string>();
+            FilesToTransfer.Add("boot.ppc");
+            FilesToTransfer.Add("boot.cfg");
+            FilesToTransfer.Add("acl.cfg");
+
+            foreach (var file in extraFilesToTransfer.Keys)
+            {
+                if(extraFilesToTransfer[file])
+                {
+                    FilesToTransfer.Add(file);
+                }
+            }
+        }
+
+        private static string FormatHostFile(string file) {
+            file = file.Trim();
+
+            swtich(file) {
+                case "staticRP.cfg":
+                case "antiacl.cfg":
+                case "boot.ppc":
+                    return file;
+                case "acl.cfg":
+                case "xgsn.cfg":
+                    return SerialConnection.GetSetting("router ID") + "_" + file;
+                case "boot.cfg":
+                    return SerialConnection.GetSetting("router ID") + ".cfg";;
+                default:
+                    break;
+            }
+        }
     }
 
 }
