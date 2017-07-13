@@ -81,7 +81,7 @@ namespace BetterRouterProgram
             {
                 try
                 {
-                    if (!(myStream = fbd.SelectedPath).IsNullOrEmpty())
+                    if (!string.IsNullOrEmpty(myStream = fbd.SelectedPath))
                     {
                         //Selected Path is the Absolute path selected (as a string)
                         filepathToolTip.Text = fbd.SelectedPath;
@@ -103,11 +103,13 @@ namespace BetterRouterProgram
             }
             else
             {
-                System.Windows.Forms.MessageBox.Show("There was an Error Displaying the application window. Please exit and try again.");
+                if (filepathToolTip.Text.Equals(""))
+                {
+                    System.Windows.Forms.MessageBox.Show("Please Select a Configuration Folder.");
+                }
             }
         }
 
-        //TODO: make input text box for ip address
         private void AttemptConnection(object sender, RoutedEventArgs e)
         {
             string comPort = this.portNameDD.Text;
@@ -116,33 +118,32 @@ namespace BetterRouterProgram
             string routerID = this.routerID_DD.Text;
             string configDir = this.filepathToolTip.Text;
             string timezone = this.timeZoneDD.Text;
-            string hostIP = "10.10.10.100";
-
-//            string hostIP = this.hostIP.Text;
+            //string hostIP = "10.10.10.100";
+            string hostIP = this.hostIP.Text;
 
             errorText.Text = "";
 
-            if (comPort.Empty)
+            if (comPort.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the Port Number";
             }
-            else if (sString.Empty)
+            else if (sString.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the System Password";
             }
-            else if (routerID.Empty)
+            else if (routerID.Equals(string.Empty))
             {
                 errorText.Text = "Please select the Router's ID";
             }
-            else if (configDir.Empty)
+            else if (configDir.Equals(string.Empty))
             {
                 errorText.Text = "Please fill the Configuration File Directory";
             }
-            else if (timezone.Empty)
+            else if (timezone.Equals(string.Empty))
             {
                 errorText.Text = "Please select a Time Zone";
             }
-            else if (hostIP.Empty)
+            else if (hostIP.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the host IP address";
             }
@@ -200,7 +201,7 @@ namespace BetterRouterProgram
 
         private void routerID_DD_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (filepathToolTip.Text.Empty || routerID_DD.Text.Empty)
+            if (filepathToolTip.Text.Equals(string.Empty) || routerID_DD.Text.Equals(string.Empty))
             {
                 return;
             }

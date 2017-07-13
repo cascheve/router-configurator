@@ -10,6 +10,7 @@
         Title="Router Progress" 
         Height="350" 
         Width="600"
+        ResizeMode="NoResize"
         Closing="DataWindow_Closing">
 
     <Grid>

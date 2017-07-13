@@ -17,12 +17,12 @@ namespace BetterRouterProgram
 
         private class ProgressMessage
         {
-            public string Message {get; set;};
-            public double AmountToAdd {get; set;};
+            public string MessageString { get; set; }
+            public double AmountToAdd { get; set; }
 
             public ProgressMessage(string message = "", double amountToAdd = 0)
             {
-                Message = message;
+                MessageString = message;
                 AmountToAdd = amountToAdd;
             }
         }
@@ -67,13 +67,18 @@ namespace BetterRouterProgram
                 if (InitializeSerialPort(portName))
                 {
                     //FunctionUtil.Login("root", currentPassword)
-                    if (FunctionUtil.Login("root", ""))
+                    if (FunctionUtil.Login("root", currentPassword))
                     {
-                        //TODO: Make Pingtest another backgroundWorker? -> cannot transfer files otherwise (no idea why)
-                        FunctionUtil.PingTest();
 
-                        //this will run, and upon completion the worker will proceed with the remaining functions
-                        transferWorker.RunWorkerAsync();
+                        if (FunctionUtil.PingTest()){
+                            //this will run, and upon completion the worker will proceed with the remaining functions
+                            //transferWorker.RunWorkerAsync();
+                        }
+                        else
+                        {
+                            FunctionUtil.PromptDisconnect();
+                        }
+
                     }
                     else
                     {
@@ -110,10 +115,12 @@ namespace BetterRouterProgram
             ProgressMessage pm = e.UserState as ProgressMessage;
 
             FunctionUtil.UpdateProgressWindow(
-                pm.Message, 
+                pm.MessageString, 
                 FunctionUtil.Progress.TransferFilesStart, 
                 pm.AmountToAdd
             );
+
+            Thread.Sleep(200);
         }
 
         private static void transferWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -121,53 +128,66 @@ namespace BetterRouterProgram
             // run all background tasks here
             double totalProgress = 50;
 
-            ProgressMessage pm = new ProgressMessage("Transferring Configuration Files");
+            int i = 0;
 
+
+            ProgressMessage pm = new ProgressMessage("Transferring Configuration Files");
             transferWorker.ReportProgress(0, pm);
 
             //TODO: change back after testing
             RunInstruction(@"cd a:\test\test1");
 
-            int i = 0;
             foreach (var file in FunctionUtil.GetFilesToTransfer())
             {
                 //UpdateProgressWindow($"Transferring File: {hostFile} -> {file}");
-                pm.Message = $"Transferring File: {FunctionUtil.FormatHostFile(file)} -> {file}";
+                Thread.Sleep(500);
+                pm.MessageString = $"Transferring File: {FunctionUtil.FormatHostFile(file)} -> {file}";
+                Thread.Sleep(500);
                 transferWorker.ReportProgress(0, pm);
+                Thread.Sleep(500);
+
 
                 //attempt to copy the files from the host to the machine
-                string message = SerialConnection.RunInstruction(String.Format("copy {0}:{1} {2}",
+                string message = RunInstruction(String.Format("copy {0}:{1} {2}",
                     GetSetting("host ip address"),
                     FunctionUtil.FormatHostFile(file), file
                 ));
 
                 if (message.Contains("File not found"))
                 {
-                    pm.Message = $"Error: {hostFile} not found in host configuration directory";
-                    transferWorker.ReportProgress(0, pm);
+                    lock (pm)
+                    {
+                        pm.MessageString = $"Error: {FunctionUtil.FormatHostFile(file)} not found in host configuration directory";
+                        transferWorker.ReportProgress(0, pm);
+                    }
                 }
                 else if (message.Contains("Cannot route"))
                 {
-                    pm.Message = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
-                    transferWorker.ReportProgress(0, pm);
+                    lock (pm)
+                    {
+                        pm.MessageString = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
+                        transferWorker.ReportProgress(0, pm);
+                    }
                 }
                 else
                 {
                     //update the progress window according to the file's transfer status
-                    pm.Message = $"{FunctionUtil.FormatHostFile(file)} Successfully Transferred";
-                    pm.amountToAdd = (((double)totalProgress) / FunctionUtil.FilesToTransfer.Count) * (++i);
+                    pm.MessageString = $"{FunctionUtil.FormatHostFile(file)} Successfully Transferred";
+                    pm.AmountToAdd = (((double)totalProgress) / FunctionUtil.GetFilesToTransfer().Count) * (++i);
+
                     transferWorker.ReportProgress(0, pm);
                 }
+
             }
         }
 
         private static void transferWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //FunctionUtil.CopyToSecondary();
+            FunctionUtil.CopyToSecondary();
 
-            //FunctionUtil.SetTime(GetSetting("timezone"));
+            FunctionUtil.SetTime(GetSetting("timezone"));
 
-            //FunctionUtil.SetPassword(GetSetting("system password"));
+            FunctionUtil.SetPassword(GetSetting("system password"));
 
             FunctionUtil.PromptReboot();
 

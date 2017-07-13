@@ -10,6 +10,8 @@
         Title="Router Configurator" 
         Height="370" 
         Width="650"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
         Closing="Window_Closing">
 
     <Grid>
@@ -92,7 +94,7 @@
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <TextBlock Name="filepathText" Text="" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Right" Width="280">
+        <TextBlock Name="filepathText" Text="" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Right" Width="280" VerticalAlignment="Center">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <StackPanel>
@@ -103,7 +105,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="7" Click="BrowseFiles" Width="100" HorizontalAlignment="Left"/>
+        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="9" Click="BrowseFiles" Width="100" HorizontalAlignment="Left"/>
 
         <TextBlock Text="Select the Router ID: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
@@ -149,10 +151,10 @@
             <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
         </Grid>
 
-        <Button Name="connectButton" Content="Connect" Grid.Column="5" Grid.Row="14" Click="AttemptConnection">
+        <Button Name="connectButton" IsEnabled="True" Content="Connect" Grid.Column="3" Grid.Row="17" Click="AttemptConnection"  HorizontalAlignment="Right" Width="105" Panel.ZIndex="1">
         </Button>
 
-        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="17" Grid.Column="3"/>
+        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="17" Grid.Column="3" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
     </Grid>
 </Window>
