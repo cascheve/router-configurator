@@ -43,6 +43,10 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Fills the time zones.
+        /// </summary>
+        /// <param name="m">The m.</param>
         private static void FillTimeZones(MainWindow m)
         {
             foreach (TimeZoneInfo z in TimeZoneInfo.GetSystemTimeZones())
@@ -53,11 +57,18 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Depopulates the i ds.
+        /// </summary>
         private void DepopulateIDs()
         {
             routerID_DD.Items.Clear();
         }
 
+        /// <summary>
+        /// Populates the i ds.
+        /// </summary>
+        /// <param name="directory">The directory.</param>
         private void PopulateIDs(string directory)
         {
             List<string> validRouterIDs = 
@@ -74,6 +85,11 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Routers the identifier selection changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
         private void RouterIDSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (filepathToolTip.Text.Equals(string.Empty) || routerID_DD.Text.Equals(string.Empty))
@@ -95,6 +111,11 @@ namespace BetterRouterProgram
             xgsn.IsChecked = false;
         }
 
+        /// <summary>
+        /// Browses the files.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void BrowseFiles(object sender, RoutedEventArgs e)
         {
             String myStream = null;
@@ -137,6 +158,9 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Updates the file options.
+        /// </summary>
         private void UpdateFileOptions()
         {
             bool staticrpCheck = false;
@@ -161,11 +185,21 @@ namespace BetterRouterProgram
             antiacl.IsChecked = false;
         }
 
+        /// <summary>
+        /// Called when [window close].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
             FunctionUtil.StopTftp();
         }
 
+        /// <summary>
+        /// Attempts the connection.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void AttemptConnection(object sender, RoutedEventArgs e)
         {
             string comPort = this.portNameDD.Text;

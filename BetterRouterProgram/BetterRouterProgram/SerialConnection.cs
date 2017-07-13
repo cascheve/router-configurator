@@ -7,6 +7,9 @@ using System.ComponentModel;
 
 namespace BetterRouterProgram
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SerialConnection
     {
         private static SerialPort SerialPort = null;
@@ -14,6 +17,9 @@ namespace BetterRouterProgram
         private static List <string> FilesToTransfer = null;
         private static BackgroundWorker TransferWorker = null;
 
+        /// <summary>
+        /// 
+        /// </summary>
         private class ProgressMessage
         {
             public string MessageString { get; set; }
@@ -26,11 +32,21 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Gets the setting.
+        /// </summary>
+        /// <param name="setting">The setting.</param>
+        /// <returns></returns>
         public static string GetSetting(string setting)
         {
             return Settings[setting];
         }
 
+        /// <summary>
+        /// Initializes the and connect.
+        /// </summary>
+        /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
+        /// <param name="settings">The settings.</param>
         public static void InitializeAndConnect(Dictionary<string, bool> extraFilesToTransfer, params string[] settings)
         {
             try
@@ -79,6 +95,12 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Logins the specified username.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="password">The password.</param>
+        /// <returns></returns>
         private static bool Login(string username, string password)
         {
             FunctionUtil.UpdateProgressWindow("Logging In");
@@ -109,6 +131,11 @@ namespace BetterRouterProgram
             return false;
         }
 
+        /// <summary>
+        /// Transfers the worker do work.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="DoWorkEventArgs"/> instance containing the event data.</param>
         private static void TransferWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             double totalProgress = 50;
@@ -157,6 +184,11 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Transfers the worker progress changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="ProgressChangedEventArgs"/> instance containing the event data.</param>
         private static void TransferWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             ProgressMessage pm = e.UserState as ProgressMessage;
@@ -170,6 +202,11 @@ namespace BetterRouterProgram
             Thread.Sleep(200);
         }
 
+        /// <summary>
+        /// Transfers the worker completed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="RunWorkerCompletedEventArgs"/> instance containing the event data.</param>
         private static void TransferWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //FunctionUtil.CopyToSecondary();
@@ -183,6 +220,9 @@ namespace BetterRouterProgram
             FunctionUtil.PromptDisconnect();
         }
 
+        /// <summary>
+        /// Closes the connection.
+        /// </summary>
         public static void CloseConnection()
         {
             if (SerialPort.IsOpen)
@@ -191,6 +231,9 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Resets the connection buffers.
+        /// </summary>
         private static void ResetConnectionBuffers()
         {
             if (SerialPort.IsOpen)
@@ -200,6 +243,11 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Reads the response.
+        /// </summary>
+        /// <param name="endChar">The end character.</param>
+        /// <returns></returns>
         private static string ReadResponse(char endChar = '#')
         {
             char currentResponse = ' ';
@@ -219,6 +267,11 @@ namespace BetterRouterProgram
             return response;
         }
 
+        /// <summary>
+        /// Runs the instruction.
+        /// </summary>
+        /// <param name="instruction">The instruction.</param>
+        /// <returns></returns>
         public static string RunInstruction(string instruction)
         {
             string retVal = "Unable to Run: No Connection to the Serial Port";
@@ -233,6 +286,11 @@ namespace BetterRouterProgram
             return retVal;
         }
 
+        /// <summary>
+        /// Initializes the serial port.
+        /// </summary>
+        /// <param name="comPort">The COM port.</param>
+        /// <returns></returns>
         private static bool InitializeSerialPort(string comPort)
         {
             try
@@ -250,6 +308,12 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Initializes the connection.
+        /// </summary>
+        /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
+        /// <param name="settings">The settings.</param>
+        /// <returns></returns>
         private static bool InitializeConnection(Dictionary<string, bool> extraFilesToTransfer, string[] settings)
         {
             Settings = new Dictionary<string, string>()
@@ -301,6 +365,10 @@ namespace BetterRouterProgram
             return InitializeSerialPort(settings[0]);
         }
 
+        /// <summary>
+        /// Sets the files to transfer.
+        /// </summary>
+        /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
         private static void SetFilesToTransfer(Dictionary<string, bool> extraFilesToTransfer)
         {
             FilesToTransfer = new List<string>();
@@ -317,6 +385,11 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Formats the host file.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <returns></returns>
         private static string FormatHostFile(string file) {
             file = file.Trim();
 
