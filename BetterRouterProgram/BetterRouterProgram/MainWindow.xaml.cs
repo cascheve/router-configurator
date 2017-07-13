@@ -6,8 +6,6 @@ using System.Windows.Media;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.IO;
-using Microsoft.Win32;
-using System.Threading;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,7 +15,8 @@ namespace BetterRouterProgram
     {
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class. This includes
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// This includes filling the port and timezone DropDown lists
         /// </summary>
         public MainWindow()
         {
@@ -30,7 +29,7 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Fills the port names.
+        /// Programmatically locates the available COM ports on the host computer and fills the DropDown list
         /// </summary>
         /// <param name="m">A reference to the window object</param>
         private static void FillPortNames(MainWindow m)
@@ -44,7 +43,7 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Fills the time zones.
+        /// Fills the time zones DropDown with all the possible timezones the router may be located in
         /// </summary>
         /// <param name="m">The m.</param>
         private static void FillTimeZones(MainWindow m)
@@ -58,7 +57,7 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Depopulates the i ds.
+        /// Depopulates the router ID list in case of a new configuration directory being selected
         /// </summary>
         private void DepopulateIDs()
         {
@@ -66,7 +65,7 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Populates the i ds.
+        /// Populates the ID list using the files found inside the configuration directory
         /// </summary>
         /// <param name="directory">The directory.</param>
         private void PopulateIDs(string directory)
@@ -86,9 +85,9 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Routers the identifier selection changed.
+        /// When the configuration folder is changed, locate the configuration files
         /// </summary>
-        /// <param name="sender">The sender.</param>
+        /// <param name="sender">The sender of the selection change</param>
         /// <param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
         private void RouterIDSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -112,9 +111,9 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Browses the files.
+        /// Browses for the configuration directory containing the configuration files and TFTP application
         /// </summary>
-        /// <param name="sender">The sender.</param>
+        /// <param name="sender">The sender of the browse event</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void BrowseFiles(object sender, RoutedEventArgs e)
         {
@@ -159,7 +158,7 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Updates the file options.
+        /// Updates the file options based on the currently chosen configuration directory
         /// </summary>
         private void UpdateFileOptions()
         {
@@ -186,9 +185,9 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Called when [window close].
+        /// Called when the window is closing, used to clean up the TFTP application
         /// </summary>
-        /// <param name="sender">The sender.</param>
+        /// <param name="sender">The sender of the close event</param>
         /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -196,7 +195,8 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Attempts the connection.
+        /// Attempts to connect to the router using the information provided by the user. 
+        /// Spawns a progress window that thereby notifies the user of all successes and failures.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
