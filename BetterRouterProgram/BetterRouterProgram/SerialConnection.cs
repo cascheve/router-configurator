@@ -8,17 +8,54 @@ using System.ComponentModel;
 namespace BetterRouterProgram
 {
     /// <summary>
-    /// 
+    /// Runs the instructions necessary to program the router
+    /// through the serial connection.
     /// </summary>
+    /// <remarks>
+    /// <list type="bullet">
+    ///     <listheader>
+    ///         <description> Data ontained in this class/description>
+    ///    </listheader>
+    ///         <item>
+    ///             <description>Serial connection information</description>
+    ///         </item>\
+    ///         <item>
+    ///             <description>Settings for the router configuration</description>
+    ///         </item>
+    ///         <item>
+    ///             <description>BackgroundWorker used for UI updates</description>
+    ///         </item>
+    ///</list>
+    /// The neccessety of a BackgroundWorker caused <see cref="TransferWorkerDoWork"/>
+    /// functionality to be in this clas rather than <see cref="FunctionUtil"/>.
+    /// 
+    /// The functionality of <see cref="Login"/> made it neccessary to put it in this class.
+    /// </remarks>
     public class SerialConnection
     {
+        /// <summary>
+        /// SerialPort object use to communicate via serial with the router.
+        /// </summary>
         private static SerialPort SerialPort = null;
+
+        /// <summary>
+        /// Data structure used to quickly access router
+        /// configuration settings.
+        /// </summary>
         private static Dictionary<string, string> Settings = null;
+
+        /// <summary>
+        /// List of files to transfer to the router
+        /// </summary>
         private static List <string> FilesToTransfer = null;
+
+        /// <summary>
+        /// worker used to update ui asynchronous.
+        /// </summary>
         private static BackgroundWorker TransferWorker = null;
 
         /// <summary>
-        /// 
+        /// Class used to encaupsulate information to be passed to the <see cref="ProgressBar"/>
         /// </summary>
         private class ProgressMessage
         {
@@ -33,20 +70,22 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Gets the setting.
+        /// Gets the setting value associated with the setting name.
         /// </summary>
         /// <param name="setting">The setting.</param>
-        /// <returns></returns>
+        /// <returns> a string value associated 
+        /// with the setting requested.</returns>
         public static string GetSetting(string setting)
         {
             return Settings[setting];
         }
 
         /// <summary>
-        /// Initializes the and connect.
+        /// Initializes the serial connection and connects to the router
         /// </summary>
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
-        /// <param name="settings">The settings.</param>
+        /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
+        /// <param name="settings">The settings for the router configuration.</param>
         public static void InitializeAndConnect(Dictionary<string, bool> extraFilesToTransfer, params string[] settings)
         {
             try
@@ -96,11 +135,11 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Logins the specified username.
+        /// Logins with the specified username and password.
         /// </summary>
-        /// <param name="username">The username.</param>
-        /// <param name="password">The password.</param>
-        /// <returns></returns>
+        /// <param name="username">The router username.</param>
+        /// <param name="password">The current router password.</param>
+        /// <returns> whether the login was successful or not.</returns>
         private static bool Login(string username, string password)
         {
             FunctionUtil.UpdateProgressWindow("Logging In");
@@ -132,10 +171,16 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Transfers the worker do work.
+        /// Transfers files to the router as a BackgroundWorker.
+        /// This is where the router instructions are run and handled.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="DoWorkEventArgs"/> instance containing the event data.</param>
+        /// <remarks>
+        /// Event handler: parameters need to stay constant.
+        /// Transfer files being an async function, it needs to update the UI on the background.
+        /// This is the only way to get it to work smoothly.
+        /// </remarks>
         private static void TransferWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             double totalProgress = 50;
@@ -185,10 +230,15 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Transfers the worker progress changed.
+        /// Updates the ProgressBar on a progress 
+        /// change called by <see cref="TransferWorker.ReportProgress"/>.
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="ProgressChangedEventArgs"/> instance containing the event data.</param>
+        /// <remarks>
+        /// Event handler: parameters need to stay constant.
+        /// This is only for handling TransferFiles functionality's progress change.
+        /// </remarks>
         private static void TransferWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             ProgressMessage pm = e.UserState as ProgressMessage;
@@ -203,10 +253,15 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Transfers the worker completed.
+        /// This function is run when <see cref="TransferWorkerDoWork"/> is completed.
+        /// This then runs the rest of the functions to configure the router
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="RunWorkerCompletedEventArgs"/> instance containing the event data.</param>
+        /// /// <remarks>
+        /// Event handler: parameters need to stay constant.
+        /// This is only for handling TransferFiles functionality's completion.
+        /// </remarks>
         private static void TransferWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             //FunctionUtil.CopyToSecondary();
@@ -221,7 +276,7 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Closes the connection.
+        /// Closes the <see cref="SerialPort"/> connection.
         /// </summary>
         public static void CloseConnection()
         {
@@ -232,8 +287,11 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Resets the connection buffers.
+        /// Resets the connection buffers for <see cref="SerialPort"/>.
         /// </summary>
+        /// <remarks> 
+        /// This method is only called in the <see cref="RunInstruction"/> function
+        /// </remarks>
         private static void ResetConnectionBuffers()
         {
             if (SerialPort.IsOpen)
@@ -244,10 +302,15 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Reads the response.
+        /// Reads the response from the input buffer.
         /// </summary>
-        /// <param name="endChar">The end character.</param>
-        /// <returns></returns>
+        /// <param name="endChar">Character that terminates the input buffer listener.</param>
+        /// <returns>The whole response from the input buffer</returns>
+        /// <remarks> 
+        /// This method is only called in the <see cref="RunInstruction"/> function.
+        /// The whole message returned is just after a run instruction.
+        /// This means that the message is the response from the instruction.
+        /// </remarks>
         private static string ReadResponse(char endChar = '#')
         {
             char currentResponse = ' ';
@@ -268,10 +331,11 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Runs the instruction.
+        /// Sends the instruction to the output buffer, 
+        /// which sends it to the router to be run there.
         /// </summary>
-        /// <param name="instruction">The instruction.</param>
-        /// <returns></returns>
+        /// <param name="instruction">The instruction to be run.</param>
+        /// <returns> the response from the router after the instruction is run.</returns>
         public static string RunInstruction(string instruction)
         {
             string retVal = "Unable to Run: No Connection to the Serial Port";
@@ -287,10 +351,10 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Initializes the serial port.
+        /// Initializes the serial port/connection.
         /// </summary>
         /// <param name="comPort">The COM port.</param>
-        /// <returns></returns>
+        /// <returns> Whether the connection was able to be opened</returns>
         private static bool InitializeSerialPort(string comPort)
         {
             try
@@ -314,6 +378,9 @@ namespace BetterRouterProgram
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
         /// <param name="settings">The settings.</param>
         /// <returns></returns>
+        /// <remarks> Named this metod with a lack of a better one. 
+        /// If a better name comes up, please rename it here and <see cref"InitializeConnection"/>
+        /// </remarks>
         private static bool InitializeConnection(Dictionary<string, bool> extraFilesToTransfer, string[] settings)
         {
             Settings = new Dictionary<string, string>()
@@ -366,11 +433,13 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Sets the files to transfer.
+        /// Creates the list of all the files to transfer.
         /// </summary>
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
+        /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         private static void SetFilesToTransfer(Dictionary<string, bool> extraFilesToTransfer)
         {
+            //TODO: uncomment boot.ppc after testing
             FilesToTransfer = new List<string>();
             //FilesToTransfer.Add("boot.ppc");
             FilesToTransfer.Add("boot.cfg");
@@ -387,9 +456,10 @@ namespace BetterRouterProgram
 
         /// <summary>
         /// Formats the host file.
+        /// Used in see <cref="TransferWorkerDoWork"/>
         /// </summary>
         /// <param name="file">The file.</param>
-        /// <returns></returns>
+        /// <returns>The host file as a string in the correct format.</returns>
         private static string FormatHostFile(string file) {
             file = file.Trim();
 
