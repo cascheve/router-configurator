@@ -69,7 +69,6 @@ namespace BetterRouterProgram
                     //FunctionUtil.Login("root", currentPassword)
                     if (FunctionUtil.Login("root", currentPassword))
                     {
-
                         if (FunctionUtil.PingTest()){
                             //this will run, and upon completion the worker will proceed with the remaining functions
                             transferWorker.RunWorkerAsync();
@@ -78,7 +77,6 @@ namespace BetterRouterProgram
                         {
                             FunctionUtil.PromptDisconnect();
                         }
-
                     }
                     else
                     {
@@ -125,11 +123,7 @@ namespace BetterRouterProgram
 
         private static void transferWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            // run all background tasks here
             double totalProgress = 50;
-
-            int i = 0;
-
 
             ProgressMessage pm = new ProgressMessage("Transferring Configuration Files");
             transferWorker.ReportProgress(0, pm);
@@ -137,15 +131,14 @@ namespace BetterRouterProgram
             //TODO: change back after testing
             RunInstruction(@"cd a:\test3");
 
+            int i = 0;
             foreach (var file in FunctionUtil.GetFilesToTransfer())
             {
-                //UpdateProgressWindow($"Transferring File: {hostFile} -> {file}");
                 Thread.Sleep(500);
                 pm.MessageString = $"Transferring File: {FunctionUtil.FormatHostFile(file)} -> {file}";
                 Thread.Sleep(500);
                 transferWorker.ReportProgress(0, pm);
                 Thread.Sleep(500);
-
 
                 //attempt to copy the files from the host to the machine
                 string message = RunInstruction(String.Format("copy {0}:{1} {2}",
@@ -153,31 +146,24 @@ namespace BetterRouterProgram
                     FunctionUtil.FormatHostFile(file), file
                 ));
 
+                //update the progress window according to the file's transfer status
                 if (message.Contains("File not found"))
                 {
-                    lock (pm)
-                    {
-                        pm.MessageString = $"Error: {FunctionUtil.FormatHostFile(file)} not found in host configuration directory";
-                        transferWorker.ReportProgress(0, pm);
-                    }
+                    pm.MessageString = $"Error: {FunctionUtil.FormatHostFile(file)} not found in host configuration directory";
+                    transferWorker.ReportProgress(0, pm);
                 }
                 else if (message.Contains("Cannot route"))
                 {
-                    lock (pm)
-                    {
-                        pm.MessageString = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
-                        transferWorker.ReportProgress(0, pm);
-                    }
+                    pm.MessageString = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
+                    transferWorker.ReportProgress(0, pm);
                 }
                 else
                 {
-                    //update the progress window according to the file's transfer status
                     pm.MessageString = $"{FunctionUtil.FormatHostFile(file)} Successfully Transferred";
-                    pm.AmountToAdd = (((double)totalProgress) / FunctionUtil.GetFilesToTransfer().Count) * (++i);
+                    pm.AmountToAdd = ((totalProgress) / FunctionUtil.GetFilesToTransfer().Count) * (++i);
 
                     transferWorker.ReportProgress(0, pm);
                 }
-
             }
         }
 
@@ -192,7 +178,6 @@ namespace BetterRouterProgram
             FunctionUtil.PromptReboot();
 
             FunctionUtil.PromptDisconnect();
-
         }
 
         public static string GetSetting(string setting)
@@ -255,7 +240,6 @@ namespace BetterRouterProgram
 
         public static string RunInstruction(string instruction)
         {
-
             string retVal = "Unable to Run: No Connection to the Serial Port";
 
             if (SerialPort.IsOpen)

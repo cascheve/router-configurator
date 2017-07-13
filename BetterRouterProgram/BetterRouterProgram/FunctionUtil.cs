@@ -11,7 +11,6 @@ using System.ComponentModel;
 
 namespace BetterRouterProgram
 {
-
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
@@ -28,7 +27,7 @@ namespace BetterRouterProgram
                 CopyToSecondary = 80, 
                 SetTime = 85, 
                 Password = 95,
-                Reboot = 100,
+                Reboot = 100
         };
 
         public static List<string> GetFilesToTransfer() {
@@ -54,7 +53,6 @@ namespace BetterRouterProgram
 
             //if the serial connection fails using the username and password specified
             if (!SerialConnection.Login(username, password)) {
-
                 UpdateProgressWindow("**Login Unsuccessful**", Progress.None);
 
                 return false;
@@ -146,21 +144,21 @@ namespace BetterRouterProgram
         }
 
         public static string FormatHostFile(string file) {
-
-            string filename = "";
             file = file.Trim();
 
-            if(file.Equals("staticRP.cfg") || file.Equals("antiacl.cfg") || file.Equals("boot.ppc")) {
-                filename = file;
+            swtich(file) {
+                case "staticRP.cfg":
+                case "antiacl.cfg":
+                case "boot.ppc":
+                    return file;
+                case "acl.cfg":
+                case "xgsn.cfg":
+                    return SerialConnection.GetSetting("router ID") + "_" + file;
+                case "boot.cfg":
+                    return SerialConnection.GetSetting("router ID") + ".cfg";;
+                default:
+                    break;
             }
-            else if(file.Equals("acl.cfg") || file.Equals("xgsn.cfg")) {
-                filename = SerialConnection.GetSetting("router ID") + "_" + file;
-            }
-            else if(file.Equals("boot.cfg")) {
-                filename = SerialConnection.GetSetting("router ID") + ".cfg";
-            }
-
-            return filename;
         }
 
         //TODO: change paths for testing
