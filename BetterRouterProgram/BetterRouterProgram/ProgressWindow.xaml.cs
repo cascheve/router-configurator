@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace BetterRouterProgram
 {
@@ -20,7 +9,8 @@ namespace BetterRouterProgram
     public partial class ProgressWindow : Window
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProgressWindow"/> class.
+        /// Initializes a new instance of the <see cref="ProgressWindow"/> class. 
+        /// This is the window used to display all messages from the configuration process, including errors.
         /// </summary>
         public ProgressWindow()
         {
@@ -29,9 +19,8 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Handles the reboot.
+        /// Sends a reboot message to the router and closes the Serial connection
         /// </summary>
-        /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void HandleReboot(object sender, RoutedEventArgs e)
         {
@@ -41,9 +30,8 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Handles the disconnect.
+        /// Disconnects the host from the router
         /// </summary>
-        /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         public void HandleDisconnect(object sender, RoutedEventArgs e)
         {
@@ -55,11 +43,9 @@ namespace BetterRouterProgram
             Close();
         }
 
-        //if the window is clsoed by the user
         /// <summary>
-        /// Handles the Closing event of the DataWindow control.
+        /// If the window is closed by the user, make sure the COM port is freed
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="CancelEventArgs"/> instance containing the event data.</param>
         void DataWindow_Closing(object sender, CancelEventArgs e)
         {
