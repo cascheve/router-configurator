@@ -11,12 +11,18 @@ using System.ComponentModel;
 
 namespace BetterRouterProgram
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class FunctionUtil
     {
         private static ProgressWindow ProgressWindow = null;
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static Process Tftp = null;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public enum Progress : int {
                 None = 0,
                 Login = 5, 
@@ -28,6 +34,9 @@ namespace BetterRouterProgram
                 Reboot = 100
         };
 
+        /// <summary>
+        /// Initializes the progress window.
+        /// </summary>
         public static void InitializeProgressWindow() {
             ProgressWindow = new ProgressWindow();
             ProgressWindow.progressBar.Value = (int)Progress.None;
@@ -35,6 +44,12 @@ namespace BetterRouterProgram
             ProgressWindow.Show();
         }
 
+        /// <summary>
+        /// Updates the progress window.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="setValue">The set value.</param>
+        /// <param name="toAdd">To add.</param>
         public static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0) {
             if(setValue != Progress.None) {
                 ProgressWindow.progressBar.Value = (int)setValue;   
@@ -44,6 +59,10 @@ namespace BetterRouterProgram
             ProgressWindow.currentTask.Text += "\n" + text;
         }
 
+        /// <summary>
+        /// Pings the test.
+        /// </summary>
+        /// <returns>did it work</returns>
         public static bool PingTest() {
             UpdateProgressWindow("Pinging Host Machine");
 
@@ -73,7 +92,9 @@ namespace BetterRouterProgram
             return retVal;
         }
 
-         //TODO: change paths for testing
+        /// <summary>
+        /// Copies to secondary.
+        /// </summary>
         public static void CopyToSecondary() {
             UpdateProgressWindow("Creating Back-Up Directory");
 
@@ -84,6 +105,10 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Backup Created Successfully", Progress.CopyToSecondary);
         }
 
+        /// <summary>
+        /// Sets the password.
+        /// </summary>
+        /// <param name="password">The password.</param>
         public static void SetPassword(string password) {
             UpdateProgressWindow("Setting Password");
 
@@ -116,8 +141,12 @@ namespace BetterRouterProgram
             SerialConnection.RunInstruction($"setd -ac secret = \"{password}\"");
             UpdateProgressWindow("Secret Password Set", Progress.Password);
         }
-         
+
         //takes a signed offset which is the number of hours forward or backward the clock must be from CST
+        /// <summary>
+        /// Sets the time.
+        /// </summary>
+        /// <param name="timeZoneString">The time zone string.</param>
         public static void SetTime(string timeZoneString = "") 
         {
             int offset = 0;
@@ -139,6 +168,9 @@ namespace BetterRouterProgram
             SerialConnection.RunInstruction($"SET - SYS DATE = {setDate.ToString(DateFormat)}");
         }
 
+        /// <summary>
+        /// Prompts the reboot.
+        /// </summary>
         public static void PromptReboot() 
         {
             ProgressWindow.RebootButton.IsEnabled = true;
@@ -146,6 +178,9 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Please Reboot or Disconnect");
         }
 
+        /// <summary>
+        /// Handles the reboot.
+        /// </summary>
         public static void HandleReboot()
         {
             SerialConnection.RunInstruction("rb");
@@ -164,12 +199,20 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Please Disconnect from the COM Port.");
         }
 
+        /// <summary>
+        /// Called when [TFTP exit].
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private static void OnTftpExit(object sender, EventArgs e)
         {
             System.Windows.Forms.MessageBox.Show("The TFTP Application was closed. This may cause errors in File Transfer.");
             Tftp = null;
         }
 
+        /// <summary>
+        /// Starts the TFTP.
+        /// </summary>
         public static void StartTftp()
         {
             if (Directory.Exists(@"C:\Motorola\SDM3000\Common\TFTP"))
@@ -191,6 +234,9 @@ namespace BetterRouterProgram
             
         }
 
+        /// <summary>
+        /// Stops the TFTP.
+        /// </summary>
         public static void StopTftp()
         {
             if (Directory.Exists(@"C:\Motorola\SDM3000\Common\temp_TFTP"))
