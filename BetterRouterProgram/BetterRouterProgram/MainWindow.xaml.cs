@@ -47,10 +47,11 @@ namespace BetterRouterProgram
 
         private void FillID_DD(string directory)
         {
-            string[] files = Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName).ToArray();
+            bool hasTFTP = false;
+            string[] configFiles = Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName).ToArray();
 
             List<string> validRouterIDs = 
-                (from file in files
+                (from file in configFiles
                 where file.Contains("z0") || file.Contains("cen")
                 orderby file ascending
                 select file.Split('_')[0]).Distinct().ToList();
@@ -60,6 +61,15 @@ namespace BetterRouterProgram
                 ComboBoxItem cBoxItem = new ComboBoxItem();
                 cBoxItem.Content = id;
                 routerID_DD.Items.Add(cBoxItem);
+            }
+
+            //TODO: prompt user if they dont have tftpd32 in their directory
+            if(File.Exists(directory + @"\tftpd32.exe"))
+            {
+                hasTFTP = true;
+            }
+            else {
+
             }
         }
 
