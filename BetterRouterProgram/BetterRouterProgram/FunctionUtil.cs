@@ -153,6 +153,9 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Reboot Command Sent Successfully", Progress.Reboot);
         }
 
+        /// <summary>
+        ///  Prompt and enable the user to disconnect from the current serial port (This does not reboot the router)
+        /// </summary>
         public static void PromptDisconnect()
         {
             ProgressWindow.DisconnectButton.IsEnabled = true;
@@ -163,7 +166,6 @@ namespace BetterRouterProgram
 
         private static void OnTftpExit(object sender, EventArgs e)
         {
-            //TODO this message may be too treatening, given the proper handling measures
             System.Windows.Forms.MessageBox.Show("The TFTP Application was closed. This may cause errors in File Transfer.");
             Tftp = null;
         }

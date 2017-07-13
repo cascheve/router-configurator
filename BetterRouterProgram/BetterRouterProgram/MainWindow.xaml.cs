@@ -15,6 +15,10 @@ namespace BetterRouterProgram
 {
     public partial class MainWindow : Window
     {
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindow"/> class. This includes
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -25,6 +29,10 @@ namespace BetterRouterProgram
             FillTimeZones(this);
         }
 
+        /// <summary>
+        /// Fills the port names.
+        /// </summary>
+        /// <param name="m">A reference to the window object</param>
         private static void FillPortNames(MainWindow m)
         {
             foreach (string s in SerialPort.GetPortNames())
