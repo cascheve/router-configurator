@@ -106,8 +106,8 @@ namespace BetterRouterProgram
                         filepathToolTip.Text = fbd.SelectedPath;
 
                         //refill the router ID list with valid router IDs
-                        DepopulateID_DD();
-                        FillID_DD(fbd.SelectedPath);
+                        DepopulateIDs();
+                        PopulateIDs(fbd.SelectedPath);
                         UpdateFileOptions();
 
                         //shortens the path for cleanliness
@@ -209,9 +209,7 @@ namespace BetterRouterProgram
                     }
                 }
 
-                SerialConnection.Connect(
-                    comPort, iString, sString, routerID, 
-                    configDir, timezone, hostIP,
+                SerialConnection.InitializeAndConnect(
                     new Dictionary<string, bool>()
                     {
                         {staticrp.Content.ToString(),
@@ -220,7 +218,9 @@ namespace BetterRouterProgram
                             antiacl.IsChecked.HasValue ? antiacl.IsChecked.Value : false},
                         {xgsn.Content.ToString(),
                             xgsn.IsChecked.HasValue ? xgsn.IsChecked.Value : false}
-                    }
+                    },
+                    comPort, iString, sString, routerID, 
+                    configDir, timezone, hostIP
                 );
             }
         }

@@ -31,7 +31,8 @@ namespace BetterRouterProgram
         public static void InitializeProgressWindow() {
             ProgressWindow = new ProgressWindow();
             ProgressWindow.progressBar.Value = (int)Progress.None;
-            pw.Topmost = true;
+            ProgressWindow.Topmost = false;
+            ProgressWindow.Show();
         }
 
         public static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0) {
@@ -41,20 +42,6 @@ namespace BetterRouterProgram
             }
 
             ProgressWindow.currentTask.Text += "\n" + text;
-        }
-
-        public static bool Login(string username = "root", string password = "") {
-            UpdateProgressWindow("Logging In");
-
-            //if the serial connection fails using the username and password specified
-            if (!SerialConnection.Login(username, password)) {
-                UpdateProgressWindow("**Login Unsuccessful**", Progress.None);
-
-                return false;
-            }
-            
-            UpdateProgressWindow("Login Successful", Progress.Login);
-            return true;
         }
 
         public static bool PingTest() {
@@ -156,16 +143,14 @@ namespace BetterRouterProgram
         {
             ProgressWindow.RebootButton.IsEnabled = true;
             ProgressWindow.RebootText.Opacity = 1.0;
-            UpdateProgressWindow("Please Reboot Router");
+            UpdateProgressWindow("Please Reboot or Disconnect");
         }
 
         public static void HandleReboot()
         {
-            UpdateProgressWindow("Rebooting");
-            
             SerialConnection.RunInstruction("rb");
 
-            UpdateProgressWindow("Reboot Successful", Progress.Reboot);
+            UpdateProgressWindow("Reboot Command Sent Successfully", Progress.Reboot);
         }
 
         public static void PromptDisconnect()
@@ -176,6 +161,13 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Please Disconnect from the COM Port.");
         }
 
+        private static void OnTftpExit(object sender, EventArgs e)
+        {
+            //TODO this message may be too treatening, given the proper handling measures
+            System.Windows.Forms.MessageBox.Show("The TFTP Application was closed. This may cause errors in File Transfer.");
+            Tftp = null;
+        }
+
         public static void StartTftp()
         {
             if (Directory.Exists(@"C:\Motorola\SDM3000\Common\TFTP"))
@@ -184,13 +176,17 @@ namespace BetterRouterProgram
                 Thread.Sleep(250);
             }
 
-            Tftp = new Process();
-            Tftp.EnableRaisingEvents = true;
-            Tftp.Exited += Tftp_Exited;
-            Tftp.StartInfo.Arguments = @"C:\";
-            Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
-            Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
-            Tftp.Start();
+            if (Tftp == null)
+            {
+                Tftp = new Process();
+                Tftp.EnableRaisingEvents = true;
+                Tftp.Exited += OnTftpExit;
+                Tftp.StartInfo.Arguments = @"C:\";
+                Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
+                Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
+                Tftp.Start();
+            }
+            
         }
 
         public static void StopTftp()

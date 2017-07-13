@@ -12,7 +12,7 @@
         Width="650"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Closing="Window_Closing">
+        Closing="OnWindowClose">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -114,7 +114,7 @@
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <ComboBox x:Name="routerID_DD" Grid.Row="11" Grid.Column="3" Width="250" Height="22" SelectionChanged="routerID_DD_SelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <ComboBox x:Name="routerID_DD" Grid.Row="11" Grid.Column="3" Width="250" Height="22" SelectionChanged="RouterIDSelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
         <TextBlock Name="TimeZoneTitle" Text="Time Zone of the System: " Grid.Row="13" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">

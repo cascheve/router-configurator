@@ -31,11 +31,11 @@ namespace BetterRouterProgram
             return Settings[setting];
         }
 
-        public static void InitializeAndConnect(params string[] settings, Dictionary<string, bool> extraFilesToTransfer)
+        public static void InitializeAndConnect(Dictionary<string, bool> extraFilesToTransfer, params string[] settings)
         {
             try
             {
-                if (InitializeConnection(settings))
+                if (InitializeConnection(extraFilesToTransfer, settings))
                 {
                     //Login("root", currentPassword)
                     if (Login("root", "P25LACleco2016!"))
@@ -51,13 +51,13 @@ namespace BetterRouterProgram
                     }
                     else
                     {
-                        FunctionUtil.UpdateProgressWindow("There was an Error logging into the Router. Check your login information and try again.");
+                        FunctionUtil.UpdateProgressWindow("There was an Error logging into the Router. \nCheck your login information and try again.");
                         CloseConnection();
                     }
                 }
                 else
                 {
-                    FunctionUtil.UpdateProgressWindow("There was an Error establishing a connection to the Serial Port. Please check your connection and try again");
+                    FunctionUtil.UpdateProgressWindow("There was an Error establishing a connection to the Serial Port. \nPlease check your connection and try again");
                 }
             }
             catch (System.IO.FileNotFoundException)
@@ -66,7 +66,7 @@ namespace BetterRouterProgram
             }
             catch (System.ComponentModel.Win32Exception)
             {
-                FunctionUtil.UpdateProgressWindow("Error: Could not find the TFTP Client executable in the folder specified. Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.");
+                FunctionUtil.UpdateProgressWindow("Error: Could not find the TFTP Client executable in the folder specified. \nPlease move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.");
             }
             catch (TimeoutException)
             {
@@ -83,9 +83,9 @@ namespace BetterRouterProgram
         {
             FunctionUtil.UpdateProgressWindow("Logging In");
 
-            if (SerialPort.IsOpen)
+            if (!SerialPort.IsOpen)
             {
-                FunctionUtil.UpdateProgressWindow("**Login Unsuccessful**", Progress.None);
+                FunctionUtil.UpdateProgressWindow("**Login Unsuccessful**", FunctionUtil.Progress.None);
                 return false;
             }
             
@@ -102,15 +102,14 @@ namespace BetterRouterProgram
 
             //if the serial connection fails using the username and password specified
             if (ReadResponse('#').Length > 0) {
-                return false;
+                FunctionUtil.UpdateProgressWindow("Login Successful", FunctionUtil.Progress.Login);
+                return true;
             }
             
-            FunctionUtil.UpdateProgressWindow("Login Successful", Progress.Login);
-
-            return true;
+            return false;
         }
 
-        private static void transferWorker_DoWork(object sender, DoWorkEventArgs e)
+        private static void TransferWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             double totalProgress = 50;
 
@@ -122,7 +121,7 @@ namespace BetterRouterProgram
 
             int i = 0;
 
-            foreach (var file in FilesToTransfer())
+            foreach (var file in FilesToTransfer)
             {
                 Thread.Sleep(500);
                 pm.MessageString = $"Transferring File: {FormatHostFile(file)} -> {file}";
@@ -151,7 +150,7 @@ namespace BetterRouterProgram
                 else
                 {
                     pm.MessageString = $"{FormatHostFile(file)} Successfully Transferred";
-                    pm.AmountToAdd = ((totalProgress) / FilesToTransfer().Count) * (++i);
+                    pm.AmountToAdd = ((totalProgress) / FilesToTransfer.Count) * (++i);
 
                     TransferWorker.ReportProgress(0, pm);
                 }
@@ -251,7 +250,8 @@ namespace BetterRouterProgram
             }
         }
 
-        private static void InitializeConnection(string[] settings) {
+        private static bool InitializeConnection(Dictionary<string, bool> extraFilesToTransfer, string[] settings)
+        {
             Settings = new Dictionary<string, string>()
             {
                 {"port", settings[0]},
@@ -273,9 +273,9 @@ namespace BetterRouterProgram
                     
                 //a separate worker thread that takes care of the transferring of files
                 //this is done to allow responsive GUI updates
-                TransferWorker.DoWork += TransferWorker_DoWork;
-                TransferWorker.RunWorkerCompleted += TransferWorker_RunWorkerCompleted;
-                TransferWorker.ProgressChanged += TransferWorker_ProgressChanged;
+                TransferWorker.DoWork += TransferWorkerDoWork;
+                TransferWorker.RunWorkerCompleted += TransferWorkerCompleted;
+                TransferWorker.ProgressChanged += TransferWorkerProgressChanged;
                 TransferWorker.WorkerReportsProgress = true;
 
                 SetFilesToTransfer(extraFilesToTransfer);
@@ -297,16 +297,14 @@ namespace BetterRouterProgram
                 FunctionUtil.UpdateProgressWindow($"Original Error: {ex.Message}");
                 CloseConnection();
             }
-            finally 
-            {
-                return InitializeSerialPort(settings[0])
-            }
+
+            return InitializeSerialPort(settings[0]);
         }
 
         private static void SetFilesToTransfer(Dictionary<string, bool> extraFilesToTransfer)
         {
             FilesToTransfer = new List<string>();
-            FilesToTransfer.Add("boot.ppc");
+            //FilesToTransfer.Add("boot.ppc");
             FilesToTransfer.Add("boot.cfg");
             FilesToTransfer.Add("acl.cfg");
 
@@ -322,7 +320,7 @@ namespace BetterRouterProgram
         private static string FormatHostFile(string file) {
             file = file.Trim();
 
-            swtich(file) {
+            switch(file) {
                 case "staticRP.cfg":
                 case "antiacl.cfg":
                 case "boot.ppc":
@@ -333,7 +331,7 @@ namespace BetterRouterProgram
                 case "boot.cfg":
                     return SerialConnection.GetSetting("router ID") + ".cfg";;
                 default:
-                    break;
+                    return "";
             }
         }
     }
