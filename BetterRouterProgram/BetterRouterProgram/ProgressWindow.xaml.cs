@@ -28,9 +28,11 @@ namespace BetterRouterProgram
         private void HandleReboot(object sender, RoutedEventArgs e)
         {
             FunctionUtil.HandleReboot();
+            Thread.Sleep(750);
+            HandleDisconnect(sender, e);
         }
 
-        private void HandleDisconnect(object sender, RoutedEventArgs e)
+        public void HandleDisconnect(object sender, RoutedEventArgs e)
         {
             SerialConnection.CloseConnection();
 

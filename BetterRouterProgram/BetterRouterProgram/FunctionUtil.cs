@@ -186,16 +186,15 @@ namespace BetterRouterProgram
         {
             ProgressWindow.RebootButton.IsEnabled = true;
             ProgressWindow.RebootText.Opacity = 1.0;
-            UpdateProgressWindow("Please Reboot Router");
+            UpdateProgressWindow("Please Reboot the Router or Disconnect");
         }
 
         public static void HandleReboot()
         {
-            UpdateProgressWindow("Rebooting");
-            
             SerialConnection.RunInstruction("rb");
 
-            UpdateProgressWindow("Reboot Successful", Progress.Reboot);
+            UpdateProgressWindow("Reboot Command Sent", Progress.Reboot);
+            
         }
 
         public static void StartTftp()
@@ -206,19 +205,24 @@ namespace BetterRouterProgram
                 Thread.Sleep(250);
             }
 
-            Tftp = new Process();
-            Tftp.EnableRaisingEvents = true;
-            Tftp.Exited += Tftp_Exited;
-            Tftp.StartInfo.Arguments = @"C:\";
-            Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
-            Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
-            Tftp.Start();
+            //if tftp is not open -> carter do not change
+            if (Tftp == null)
+            {
+                Tftp = new Process();
+                Tftp.EnableRaisingEvents = true;
+                Tftp.Exited += Tftp_Exited;
+                Tftp.StartInfo.Arguments = @"C:\";
+                Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
+                Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
+                Tftp.Start();
+            }
         }
 
         private static void Tftp_Exited(object sender, EventArgs e)
         {
             //TODO: Make TFTP Reference more dynamic/resilient
-            //UpdateProgressWindow("TFTP was closed. This can errors with file transferring.");
+            System.Windows.Forms.MessageBox.Show("TFTP was closed. This can errors with file transferring.");
+            Tftp = null;
         }
 
         public static void StopTftp()
@@ -240,7 +244,7 @@ namespace BetterRouterProgram
         public static void SetFilesToTransfer(Dictionary<string, bool> extraFilesToTransfer)
         {
             FilesToTransfer = new List<string>();
-            FilesToTransfer.Add("boot.ppc");
+            //FilesToTransfer.Add("boot.ppc");
             FilesToTransfer.Add("boot.cfg");
             FilesToTransfer.Add("acl.cfg");
 

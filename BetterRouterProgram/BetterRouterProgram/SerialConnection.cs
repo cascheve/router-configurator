@@ -12,8 +12,8 @@ namespace BetterRouterProgram
         private static SerialPort SerialPort = null;
         private static string ConfigurationDirectory = "";
         private static Dictionary<string, string> Settings = null;
-        private static BackgroundWorker transferWorker = new BackgroundWorker();
-        private static ProgressWindow pw = new ProgressWindow();
+        private static BackgroundWorker transferWorker = null;
+        private static ProgressWindow pw = null;
 
         private class ProgressMessage
         {
@@ -42,8 +42,11 @@ namespace BetterRouterProgram
                 {"host ip address", hostIpAddr}
             };
 
-            pw.Show();
+            pw = new ProgressWindow();
             FunctionUtil.InitializeProgressWindow(ref pw);
+            pw.Show();
+
+            transferWorker = new BackgroundWorker();
 
             try
             {
@@ -67,7 +70,7 @@ namespace BetterRouterProgram
                 if (InitializeSerialPort(portName))
                 {
                     //FunctionUtil.Login("root", currentPassword)
-                    if (FunctionUtil.Login("root", currentPassword))
+                    if (FunctionUtil.Login("root", "P25LACleco2016!"))
                     {
 
                         if (FunctionUtil.PingTest()){
@@ -130,7 +133,6 @@ namespace BetterRouterProgram
 
             int i = 0;
 
-
             ProgressMessage pm = new ProgressMessage("Transferring Configuration Files");
             transferWorker.ReportProgress(0, pm);
 
@@ -183,11 +185,11 @@ namespace BetterRouterProgram
 
         private static void transferWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            FunctionUtil.CopyToSecondary();
+            //FunctionUtil.CopyToSecondary();
 
-            FunctionUtil.SetTime(GetSetting("timezone"));
+            //FunctionUtil.SetTime(GetSetting("timezone"));
 
-            FunctionUtil.SetPassword(GetSetting("system password"));
+            //FunctionUtil.SetPassword(GetSetting("system password"));
 
             FunctionUtil.PromptReboot();
 
