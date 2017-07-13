@@ -47,10 +47,8 @@ namespace BetterRouterProgram
 
         private void FillID_DD(string directory)
         {
-            string[] configFiles = Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName).ToArray();
-
             List<string> validRouterIDs = 
-                (from file in configFiles
+                (from file in Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName).ToArray()
                 where file.Contains("z0") || file.Contains("cen")
                 orderby file ascending
                 select file.Split('_')[0]).Distinct().ToList();
@@ -61,7 +59,6 @@ namespace BetterRouterProgram
                 cBoxItem.Content = id;
                 routerID_DD.Items.Add(cBoxItem);
             }
-
         }
 
         private void DepopulateID_DD()
@@ -119,6 +116,7 @@ namespace BetterRouterProgram
             string routerID = this.routerID_DD.Text;
             string configDir = this.filepathToolTip.Text;
             string timezone = this.timeZoneDD.Text;
+
             string hostIP = "10.10.10.100";
             //string hostIP = this.hostIP.Text;
 
@@ -130,33 +128,31 @@ namespace BetterRouterProgram
             }
             else if (comPort.Equals(string.Empty))
             {
-                errorText.Text = "Please fill in the Port Number";
+                errorText.Text = "Please fill in the port number";
             }
             else if (sString.Equals(string.Empty))
             {
-                errorText.Text = "Please fill in the System Password";
+                errorText.Text = "Please fill in the system password";
             }
             else if (routerID.Equals(string.Empty))
             {
-                errorText.Text = "Please select the Router's ID";
+                errorText.Text = "Please select the router's ID";
             }
             else if (configDir.Equals(string.Empty))
             {
-                errorText.Text = "Please fill the Configuration File Directory";
+                errorText.Text = "Please fill the configuration file directory";
             }
             else if (!File.Exists(configDir + @"\tftpd32.exe"))
             {
-                errorText.Text = "Tftpd32 application not found";
+                errorText.Text = "tftpd32.exe not found in directory";
             }
             else if (timezone.Equals(string.Empty))
             {
-                errorText.Text = "Please select a Time Zone";
+                errorText.Text = "Please select a time zone";
             }
             else
             {
-                string[] configFiles = Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray();
-
-                foreach(var file in configFiles) {
+                foreach(var file in Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray()) {
                     if(file.StartsWith(routerID) && !file.Contains("_acl")) {
                         routerID = file.Substring(0, file.Length - 4);
                         break;
@@ -180,12 +176,11 @@ namespace BetterRouterProgram
 
         private void UpdateFileOptions()
         {
-            string[] configFiles = Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray();
 
             bool staticrpCheck = false;
             bool antiaclCheck = false;
 
-            foreach (var file in configFiles)
+            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray())
             {
                 if (file.StartsWith("staticRP"))
                 {
@@ -211,11 +206,9 @@ namespace BetterRouterProgram
                 return;
             }
 
-            string[] files = Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray();
-            
             bool xgsnCheck = false;
 
-            foreach (var file in files)
+            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray())
             {
                 if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
                 {
