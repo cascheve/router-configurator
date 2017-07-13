@@ -23,10 +23,6 @@ namespace BetterRouterProgram
         {
             InitializeComponent();
             progressBar.Value = 0.5;
-
-            this.WindowStartupLocation = WindowStartupLocation.Manual;
-            this.Left = System.Windows.SystemParameters.WorkArea.Width - this.Width * 3;
-            this.Top = System.Windows.SystemParameters.WorkArea.Height - this.Height * 2;
         }
 
         private void HandleReboot(object sender, RoutedEventArgs e)

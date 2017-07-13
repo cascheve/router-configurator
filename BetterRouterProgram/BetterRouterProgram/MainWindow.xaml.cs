@@ -47,7 +47,6 @@ namespace BetterRouterProgram
 
         private void FillID_DD(string directory)
         {
-            bool hasTFTP = false;
             string[] configFiles = Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName).ToArray();
 
             List<string> validRouterIDs = 
@@ -63,14 +62,6 @@ namespace BetterRouterProgram
                 routerID_DD.Items.Add(cBoxItem);
             }
 
-            //TODO: prompt user if they dont have tftpd32 in their directory
-            if(File.Exists(directory + @"\tftpd32.exe"))
-            {
-                hasTFTP = true;
-            }
-            else {
-
-            }
         }
 
         private void DepopulateID_DD()
@@ -133,7 +124,11 @@ namespace BetterRouterProgram
 
             errorText.Text = "";
 
-            if (comPort.Equals(string.Empty))
+            if (hostIP.Equals(string.Empty))
+            {
+                errorText.Text = "Please fill in the host IP address";
+            }
+            else if (comPort.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the Port Number";
             }
@@ -149,13 +144,13 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "Please fill the Configuration File Directory";
             }
+            else if (!File.Exists(configDir + @"\tftpd32.exe"))
+            {
+                errorText.Text = "Tftpd32 application not found";
+            }
             else if (timezone.Equals(string.Empty))
             {
                 errorText.Text = "Please select a Time Zone";
-            }
-            else if (hostIP.Equals(string.Empty))
-            {
-                errorText.Text = "Please fill in the host IP address";
             }
             else
             {

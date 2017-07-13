@@ -72,7 +72,7 @@ namespace BetterRouterProgram
 
                         if (FunctionUtil.PingTest()){
                             //this will run, and upon completion the worker will proceed with the remaining functions
-                            //transferWorker.RunWorkerAsync();
+                            transferWorker.RunWorkerAsync();
                         }
                         else
                         {
@@ -135,7 +135,7 @@ namespace BetterRouterProgram
             transferWorker.ReportProgress(0, pm);
 
             //TODO: change back after testing
-            RunInstruction(@"cd a:\test\test1");
+            RunInstruction(@"cd a:\test3");
 
             foreach (var file in FunctionUtil.GetFilesToTransfer())
             {

@@ -168,8 +168,8 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Creating Back-Up Directory");
 
             SerialConnection.RunInstruction("cd a:/");
-            SerialConnection.RunInstruction("md /test3");
-            SerialConnection.RunInstruction("copy a:/primary/*.* a:/test3");
+            SerialConnection.RunInstruction("md /test4");
+            SerialConnection.RunInstruction("copy a:/test3/*.* a:/test4");
 
             UpdateProgressWindow("Backup Created Successfully", Progress.CopyToSecondary);
         }
