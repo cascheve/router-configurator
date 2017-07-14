@@ -209,8 +209,8 @@ namespace BetterRouterProgram
             string configDir = this.filepathToolTip.Text;
             string timezone = this.timeZoneDD.Text;
 
-            string hostIP = "10.10.10.100";
-            //string hostIP = this.hostIP.Text;
+            //string hostIP = "10.10.10.100";
+            string hostIP = this.hostIP.Text;
 
             errorText.Text = "";
 

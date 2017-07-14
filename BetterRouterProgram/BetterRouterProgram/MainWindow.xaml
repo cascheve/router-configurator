@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Background="AliceBlue"
         Icon="icon1.ico"
-        Title="Router Configurator" 
+        Title="Router Configuration Tool" 
         Height="370" 
         Width="650"
         ResizeMode="NoResize"

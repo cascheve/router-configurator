@@ -263,9 +263,9 @@ namespace BetterRouterProgram
         /// </remarks>
         private static void TransferWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //FunctionUtil.CopyToSecondary();
+            FunctionUtil.CopyToSecondary(new List<string>(FilesToTransfer));
 
-            //FunctionUtil.SetTime(GetSetting("timezone"));
+            FunctionUtil.SetTime(GetSetting("timezone"));
 
             //FunctionUtil.SetPassword(GetSetting("system password"));
 
