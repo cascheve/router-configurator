@@ -243,15 +243,12 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "Please select a time zone";
             }
+            else if((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(hostIP).Count != 1) 
+            {
+                errorText.Text = "Invalid IP address format";
+            }
             else
             {
-                // ip address validation
-                if((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(hostIP).Count != 1) 
-                {
-                    errorText.Text = "Invlaid IP address format";
-                    return;
-                }
-
                 foreach(var file in Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray()) {
                     if(file.StartsWith(routerID) && !file.Contains("_acl")) {
                         routerID = file.Substring(0, file.Length - 4);
