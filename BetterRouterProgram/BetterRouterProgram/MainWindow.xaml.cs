@@ -219,6 +219,10 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "Please fill in the host IP address";
             }
+            else if ((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(hostIP).Count != 1)
+            {
+                errorText.Text = "Invalid IP address format";
+            }
             else if (comPort.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the port number";
@@ -242,10 +246,6 @@ namespace BetterRouterProgram
             else if (timezone.Equals(string.Empty))
             {
                 errorText.Text = "Please select a time zone";
-            }
-            else if((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(hostIP).Count != 1) 
-            {
-                errorText.Text = "Invalid IP address format";
             }
             else
             {
