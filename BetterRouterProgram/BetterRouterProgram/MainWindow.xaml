@@ -126,7 +126,9 @@
         </TextBlock>
         <ComboBox Name="timeZoneDD" Grid.Row="13" Grid.Column="3" Width="350" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" />
 
-        <TextBlock Text="Files to Transfer: " Grid.Row="15" Grid.Column="1" VerticalAlignment="Center">
+        <Separator Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="3" />
+
+        <TextBlock Text="Optional Files to Transfer: " Grid.Row="15" Grid.Column="1" VerticalAlignment="Center">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Select which of the files to the right should be installed during the configuration process.</TextBlock>

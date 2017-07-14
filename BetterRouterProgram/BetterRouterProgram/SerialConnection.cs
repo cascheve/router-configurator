@@ -151,8 +151,7 @@ namespace BetterRouterProgram
             foreach (var file in FilesToTransfer)
             {
                 Thread.Sleep(500);
-                pm.MessageString = $"Transferring File: {FormatHostFile(file)} -> {file}";
-                Thread.Sleep(500);
+                pm.MessageString = $"Transferring File '{FormatHostFile(file)}' as '{file}'";
                 TransferWorker.ReportProgress(0, pm);
                 Thread.Sleep(500);
 

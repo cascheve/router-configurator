@@ -120,10 +120,10 @@ namespace BetterRouterProgram
             String myStream = null;
             FolderBrowserDialog fbd = new FolderBrowserDialog();
 
-            fbd.Description = "Select the directory holding the configuration (.cfg) files";
-            fbd.ShowNewFolderButton = true;
+            fbd.Description = "Select the directory holding the configuration (*.cfg) files and the TFTP Application.";
+            fbd.ShowNewFolderButton = false;
             errorText.Text = fbd.SelectedPath;
-
+             
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 try
