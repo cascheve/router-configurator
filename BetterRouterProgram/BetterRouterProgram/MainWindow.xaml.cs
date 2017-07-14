@@ -8,6 +8,7 @@ using System.IO.Ports;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace BetterRouterProgram
 {
@@ -244,6 +245,15 @@ namespace BetterRouterProgram
             }
             else
             {
+                // ip address validation
+                Regex ip = new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
+                MatchCollection result = ip.Matches(hostIP);
+                if(ip.Matches(hostIP).Count != 1) 
+                {
+                    errorText.Text = "Invlaid IP address format";
+                    return;
+                }
+
                 foreach(var file in Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray()) {
                     if(file.StartsWith(routerID) && !file.Contains("_acl")) {
                         routerID = file.Substring(0, file.Length - 4);
