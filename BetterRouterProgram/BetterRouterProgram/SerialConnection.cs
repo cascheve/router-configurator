@@ -196,8 +196,7 @@ namespace BetterRouterProgram
             foreach (var file in FilesToTransfer)
             {
                 Thread.Sleep(500);
-                pm.MessageString = $"Transferring File: {FormatHostFile(file)} -> {file}";
-                Thread.Sleep(500);
+                pm.MessageString = $"Transferring File '{FormatHostFile(file)}' as '{file}'";
                 TransferWorker.ReportProgress(0, pm);
                 Thread.Sleep(500);
 
@@ -264,9 +263,9 @@ namespace BetterRouterProgram
         /// </remarks>
         private static void TransferWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //FunctionUtil.CopyToSecondary();
+            FunctionUtil.CopyToSecondary(new List<string>(FilesToTransfer));
 
-            //FunctionUtil.SetTime(GetSetting("timezone"));
+            FunctionUtil.SetTime(GetSetting("timezone"));
 
             //FunctionUtil.SetPassword(GetSetting("system password"));
 

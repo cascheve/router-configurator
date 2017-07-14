@@ -1,4 +1,4 @@
-
+using System.Collections.Generic;
 using System;
 using System.Threading;
 using System.Diagnostics;
@@ -92,14 +92,21 @@ namespace BetterRouterProgram
         /// <summary>
         /// Copies the previously loaded file directory into a back-up directory in case of an error on the router
         /// </summary>
-        public static void CopyToSecondary() {
+        public static void CopyToSecondary(List<string> filesToCopy) {
             UpdateProgressWindow("Creating Back-Up Directory");
 
-            SerialConnection.RunInstruction("cd a:/");
-            SerialConnection.RunInstruction("md /test4");
-            SerialConnection.RunInstruction("copy a:/test3/*.* a:/test4");
+            string backupDirectory = "test4";
 
-            UpdateProgressWindow("Backup Created Successfully", Progress.CopyToSecondary);
+            SerialConnection.RunInstruction("cd a:/");
+            SerialConnection.RunInstruction($"md /{backupDirectory}");
+
+            foreach(var file in filesToCopy)
+            {
+                SerialConnection.RunInstruction($"copy a:/test3/{file} a:/{backupDirectory}");
+                UpdateProgressWindow($"Created backup of {file} in {backupDirectory}");
+            }
+
+            UpdateProgressWindow("Backup Directory Created Successfully", Progress.CopyToSecondary);
         }
 
         /// <summary>

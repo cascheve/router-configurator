@@ -121,10 +121,10 @@ namespace BetterRouterProgram
             String myStream = null;
             FolderBrowserDialog fbd = new FolderBrowserDialog();
 
-            fbd.Description = "Select the directory holding the configuration (.cfg) files";
-            fbd.ShowNewFolderButton = true;
+            fbd.Description = "Select the directory holding the configuration (*.cfg) files and the TFTP Application.";
+            fbd.ShowNewFolderButton = false;
             errorText.Text = fbd.SelectedPath;
-
+             
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 try
@@ -210,8 +210,8 @@ namespace BetterRouterProgram
             string configDir = this.filepathToolTip.Text;
             string timezone = this.timeZoneDD.Text;
 
-            string hostIP = "10.10.10.100";
-            //string hostIP = this.hostIP.Text;
+            //string hostIP = "10.10.10.100";
+            string hostIP = this.hostIP.Text;
 
             errorText.Text = "";
 
