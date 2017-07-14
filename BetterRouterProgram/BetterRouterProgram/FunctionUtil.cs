@@ -95,14 +95,15 @@ namespace BetterRouterProgram
         public static void CopyToSecondary(List<string> filesToCopy) {
             UpdateProgressWindow("Creating Back-Up Directory");
 
-            string backupDirectory = "test4";
+            string backupDirectory = "a:/test4";
 
-            SerialConnection.RunInstruction("cd a:/");
-            SerialConnection.RunInstruction($"md /{backupDirectory}");
+            //SerialConnection.RunInstruction("cd a:/");
+            SerialConnection.RunInstruction($"md {backupDirectory}");
 
             foreach(var file in filesToCopy)
             {
-                SerialConnection.RunInstruction($"copy a:/test3/{file} a:/{backupDirectory}");
+                //TODO change test3 after testing
+                SerialConnection.RunInstruction($"copy a:/test3/{file} {backupDirectory}");
                 UpdateProgressWindow($"Created backup of {file} in {backupDirectory}");
             }
 
@@ -237,14 +238,7 @@ namespace BetterRouterProgram
                 Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
                 Tftp.Start();
             }
-            
-        }
 
-        /// <summary>
-        /// Stops the TFTP application. This is done as a convenience for the User.
-        /// </summary>
-        public static void StopTftp()
-        {
             //if the directory was renamed, set the name right again
             if (Directory.Exists(@"C:\Motorola\SDM3000\Common\temp_TFTP"))
             {
@@ -252,6 +246,14 @@ namespace BetterRouterProgram
                 Thread.Sleep(250);
             }
 
+        }
+
+        /// <summary>
+        /// Stops the TFTP application. This is done as a convenience for the User.
+        /// </summary>
+        public static void StopTftp()
+        {
+            
             if (Tftp != null)
             {
                 Tftp.CloseMainWindow();

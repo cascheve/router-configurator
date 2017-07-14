@@ -107,12 +107,13 @@ namespace BetterRouterProgram
                     else
                     {
                         FunctionUtil.UpdateProgressWindow("There was an Error logging into the Router. \nCheck your login information and try again.");
-                        CloseConnection();
+                        FunctionUtil.PromptDisconnect();
                     }
                 }
                 else
                 {
                     FunctionUtil.UpdateProgressWindow("There was an Error establishing a connection to the Serial Port. \nPlease check your connection and try again");
+                    FunctionUtil.PromptDisconnect();
                 }
             }
             catch (System.IO.FileNotFoundException)
@@ -126,11 +127,12 @@ namespace BetterRouterProgram
             catch (TimeoutException)
             {
                 FunctionUtil.UpdateProgressWindow("Connection Attempt timed out. \nCheck your Serial Connection and try again.");
+                FunctionUtil.PromptDisconnect();
             }
             catch (Exception ex)
             {
                 FunctionUtil.UpdateProgressWindow($"Original Error: {ex.Message}");
-                CloseConnection();
+                FunctionUtil.PromptDisconnect();
             }
         }
 
@@ -193,6 +195,8 @@ namespace BetterRouterProgram
 
             int i = 0;
 
+            SerialPort.ReadTimeout = 50000;
+
             foreach (var file in FilesToTransfer)
             {
                 Thread.Sleep(500);
@@ -226,6 +230,8 @@ namespace BetterRouterProgram
                     TransferWorker.ReportProgress(0, pm);
                 }
             }
+
+            SerialPort.ReadTimeout = 750;
         }
 
         /// <summary>
@@ -359,7 +365,7 @@ namespace BetterRouterProgram
             try
             {
                 SerialPort = new SerialPort(comPort, 9600);
-                SerialPort.ReadTimeout = 50000;
+                SerialPort.ReadTimeout = 750;
                 SerialPort.WriteTimeout = 500;
                 SerialPort.Open();
 
@@ -440,7 +446,7 @@ namespace BetterRouterProgram
         {
             //TODO: uncomment boot.ppc after testing
             FilesToTransfer = new List<string>();
-            //FilesToTransfer.Add("boot.ppc");
+            FilesToTransfer.Add("boot.ppc");
             FilesToTransfer.Add("boot.cfg");
             FilesToTransfer.Add("acl.cfg");
 

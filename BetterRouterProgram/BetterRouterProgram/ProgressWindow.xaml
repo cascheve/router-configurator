@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BetterRouterProgram"
         mc:Ignorable="d"
-        Background="AliceBlue"
+        Background="#fbfbfb"
         Icon="icon1.ico"
         Title="Router Progress" 
         Height="350" 
