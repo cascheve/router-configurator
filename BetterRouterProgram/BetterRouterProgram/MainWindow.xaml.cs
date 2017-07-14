@@ -246,9 +246,7 @@ namespace BetterRouterProgram
             else
             {
                 // ip address validation
-                Regex ip = new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
-                MatchCollection result = ip.Matches(hostIP);
-                if(ip.Matches(hostIP).Count != 1) 
+                if((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(hostIP).Count != 1) 
                 {
                     errorText.Text = "Invlaid IP address format";
                     return;
