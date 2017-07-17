@@ -8,7 +8,7 @@
         Background="#fbfbfb"
         Icon="icon1.ico"
         Title="Router Progress" 
-        Height="350" 
+        Height="400" 
         Width="600"
         ResizeMode="NoResize"
         Closing="DataWindow_Closing">
@@ -21,7 +21,7 @@
             <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="220"/>
+            <RowDefinition Height="270"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
 

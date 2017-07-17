@@ -95,15 +95,16 @@ namespace BetterRouterProgram
         public static void CopyToSecondary(List<string> filesToCopy) {
             UpdateProgressWindow("Creating Back-Up Directory");
 
-            string backupDirectory = "a:/test4";
+            string backupDirectory = "a:/test5/";
 
             //SerialConnection.RunInstruction("cd a:/");
             SerialConnection.RunInstruction($"md {backupDirectory}");
+            SerialConnection.RunInstruction($"cd {backupDirectory}");
 
-            foreach(var file in filesToCopy)
+            foreach (var file in filesToCopy)
             {
                 //TODO change test3 after testing
-                SerialConnection.RunInstruction($"copy a:/test3/{file} {backupDirectory}");
+                SerialConnection.RunInstruction($"copy a:/test3/{file} {backupDirectory}/{file}");
                 UpdateProgressWindow($"Created backup of {file} in {backupDirectory}");
             }
 
@@ -213,6 +214,13 @@ namespace BetterRouterProgram
         {
             System.Windows.Forms.MessageBox.Show("The TFTP Application was closed. This may cause errors in File Transfer.");
             Tftp = null;
+
+            //if the directory was renamed, set the name right again
+            if (Directory.Exists(@"C:\Motorola\SDM3000\Common\temp_TFTP"))
+            {
+                Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP");
+                Thread.Sleep(250);
+            }
         }
 
         /// <summary>
@@ -253,7 +261,7 @@ namespace BetterRouterProgram
         /// </summary>
         public static void StopTftp()
         {
-            
+
             if (Tftp != null)
             {
                 Tftp.CloseMainWindow();
