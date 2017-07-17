@@ -38,6 +38,8 @@ namespace BetterRouterProgram
         /// </summary>
         private static SerialPort SerialPort = null;
 
+        private static bool ConnectionLost = false;
+
         /// <summary>
         /// Data structure used to quickly access router
         /// configuration settings.
@@ -98,6 +100,7 @@ namespace BetterRouterProgram
                         if (FunctionUtil.PingTest()){
                             //this will run, and upon completion the worker will proceed with the remaining functions
                             TransferWorker.RunWorkerAsync();
+
                         }
                         else
                         {
@@ -190,7 +193,7 @@ namespace BetterRouterProgram
             ProgressMessage pm = new ProgressMessage("Transferring Configuration Files");
             TransferWorker.ReportProgress(0, pm);
 
-            //TODO: change back after testing
+            //TODO: change back to primary after testing
             RunInstruction(@"cd a:\test3");
 
             int i = 0;
@@ -212,7 +215,14 @@ namespace BetterRouterProgram
                 ));
 
                 //update the progress window according to the file's transfer status
-                if (message.Contains("File not found"))
+                if(message.EndsWith("DOWN"))
+                {
+                    pm.MessageString = $"Error: The ethernet connection was lost. {FormatHostFile(file)} could not be copied";
+                    TransferWorker.ReportProgress(0, pm);
+                    ConnectionLost = true;
+                    return;
+                }
+                else if (message.Contains("File not found"))
                 {
                     pm.MessageString = $"Error: {FormatHostFile(file)} not found in host configuration directory";
                     TransferWorker.ReportProgress(0, pm);
@@ -269,6 +279,13 @@ namespace BetterRouterProgram
         /// </remarks>
         private static void TransferWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+
+            if (!ConnectionLost)
+            {
+                FunctionUtil.PromptDisconnect();
+                return;
+            }
+
             FunctionUtil.CopyToSecondary(new List<string>(FilesToTransfer));
 
             FunctionUtil.SetTime(GetSetting("timezone"));
@@ -328,11 +345,13 @@ namespace BetterRouterProgram
 
                 if (currentResponse == endChar)
                 {
-                    break;
+                    return response;
+                }
+                else if(response.EndsWith("DOWN"))
+                {
+                    return response;
                 }
             }
-
-            return response;
         }
 
         /// <summary>

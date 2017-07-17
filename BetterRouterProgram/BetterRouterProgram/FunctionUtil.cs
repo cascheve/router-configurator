@@ -6,6 +6,8 @@ using System.IO;
 
 namespace BetterRouterProgram
 {
+    //TODO: Routine to wipe router of information
+
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
     /// This class acts as a toolbox for each operation required to configure the router
@@ -76,13 +78,13 @@ namespace BetterRouterProgram
             }
 	        else {
 		        if(message.Contains("Host unreachable")){
-                    UpdateProgressWindow("**Host IP Address Cannot be Reached**", Progress.Ping);
+                    UpdateProgressWindow("**Error: Host IP Address Cannot be Reached", Progress.Ping);
                 }
                 else if(message.Contains("Request timed out")) {
-                    UpdateProgressWindow("**Connection Attempt has Timed Out**", Progress.Ping);
+                    UpdateProgressWindow("**Error: Connection Attempt has Timed Out", Progress.Ping);
                 }
                 else {
-                    UpdateProgressWindow($"Ping testing failed with message: {message}", Progress.Ping);
+                    UpdateProgressWindow($"**Error: Ping testing failed with message: {message}", Progress.Ping);
                 }
             }
 
@@ -95,7 +97,9 @@ namespace BetterRouterProgram
         public static void CopyToSecondary(List<string> filesToCopy) {
             UpdateProgressWindow("Creating Back-Up Directory");
 
+            //TODO change test5 after testing
             string backupDirectory = "a:/test5/";
+            string response = "";
 
             //SerialConnection.RunInstruction("cd a:/");
             SerialConnection.RunInstruction($"md {backupDirectory}");
@@ -104,11 +108,18 @@ namespace BetterRouterProgram
             foreach (var file in filesToCopy)
             {
                 //TODO change test3 after testing
-                SerialConnection.RunInstruction($"copy a:/test3/{file} {backupDirectory}/{file}");
-                UpdateProgressWindow($"Created backup of {file} in {backupDirectory}");
+                response = SerialConnection.RunInstruction($"copy a:/test3/{file} {backupDirectory}/{file}");
+
+                if (response.Contains("not Found"))
+                {
+                    UpdateProgressWindow($"**Error: Backup of {file} in {backupDirectory} could not be made");
+                }
+                else
+                {
+                    UpdateProgressWindow($"Created backup of {file} in {backupDirectory}");
+                }
             }
 
-            UpdateProgressWindow("Backup Directory Created Successfully", Progress.CopyToSecondary);
         }
 
         /// <summary>
@@ -121,7 +132,7 @@ namespace BetterRouterProgram
             password = password.Trim(' ', '\t', '\r', '\n');
             
             if(password.Equals(SerialConnection.GetSetting("initial password"))){
-                UpdateProgressWindow("**Password cannot be set to the same value. Skipping Step**");
+                UpdateProgressWindow("**Password cannot be set to the same value. Skipping Step...");
                 return;
             }
 
@@ -136,11 +147,11 @@ namespace BetterRouterProgram
             }
             else if (message.Contains("Invalid password")) {
                 
-                UpdateProgressWindow("**Password used doesn't meet requirements, skipping step**");
+                UpdateProgressWindow("**Password used doesn't meet requirements. Skipping Step...");
                 return;
             }
 	        else {
-                UpdateProgressWindow($"**{message.Substring(0, 50)}...**");
+                UpdateProgressWindow($"**Error: {message.Substring(0, 50)}...");
                 return;
             }
 
@@ -191,7 +202,7 @@ namespace BetterRouterProgram
         {
             SerialConnection.RunInstruction("rb");
 
-            UpdateProgressWindow("Reboot Command Sent Successfully", Progress.Reboot);
+            UpdateProgressWindow("Reboot Command Sent", Progress.Reboot);
         }
 
         /// <summary>

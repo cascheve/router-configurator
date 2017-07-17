@@ -51,5 +51,10 @@ namespace BetterRouterProgram
         {
             SerialConnection.CloseConnection();
         }
+
+        private void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ScrollView.ScrollToBottom();
+        }
     }
 }
