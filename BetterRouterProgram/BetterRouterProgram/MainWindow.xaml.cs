@@ -47,6 +47,7 @@ namespace BetterRouterProgram
         /// <summary>
         /// Depopulates the router ID list in case of a new configuration directory being selected
         /// </summary>
+        // TODO: delete if called nowhere else
         private void DepopulateIDs()
         {
             routerID_DD.Items.Clear();
@@ -58,17 +59,35 @@ namespace BetterRouterProgram
         /// <param name="directory">The directory.</param>
         private void PopulateIDs(string directory)
         {
-            List<string> validRouterIDs = 
-                (from file in Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName).ToArray()
-                where file.Contains("z0") || file.Contains("cen")
-                orderby file ascending
-                select file.Split('_')[0]).Distinct().ToList();
+            routerID_DD.Items.Clear();
 
-            foreach (var id in validRouterIDs)
+            Dictionary<string, int> configFiles = new Dictionary<string, int>();
+            string currentFile = "";
+            ComboBoxItem cBoxItem = null;
+
+            foreach (var file in Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName))
             {
-                ComboBoxItem cBoxItem = new ComboBoxItem();
-                cBoxItem.Content = id;
-                routerID_DD.Items.Add(cBoxItem);
+                if(file.StartsWith("z0") || file.StartsWith("cen"))
+                {
+                    currentFile = file.Split('_')[0];
+                    try 
+                    {
+                        if((configFiles[currentFile] == 2 && currentFile.Contains("ggsn"))
+                            || configFiles[currentFile] >= 1) 
+                        {
+                            cBoxItem = new ComboBoxItem();
+                            cBoxItem.Content = currentFile;
+                            routerID_DD.Items.Add(cBoxItem);
+                        }
+                        else {
+                            configFiles[currentFile]++;
+                        }
+                    }
+                    catch(KeyNotFoundException) 
+                    {
+                        configFiles.Add(currentFile, 1);
+                    }
+                }
             }
         }
 
@@ -122,9 +141,15 @@ namespace BetterRouterProgram
                         filepathToolTip.Text = fbd.SelectedPath;
 
                         //refill the router ID list with valid router IDs
-                        DepopulateIDs();
                         PopulateIDs(fbd.SelectedPath);
                         UpdateFileOptions();
+
+                        //creates /done and /logs folders
+                        if (!Directory.Exists(filepathText.Text)) 
+                        {
+                            Directory.CreateDirectory(filepathText.Text + @"\done");
+                            Directory.CreateDirectory(filepathText.Text + @"\logs");
+                        }
 
                         //shortens the path for cleanliness
                         filepathText.Text = fbd.SelectedPath.Length > 35? 
@@ -152,24 +177,34 @@ namespace BetterRouterProgram
         {
             bool staticrpCheck = false;
             bool antiaclCheck = false;
+            bool ppcCheck = false;
 
-            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray())
+            foreach (var file in Directory.GetFiles(filepathToolTip.Text).Select(Path.GetFileName))
             {
-                if (file.StartsWith("staticRP"))
+                switch(file)
                 {
-                    staticrpCheck = true;
-                }
-                else if (file.StartsWith("antiacl"))
-                {
-                    antiaclCheck = true;
+                    case "staticRP.cfg":
+                        staticrpCheck = true;
+                        break;
+                    case "antiacl.cfg":
+                        antiaclCheck = true;
+                        break;
+                    case "boot.ppc":
+                        ppcCheck = true;
+                        break;
+                    default:
+                        break;
                 }
             }
 
             staticrp.IsEnabled = staticrpCheck;
-            staticrp.IsChecked = false;
+            staticrp.IsChecked = staticrpCheck;
 
             antiacl.IsEnabled = antiaclCheck;
-            antiacl.IsChecked = false;
+            antiacl.IsChecked = antiaclCheck;
+
+            ppc.IsEnabled = ppcCheck;
+            ppc.IsChecked = ppcCheck;
         }
 
         /// <summary>
@@ -190,11 +225,13 @@ namespace BetterRouterProgram
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void AttemptConnection(object sender, RoutedEventArgs e)
         {
-            string comPort = this.portNameDD.Text;
-            string iString = this.currentPassword.Text;
-            string sString = this.sysPassword.Text;
-            string routerID = this.routerID_DD.Text;
-            string configDir = this.filepathToolTip.Text;
+            string comPort = portNameDD.Text;
+            string iString = currentPassword.Text;
+            string sString = sysPassword.Text;
+            string routerID = routerID_DD.Text;
+            string configDir = filepathToolTip.Text;
+            string secret = secretPassword.Text;
+            bool rebootStatus = rebootCheckbox.IsChecked.HasValue ? rebootCheckbox.IsChecked.Value : false
 
             //string hostIP = "10.10.10.100";
             string hostIP = this.hostIP.Text;
@@ -229,6 +266,11 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "tftpd32.exe not found in directory";
             }
+            //TODO: secret password input not fully done
+            else if (secret.Equals(string.Empty))
+            {
+                errorText.Text = "Please select the router's secret";
+            }
             else
             {
                 foreach(var file in Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray()) {
@@ -247,9 +289,16 @@ namespace BetterRouterProgram
                             antiacl.IsChecked.HasValue ? antiacl.IsChecked.Value : false},
                         {xgsn.Content.ToString(),
                             xgsn.IsChecked.HasValue ? xgsn.IsChecked.Value : false}
+                        {ppc.Content.ToString(),
+                            ppc.IsChecked.HasValue ? ppc.IsChecked.Value : false}
+                        {cfg.Content.ToString(),
+                            cfg.IsChecked.HasValue ? cfg.IsChecked.Value : false}
+                        {acl.Content.ToString(),
+                            acl.IsChecked.HasValue ? acl.IsChecked.Value : false}
                     },
-                    comPort, iString, sString, routerID, 
-                    configDir, hostIP
+                    rebootStatus,
+                    comPort, iString, sString, secret, 
+                    routerID, configDir, hostIP
                 );
             }
         }

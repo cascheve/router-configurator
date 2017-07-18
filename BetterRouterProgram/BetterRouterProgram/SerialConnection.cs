@@ -14,7 +14,7 @@ namespace BetterRouterProgram
     /// <remarks>
     /// <list type="bullet">
     ///     <listheader>
-    ///         <description> Data ontained in this class/description>
+    ///         <description> Data ontained in this class</description>
     ///    </listheader>
     ///         <item>
     ///             <description>Serial connection information</description>
@@ -28,17 +28,29 @@ namespace BetterRouterProgram
     ///</list>
     /// The neccessety of a BackgroundWorker caused <see cref="TransferWorkerDoWork"/>
     /// functionality to be in this clas rather than <see cref="FunctionUtil"/>.
-    /// 
     /// The functionality of <see cref="Login"/> made it neccessary to put it in this class.
     /// </remarks>
     public class SerialConnection
     {
         /// <summary>
+        /// A variable to keep track if ethernet connection was lost
+        /// </summary>
+        private static bool ConnectionLost = false;
+
+        /// <summary>
+        /// A variable to keep track if ethernet connection was lost
+        /// </summary>
+        readonly static bool RebootStatus = false;
+
+        /// <summary>
         /// SerialPort object use to communicate via serial with the router.
         /// </summary>
         private static SerialPort SerialPort = null;
 
-        private static bool ConnectionLost = false;
+        /// <summary>
+        /// worker used to update ui asynchronous.
+        /// </summary>
+        private static BackgroundWorker TransferWorker = null;
 
         /// <summary>
         /// Data structure used to quickly access router
@@ -50,11 +62,6 @@ namespace BetterRouterProgram
         /// List of files to transfer to the router
         /// </summary>
         private static List <string> FilesToTransfer = null;
-
-        /// <summary>
-        /// worker used to update ui asynchronous.
-        /// </summary>
-        private static BackgroundWorker TransferWorker = null;
 
         /// <summary>
         /// Class used to encaupsulate information to be passed to the <see cref="ProgressBar"/>
@@ -88,13 +95,13 @@ namespace BetterRouterProgram
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         /// <param name="settings">The settings for the router configuration.</param>
-        public static void InitializeAndConnect(Dictionary<string, bool> extraFilesToTransfer, params string[] settings)
+        public static void InitializeAndConnect(Dictionary<string, bool> filesToTransfer, bool rebootStatus, params string[] settings)
         {
             try
             {
-                if (InitializeConnection(extraFilesToTransfer, settings))
+                if (InitializeConnection(filesToTransfer, rebootStatus, settings))
                 {
-                    //Login("root", currentPassword)
+                    //TODO: Login("root", currentPassword)
                     if (Login("root", "P25LACleco2016!"))
                     {
                         if (FunctionUtil.PingTest()){
@@ -287,6 +294,7 @@ namespace BetterRouterProgram
         /// Event handler: parameters need to stay constant.
         /// This is only for handling TransferFiles functionality's completion.
         /// </remarks>
+        // TODO: throw event to finish config on finally
         private static void TransferWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             try
@@ -303,13 +311,16 @@ namespace BetterRouterProgram
                 //FunctionUtil.SetPassword(GetSetting("system password"));
 
                 FunctionUtil.PromptReboot();
-
-                FunctionUtil.PromptDisconnect();
             }
             catch (TimeoutException)
             {
                 FunctionUtil.UpdateProgressWindow("**Error: Connection Attempt timed out. \nCheck your Serial Connection and try again.");
-                FunctionUtil.PromptDisconnect();
+               
+            }
+            finally 
+            {
+                 FunctionUtil.PromptDisconnect();
+                 //FunctionUtil.FinishConfig();
             }
         }
 
@@ -421,17 +432,20 @@ namespace BetterRouterProgram
         /// <remarks> Named this metod with a lack of a better one. 
         /// If a better name comes up, please rename it here and <see cref"InitializeConnection"/>
         /// </remarks>
-        private static bool InitializeConnection(Dictionary<string, bool> extraFilesToTransfer, string[] settings)
+        private static bool InitializeConnection(Dictionary<string, bool> filesToTransfer, bool rebootStatus, string[] settings)
         {
             Settings = new Dictionary<string, string>()
             {
                 {"port", settings[0]},
                 {"initial password", settings[1]},
                 {"system password", settings[2]},
-                {"router ID", settings[3]},
-                {"config directory", settings[4]},
-                {"host ip address", settings[5]}
+                {"password secret", settings[3]},
+                {"router ID", settings[4]},
+                {"config directory", settings[5]},
+                {"host ip address", settings[6]},
             };
+
+            RebootStatus = rebootStatus;
 
             FunctionUtil.InitializeProgressWindow();
 
@@ -476,18 +490,14 @@ namespace BetterRouterProgram
         /// </summary>
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
-        private static void SetFilesToTransfer(Dictionary<string, bool> extraFilesToTransfer)
+        private static void SetFilesToTransfer(Dictionary<string, bool> filesToTransfer)
         {
             //TODO: this will be replaced by new GUI setup
             FilesToTransfer = new List<string>();
-            FilesToTransfer.Add("boot.ppc");
-            FilesToTransfer.Add("boot.cfg");
-            FilesToTransfer.Add("acl.cfg");
-            //
 
-            foreach (var file in extraFilesToTransfer.Keys)
+            foreach (var file in filesToTransfer.Keys)
             {
-                if(extraFilesToTransfer[file])
+                if(filesToTransfer[file])
                 {
                     FilesToTransfer.Add(file);
                 }

@@ -8,14 +8,12 @@ namespace BetterRouterProgram
 {
     //TODO: Routine to wipe router of information
     // Separate secret input
-    // get rid of timezone
     // move config files to "done" directory to reduce wrong file selection
     // all files to be moved added to connection dictionary
     // autocheck all 5 main files
     // make reboot checkbox functional
-    // log file for all output
+    // log file for all output - name of file = {router_id}_log_{date}-{time}.txt
     // auto disconnect, pause, and close of progress window
-    // if acl and cfg are not both there, do not populate in list
     // programatically find and check staticrp and antiacl file boxes if present
     // programmatically set computer's adapter ip address
 
@@ -108,7 +106,7 @@ namespace BetterRouterProgram
             UpdateProgressWindow("Creating Back-Up Directory");
 
             //TODO change test5 after testing
-            string backupDirectory = "a:/test5/";
+            string backupDirectory = "a:/test5";
             string response = "";
 
             //SerialConnection.RunInstruction("cd a:/");
