@@ -28,7 +28,6 @@ namespace BetterRouterProgram
             portNameDD.Background = Brushes.LightGray;
 
             FillPortNames(this);
-            FillTimeZones(this);
         }
 
         /// <summary>
@@ -42,20 +41,6 @@ namespace BetterRouterProgram
                 ComboBoxItem cBoxItem = new ComboBoxItem();
                 cBoxItem.Content = s;
                 m.portNameDD.Items.Add(cBoxItem);
-            }
-        }
-
-        /// <summary>
-        /// Fills the time zones DropDown with all the possible timezones the router may be located in
-        /// </summary>
-        /// <param name="m">The m.</param>
-        private static void FillTimeZones(MainWindow m)
-        {
-            foreach (TimeZoneInfo z in TimeZoneInfo.GetSystemTimeZones())
-            {
-                ComboBoxItem tBoxItem = new ComboBoxItem();
-                tBoxItem.Content = z.DisplayName;
-                m.timeZoneDD.Items.Add(tBoxItem);
             }
         }
 
@@ -210,7 +195,6 @@ namespace BetterRouterProgram
             string sString = this.sysPassword.Text;
             string routerID = this.routerID_DD.Text;
             string configDir = this.filepathToolTip.Text;
-            string timezone = this.timeZoneDD.Text;
 
             //string hostIP = "10.10.10.100";
             string hostIP = this.hostIP.Text;
@@ -245,10 +229,6 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "tftpd32.exe not found in directory";
             }
-            else if (timezone.Equals(string.Empty))
-            {
-                errorText.Text = "Please select a time zone";
-            }
             else
             {
                 foreach(var file in Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray()) {
@@ -269,7 +249,7 @@ namespace BetterRouterProgram
                             xgsn.IsChecked.HasValue ? xgsn.IsChecked.Value : false}
                     },
                     comPort, iString, sString, routerID, 
-                    configDir, timezone, hostIP
+                    configDir, hostIP
                 );
             }
         }

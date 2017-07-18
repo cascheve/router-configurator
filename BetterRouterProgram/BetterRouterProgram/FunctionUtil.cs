@@ -7,6 +7,17 @@ using System.IO;
 namespace BetterRouterProgram
 {
     //TODO: Routine to wipe router of information
+    // Separate secret input
+    // get rid of timezone
+    // move config files to "done" directory to reduce wrong file selection
+    // all files to be moved added to connection dictionary
+    // autocheck all 5 main files
+    // make reboot checkbox functional
+    // log file for all output
+    // auto disconnect, pause, and close of progress window
+    // if acl and cfg are not both there, do not populate in list
+    // programatically find and check staticrp and antiacl file boxes if present
+    // programmatically set computer's adapter ip address
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
@@ -27,7 +38,6 @@ namespace BetterRouterProgram
                 Ping = 10,
                 TransferFilesStart = 10, //goes to 60 - length: 50
                 CopyToSecondary = 80, 
-                SetTime = 85, 
                 Password = 95,
                 Reboot = 100
         };
@@ -157,32 +167,6 @@ namespace BetterRouterProgram
 
             SerialConnection.RunInstruction($"setd -ac secret = \"{password}\"");
             UpdateProgressWindow("Secret Password Set", Progress.Password);
-        }
-
-
-        /// <summary>
-        /// Takes a signed offset from the timezone parameter and uses it to set the time
-        /// </summary>
-        /// <param name="timeZoneString">The time zone the router will be located in</param>
-        public static void SetTime(string timeZoneString = "") 
-        {
-            int offset = 0;
-
-            if (!timeZoneString.Equals(string.Empty))
-            {
-                offset = Int32.Parse(timeZoneString.Substring(4, 3));
-            }
-
-            DateTime setDate = DateTime.UtcNow.AddHours(offset);
-            if (!setDate.IsDaylightSavingTime())
-            {
-                setDate = DateTime.UtcNow.AddHours(offset + 1);
-            }
-
-            //outputs as mm/dd/yyyy hh:mm:ss XM
-            UpdateProgressWindow("Setting Time: " + setDate.ToString(DateFormat), Progress.SetTime);
-
-            SerialConnection.RunInstruction($"SET - SYS DATE = {setDate.ToString(DateFormat)}");
         }
 
         /// <summary>

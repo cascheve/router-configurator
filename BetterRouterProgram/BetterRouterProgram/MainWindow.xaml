@@ -8,7 +8,7 @@
         Background="#fbfbfb"
         Icon="icon1.ico"
         Title="Router Configuration Tool" 
-        Height="370" 
+        Height="440" 
         Width="650"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
@@ -16,7 +16,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="10"/>
+            <RowDefinition Height="5"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="25"/>
@@ -31,7 +31,9 @@
             <RowDefinition Height="10"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="20"/>
 
             <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
@@ -46,7 +48,7 @@
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
         
-        <TextBlock Text="Mouse over the option titles for help" Foreground="DodgerBlue"  Grid.Row="18" Grid.Column="1" VerticalAlignment="Center" />
+        <TextBlock Text="Mouse over the option titles for help" Foreground="DodgerBlue"  Grid.Row="19" Grid.Column="1" VerticalAlignment="Center" />
 
         <TextBlock Text="Enter your Ethernet IP Address " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" >
             <TextBlock.ToolTip>
@@ -87,14 +89,24 @@
         </TextBlock>
         <TextBox Name="sysPassword" Text="" Grid.Row="7" Grid.Column="3" Width="250" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
 
-        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <TextBlock Text="Enter the Secret Password: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="300">Enter the secret password. Leaving this blank will set the secret password to the System Password. </TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
+        <TextBox Name="secretPassword" Text="" Grid.Row="9" Grid.Column="3" Width="250" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
+
+        <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="320">Browse for the folder that contains the configuration file(s) required to configure the Router.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <TextBlock Name="filepathText" Text="" Grid.Row="9" Grid.Column="3" HorizontalAlignment="Right" Width="280" VerticalAlignment="Center">
+        
+        <TextBlock Name="filepathText" Text="" Grid.Row="11" Grid.Column="3" HorizontalAlignment="Right" Width="280" VerticalAlignment="Center">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <StackPanel>
@@ -105,37 +117,28 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="9" Click="BrowseFiles" Width="100" HorizontalAlignment="Left"/>
+        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="11" Click="BrowseFiles" Width="100" HorizontalAlignment="Left"/>
 
-        <TextBlock Text="Select the Router ID: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
+        <TextBlock Text="Select the Router ID: " Grid.Row="13" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Select the ID of the Router you would like to configure. If the Router's ID does not appear in the list, make sure the configuration files exist in the given path and try again.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <ComboBox x:Name="routerID_DD" Grid.Row="11" Grid.Column="3" Width="250" Height="22" SelectionChanged="RouterIDSelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center">
+        
+        <ComboBox x:Name="routerID_DD" Grid.Row="13" Grid.Column="3" Width="250" Height="22" SelectionChanged="RouterIDSelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center">
         </ComboBox>
 
-        <TextBlock Name="TimeZoneTitle" Text="Time Zone of the System: " Grid.Row="13" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
-            <TextBlock.ToolTip>
-                <ToolTip>
-                    <TextBlock TextWrapping="Wrap" Width="300">Indicate which time zone this router will reside in when the system is shipped out. </TextBlock>
-                </ToolTip>
-            </TextBlock.ToolTip>
-        </TextBlock>
-        <ComboBox Name="timeZoneDD" Grid.Row="13" Grid.Column="3" Width="350" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center" />
-
-        <Separator Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="3" />
-
-        <TextBlock Text="Optional Files to Transfer: " Grid.Row="15" Grid.Column="1" VerticalAlignment="Center">
+        <TextBlock Text="Files to Transfer: " Grid.Row="15" Grid.Column="1" VerticalAlignment="Center">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Select which of the files to the right should be installed during the configuration process.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <Grid Grid.Row="15" Grid.Column="3" Grid.ColumnSpan="1">
+        
+        <Grid Grid.Row="15" Grid.Column="3" Grid.RowSpan="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>
@@ -147,16 +150,22 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-
-            <CheckBox Name="staticrp" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="0" VerticalAlignment="Center"/>
-            <CheckBox Name="antiacl" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-            <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+            <CheckBox Name="ppc" IsEnabled="True" IsChecked="True" Content="boot.ppc" Grid.Row="0" VerticalAlignment="Center"/>
+            <CheckBox Name="cfg" IsEnabled="True" IsChecked="True" Content="boot.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="acl" IsEnabled="True" IsChecked="True" Content="acl.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+            <CheckBox Name="staticrp" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" VerticalAlignment="Center"/>
+            <CheckBox Name="antiacl" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
         </Grid>
 
-        <Button Name="connectButton" IsEnabled="True" Content="Connect" Grid.Column="3" Grid.Row="17" Click="AttemptConnection"  HorizontalAlignment="Right" Width="105" Panel.ZIndex="1">
+        <CheckBox Name="rebootCheckbox" IsEnabled="True" IsChecked="False" Content="Reboot After Configuration" Grid.Row="17" Grid.Column="3" VerticalAlignment="Bottom" VerticalContentAlignment="Center" HorizontalAlignment="Left"/>
+
+        <Separator Grid.Row="18" Grid.Column="1" Grid.ColumnSpan="3" />
+
+        <Button Name="connectButton" IsEnabled="True" Content="Connect" Grid.Column="3" Grid.Row="21" Click="AttemptConnection"  HorizontalAlignment="Right" Width="105" Panel.ZIndex="1">
         </Button>
 
-        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="17" Grid.Column="3" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="21" Grid.Column="3" Width="200" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
     </Grid>
 </Window>
