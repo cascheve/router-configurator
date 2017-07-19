@@ -144,7 +144,7 @@ namespace BetterRouterProgram
                         PopulateIDs(fbd.SelectedPath);
                         UpdateFileOptions();
 
-                        //creates /done and /logs folders
+                        //creates /done and /logs directories
                         if (!Directory.Exists(filepathText.Text)) 
                         {
                             Directory.CreateDirectory(filepathText.Text + @"\done");
