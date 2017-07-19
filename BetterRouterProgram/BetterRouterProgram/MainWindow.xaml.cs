@@ -17,6 +17,8 @@ namespace BetterRouterProgram
     public partial class MainWindow : Window
     {
 
+        private static MainWindow MWRef= null;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// This includes filling the port and timezone DropDown lists
@@ -30,6 +32,7 @@ namespace BetterRouterProgram
             FillPortNames(this);
             FillHostIP(this);
 
+            MWRef = this;
         }
 
         /// <summary>
@@ -85,6 +88,10 @@ namespace BetterRouterProgram
 
         }
 
+        public static void UpdateIDs()
+        {
+            MWRef.PopulateIDs(SerialConnection.GetSetting("config directory"));
+        }
 
         /// <summary>
         /// Populates the ID list using the files found inside the configuration directory

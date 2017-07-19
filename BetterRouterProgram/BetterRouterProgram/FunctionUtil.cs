@@ -8,8 +8,6 @@ using System.Linq;
 namespace BetterRouterProgram
 {
     //TODO: Routine to wipe router of information
-    // move config files to "done" directory
-    // output to log file
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
@@ -74,19 +72,21 @@ namespace BetterRouterProgram
             string progressUpdate = "";
             switch(type) {
                 case MessageType.Message:
-                    progressUpdate = $"\n[Message]\t{message}"
+                    progressUpdate = "[Message]";
                     break;
                 case MessageType.Success:
-                    progressUpdate = $"\n[Success]\t{message}"
+                    progressUpdate = "[Success]";
                     break;
                 case MessageType.Error:
-                    progressUpdate = $"\n[Error]\t{message}"
+                    progressUpdate = "[Error]";
                     break;
                 default:
                     break;
             }
 
-            ProgressWindow.currentTask.Text += progressUpdate;
+            progressUpdate += ":\t" + message;
+
+            ProgressWindow.currentTask.Text += '\n' + progressUpdate;
             LogFileWriter.WriteLine(progressUpdate);
             LogFileWriter.WriteLine("");    
             LogFileWriter.Flush();
@@ -205,6 +205,8 @@ namespace BetterRouterProgram
                     File.Move(configDir + @"\" + file, configDir + @"\Completed\" + file);
                 }
             }
+
+            MainWindow.UpdateIDs();
         }
 
         /// <summary>
@@ -212,7 +214,6 @@ namespace BetterRouterProgram
         /// </summary>
         public static void ConfigurationFinished(bool rebootChecked, bool error) 
         {
-            SerialConnection.CloseConnection();
 
             if (!error)
             {
@@ -220,16 +221,20 @@ namespace BetterRouterProgram
                 {
                     UpdateProgress("Reboot command sent", MessageType.Message);
                     SerialConnection.RunInstruction("rb");
-                    UpdateProgress("All Processes Complete", MessageType.Message);
                 }
 
+                UpdateProgress("All Processes Complete", MessageType.Message);
                 MoveCompletedFiles();
+
+
             }
             else
             {
                 UpdateProgress("An Error occurred during runtime. The router will not be rebooted.", MessageType.Message);
                 Thread.Sleep(1000);
             }
+
+            SerialConnection.CloseConnection();
 
             //close the progress window and filewriter
             ProgressWindow.Close();
