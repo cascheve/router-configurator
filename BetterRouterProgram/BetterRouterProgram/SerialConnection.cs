@@ -66,9 +66,9 @@ namespace BetterRouterProgram
         {
             public string Message { get; set; }
             public double AmountToAdd { get; set; }
-            public MessageType Type { get; set; }
+            public FunctionUtil.MessageType Type { get; set; }
 
-            public ProgressMessage(string message = "", MessageType type = MessageType.Message, double amountToAdd = 0)
+            public ProgressMessage(string message = "", FunctionUtil.MessageType type = FunctionUtil.MessageType.Message, double amountToAdd = 0)
             {
                 Message = message;
                 AmountToAdd = amountToAdd;
@@ -96,13 +96,6 @@ namespace BetterRouterProgram
         public static void InitializeAndConnect(Dictionary<string, bool> filesToTransfer, bool rebootStatus, params string[] settings)
         {
             RebootStatus = rebootStatus;
-            string logFile = settings[5] + @"\Logs\" + 
-                $"{settings[4]}_log_{DateTime.Today.ToString(@"MM.dd.yyyy")}.txt";
-
-            if (File.Exists(logFile))
-            {
-                File.Delete(logFile);
-            }
            
             try
             {
@@ -122,33 +115,33 @@ namespace BetterRouterProgram
                     }
                     else
                     {
-                        FunctionUtil.UpdateProgress("Could not log into the Router. \nCheck your login information and try again.", MessageType.Error);
+                        FunctionUtil.UpdateProgress("Could not log into the Router. \nCheck your login information and try again.", FunctionUtil.MessageType.Error);
                         FunctionUtil.ConfigurationFinished(RebootStatus, true);
                     }
                 }
                 else
                 {
-                    FunctionUtil.UpdateProgress("A connection to the Serial Port could not be made. \nPlease check your connection and try again", MessageType.Error);
+                    FunctionUtil.UpdateProgress("A connection to the Serial Port could not be made. \nPlease check your connection and try again", FunctionUtil.MessageType.Error);
                     FunctionUtil.ConfigurationFinished(RebootStatus, true);
                 }
             }
             catch (System.IO.FileNotFoundException)
             {
-                FunctionUtil.UpdateProgress("Unable to locate the Specified File, please try again.", MessageType.Error);
+                FunctionUtil.UpdateProgress("Unable to locate the Specified File, please try again.", FunctionUtil.MessageType.Error);
             }
             catch (System.ComponentModel.Win32Exception)
             {
                 FunctionUtil.UpdateProgress("Could not find the TFTP Client executable in the folder specified. "
-                    +"\nPlease move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.", MessageType.Error);
+                    +"\nPlease move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.", FunctionUtil.MessageType.Error);
             }
             catch (TimeoutException)
             {
-                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", MessageType.Error);
+                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", FunctionUtil.MessageType.Error);
                 FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
             catch (Exception ex)
             {
-                FunctionUtil.UpdateProgress(ex.Message, MessageType.Error);
+                FunctionUtil.UpdateProgress(ex.Message, FunctionUtil.MessageType.Error);
                 FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
 
@@ -162,11 +155,11 @@ namespace BetterRouterProgram
         /// <returns> whether the login was successful or not.</returns>
         private static bool Login(string username, string password)
         {
-            FunctionUtil.UpdateProgress("Logging In", MessageType.Message);
+            FunctionUtil.UpdateProgress("Logging In", FunctionUtil.MessageType.Message);
 
             if (!SerialPort.IsOpen)
             {
-                FunctionUtil.UpdateProgress("Login Unsuccessful: serial connection lost", MessageType.Error, FunctionUtil.Progress.None);
+                FunctionUtil.UpdateProgress("Login Unsuccessful: serial connection lost", FunctionUtil.MessageType.Error, FunctionUtil.Progress.None);
                 return false;
             }
             
@@ -183,7 +176,7 @@ namespace BetterRouterProgram
 
             //if the serial connection fails using the username and password specified
             if (ReadResponse('#').Length > 0) {
-                FunctionUtil.UpdateProgress("Login Successful", FunctionUtil.Progress.Login, MessageType.Success);
+                FunctionUtil.UpdateProgress("Login Successful", FunctionUtil.MessageType.Success, FunctionUtil.Progress.Login);
                 return true;
             }
             
@@ -205,7 +198,7 @@ namespace BetterRouterProgram
         {
             double totalProgress = 50;
 
-            ProgressMessage pm = new ProgressMessage("Transferring Configuration Files", MessageType.Message);
+            ProgressMessage pm = new ProgressMessage("Transferring Configuration Files", FunctionUtil.MessageType.Message);
             TransferWorker.ReportProgress(0, pm);
 
             //TODO: change back to primary after testing
@@ -221,7 +214,7 @@ namespace BetterRouterProgram
                         SerialPort.ReadTimeout = 30000;
                     }
                     Thread.Sleep(500);
-                    pm.MessageString = $"Transferring File '{FormatHostFile(file)}' as '{file}'";
+                    pm.Message = $"Transferring File '{FormatHostFile(file)}' as '{file}'";
                     TransferWorker.ReportProgress(0, pm);
                     Thread.Sleep(500);
 
@@ -235,28 +228,28 @@ namespace BetterRouterProgram
                     //update the progress window according to the file's transfer status
                     if (message.EndsWith("DOWN"))
                     {
-                        pm.MessageString = $"Ethernet connection was lost. {FormatHostFile(file)} could not be copied";
-                        pm.Type =  MessageType.Error;
+                        pm.Message = $"Ethernet connection was lost. {FormatHostFile(file)} could not be copied";
+                        pm.Type =  FunctionUtil.MessageType.Error;
                         TransferWorker.ReportProgress(0, pm);
                         ConnectionLost = true;
                         return;
                     }
                     else if (message.Contains("File not found"))
                     {
-                        pm.MessageString = $"{FormatHostFile(file)} not found in host configuration directory";
-                        pm.Type =  MessageType.Error;
+                        pm.Message = $"{FormatHostFile(file)} not found in host configuration directory";
+                        pm.Type =  FunctionUtil.MessageType.Error;
                         TransferWorker.ReportProgress(0, pm);
                     }
                     else if (message.Contains("Cannot route"))
                     {
-                        pm.MessageString = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
-                        pm.Type =  MessageType.Error;
+                        pm.Message = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
+                        pm.Type =  FunctionUtil.MessageType.Error;
                         TransferWorker.ReportProgress(0, pm);
                     }
                     else
                     {
-                        pm.MessageString = $"{FormatHostFile(file)} Successfully Transferred";
-                        pm.Type =  MessageType.Success;
+                        pm.Message = $"{FormatHostFile(file)} Successfully Transferred";
+                        pm.Type =  FunctionUtil.MessageType.Success;
                         pm.AmountToAdd = ((totalProgress) / FilesToTransfer.Count) * (++i);
 
                         TransferWorker.ReportProgress(0, pm);
@@ -265,7 +258,7 @@ namespace BetterRouterProgram
             }
             catch (TimeoutException)
             {
-                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", MessageType.Error);
+                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", FunctionUtil.MessageType.Error);
                 FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
 
@@ -287,7 +280,7 @@ namespace BetterRouterProgram
             ProgressMessage pm = e.UserState as ProgressMessage;
 
             FunctionUtil.UpdateProgress(
-                pm.MessageString,
+                pm.Message,
                 pm.Type,
                 FunctionUtil.Progress.TransferFilesStart, 
                 pm.AmountToAdd
@@ -312,7 +305,7 @@ namespace BetterRouterProgram
             {
                 if (ConnectionLost)
                 {
-                    FunctionUtil.UpdateProgress("Ethernet connection has been lost", MessageType.Error);
+                    FunctionUtil.UpdateProgress("Ethernet connection has been lost", FunctionUtil.MessageType.Error);
                     return;
                 }
 
@@ -324,7 +317,7 @@ namespace BetterRouterProgram
             }
             catch (TimeoutException)
             {
-                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", MessageType.Error);
+                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", FunctionUtil.MessageType.Error);
                 FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
 
@@ -451,7 +444,8 @@ namespace BetterRouterProgram
                 {"host ip address", settings[6]}
             };
 
-            FunctionUtil.InitializeProgressWindow();
+            FunctionUtil.InitializeProgress(settings[5] + @"\Logs\" +
+                $"{settings[4]}_log_{DateTime.Today.ToString(@"MM.dd.yyyy")}.txt");
 
             TransferWorker = new BackgroundWorker();
 
@@ -470,20 +464,20 @@ namespace BetterRouterProgram
             }
             catch (System.IO.FileNotFoundException)
             {
-                FunctionUtil.UpdateProgress("Unable to locate the Specified File, please try again.", MessageType.Error);
+                FunctionUtil.UpdateProgress("Unable to locate the Specified File, please try again.", FunctionUtil.MessageType.Error);
             }
             catch (System.ComponentModel.Win32Exception)
             {
                 FunctionUtil.UpdateProgress("Could not find the TFTP Client executable in the folder specified. "
-                    +"Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.", MessageType.);
+                    +"Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.", FunctionUtil.MessageType.Error);
             }
             catch (TimeoutException)
             {
-                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", MessageType.Error);
+                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", FunctionUtil.MessageType.Error);
             }
             catch (Exception ex)
             {
-                FunctionUtil.UpdateProgress(ex.Message, MessageType.Error);
+                FunctionUtil.UpdateProgress(ex.Message, FunctionUtil.MessageType.Error);
                 CloseConnection();
             }
 

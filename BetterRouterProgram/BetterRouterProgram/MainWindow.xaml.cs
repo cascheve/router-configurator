@@ -268,7 +268,7 @@ namespace BetterRouterProgram
             string configDir = filepathToolTip.Text;
             string secret = secretPassword.Text;
             //string hostIP = "10.10.10.100";
-            string hostIP = hostIP.Text;
+            string hostIP = this.hostIP.Text;
 
             errorText.Text = "";
 

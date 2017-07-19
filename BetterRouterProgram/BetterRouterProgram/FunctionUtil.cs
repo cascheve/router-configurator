@@ -3,6 +3,7 @@ using System;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace BetterRouterProgram
 {
@@ -50,9 +51,9 @@ namespace BetterRouterProgram
             ProgressWindow.Topmost = true;
             ProgressWindow.Show();
 
-            if (File.Exists(logFile))
+            if (File.Exists(logFilePath))
             {
-                File.Delete(logFile);
+                File.Delete(logFilePath);
             }
 
             LogFileWriter = File.AppendText(logFilePath);
@@ -71,23 +72,23 @@ namespace BetterRouterProgram
             }
 
             switch(type) {
-                case Message:
+                case MessageType.Message:
                     ProgressWindow.currentTask.Text += $"\n[Message]:\t{message}";
-                    sw.WriteLine($"[Message]:\t{message}\r\n");
+                    LogFileWriter.WriteLine($"[Message]:\t{message}\r\n");
                     break;
-                case Success:
+                case MessageType.Success:
                     ProgressWindow.currentTask.Text += $"\n[Success]:\t{message}";
-                    sw.WriteLine($"[Success]:\t{message}\r\n");
+                    LogFileWriter.WriteLine($"[Success]:\t{message}\r\n");
                     break;
-                case Error:
+                case MessageType.Error:
                     ProgressWindow.currentTask.Text += $"\n[Error]:\t{message}";
-                    sw.WriteLine($"[Error]:\t{message}\r\n");
+                    LogFileWriter.WriteLine($"[Error]:\t{message}\r\n");
                     break;
                 default:
                     break;
             }
-            
-            sw.Flush();
+
+            LogFileWriter.Flush();
         }
 
         /// <summary>
@@ -191,12 +192,12 @@ namespace BetterRouterProgram
             UpdateProgress("Secret Password Set", MessageType.Success, Progress.Password);
         }
 
-        private void MoveCompletedFiles()
+        private static void MoveCompletedFiles()
         {
-            string routerID = SerialConnection.GetSetting("router id");
-            string configDir = SerialConnection.GetSetting("router id");
+            string routerID = SerialConnection.GetSetting("router ID");
+            string configDir = SerialConnection.GetSetting("config directory");
 
-            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName))
+            foreach (var file in Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName))
             {
                 if(file.StartsWith(routerID))
                 {
@@ -230,7 +231,7 @@ namespace BetterRouterProgram
 
             //close the progress window and filewriter
             ProgressWindow.Close();
-            StreamWriter.Close();
+            LogFileWriter.Close();
         }
 
         /// <summary>
