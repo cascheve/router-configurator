@@ -20,29 +20,43 @@ namespace BetterRouterProgram
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
         private static ProgressWindow ProgressWindow = null;
         private static Process Tftp = null;
+        private static StreamWriter LogFileWriter = null;
 
         /// <summary>
         /// A list of shorthand enumerables used to indicate how far along the progress of the program is.
         /// </summary>
         public enum Progress : int {
-                None = 0,
-                Login = 5, 
-                Ping = 10,
-                TransferFilesStart = 10, //goes to 60 - length: 50
-                CopyToSecondary = 80, 
-                Password = 95,
-                Reboot = 100
+            None = 0,
+            Login = 5, 
+            Ping = 10,
+            TransferFilesStart = 10, //goes to 60 - length: 50
+            CopyToSecondary = 80, 
+            Password = 95,
+            Reboot = 100
+        };
+
+        public enum MessageType : int {
+            Message,
+            Success,
+            Error
         };
 
         /// <summary>
         /// Initializes and shows the progress window, used to show the user how far along the program is.
         /// also used to show any errors that may arise.
         /// </summary>
-        public static void InitializeProgressWindow() {
+        public static void InitializeProgress(string logFilePath) {
             ProgressWindow = new ProgressWindow();
             ProgressWindow.progressBar.Value = (int)Progress.None;
             ProgressWindow.Topmost = true;
             ProgressWindow.Show();
+
+            if (File.Exists(logFile))
+            {
+                File.Delete(logFile);
+            }
+
+            LogFileWriter = File.AppendText(logFilePath);
         }
 
         /// <summary>
@@ -51,13 +65,30 @@ namespace BetterRouterProgram
         /// <param name="text">The message to be displayed in the textblock</param>
         /// <param name="setValue">The value to set the progress bar to</param>
         /// <param name="toAdd">The amount of progress to be added to the current progress level</param>
-        public static void UpdateProgressWindow(string text, Progress setValue = Progress.None, double toAdd = 0) {
+        public static void UpdateProgress(string message, MessageType type, Progress setValue = Progress.None, double toAdd = 0) {
             if(setValue != Progress.None) {
                 ProgressWindow.progressBar.Value = (int)setValue;   
                 ProgressWindow.progressBar.Value += toAdd;
             }
 
-            ProgressWindow.currentTask.Text += "\n" + text;
+            switch(type) {
+                case Message:
+                    ProgressWindow.currentTask.Text += $"\n[Message]:\t{message}";
+                    sw.WriteLine($"[Message]:\t{message}\r\n");
+                    break;
+                case Success:
+                    ProgressWindow.currentTask.Text += $"\n[Success]:\t{message}";
+                    sw.WriteLine($"[Success]:\t{message}\r\n");
+                    break;
+                case Error:
+                    ProgressWindow.currentTask.Text += $"\n[Error]:\t{message}";
+                    sw.WriteLine($"[Error]:\t{message}\r\n");
+                    break;
+                default:
+                    break;
+            }
+            
+            sw.Flush();
         }
 
         /// <summary>
@@ -65,7 +96,7 @@ namespace BetterRouterProgram
         /// </summary>
         /// <returns>Indicates whether or not the ping test successfully pinged the host</returns>
         public static bool PingTest() {
-            UpdateProgressWindow("Pinging Host Machine");
+            UpdateProgress("Pinging Host Machine", MessageType.Message);
 
             //TODO: uncomment after testing
             //SerialConnection.RunInstruction("setd !1 -ip neta = 10.1.1.1 255.255.255.0");
@@ -75,18 +106,18 @@ namespace BetterRouterProgram
             bool retVal = false;
             
             if (message.Contains("is alive")) {
-                UpdateProgressWindow("Ping Successful", Progress.Ping);
+                UpdateProgress("Ping Successful", MessageType.Success, Progress.Ping);
                 retVal = true;
             }
 	        else {
 		        if(message.Contains("Host unreachable")){
-                    UpdateProgressWindow("**Error: Host IP Address Cannot be Reached", Progress.Ping);
+                    UpdateProgress("Host IP Address Cannot be Reached", MessageType.Error, Progress.Ping);
                 }
                 else if(message.Contains("Request timed out")) {
-                    UpdateProgressWindow("**Error: Connection Attempt has Timed Out", Progress.Ping);
+                    UpdateProgress("Connection Attempt has Timed Out", MessageType.Error, Progress.Ping);
                 }
                 else {
-                    UpdateProgressWindow($"**Error: Ping testing failed with message: {message}", Progress.Ping);
+                    UpdateProgress($"Ping testing failed with message: {message}", MessageType.Error, Progress.Ping);
                 }
             }
 
@@ -97,7 +128,7 @@ namespace BetterRouterProgram
         /// Copies the previously loaded file directory into a back-up directory in case of an error on the router
         /// </summary>
         public static void CopyToSecondary(List<string> filesToCopy) {
-            UpdateProgressWindow("Creating Back-Up Directory");
+            UpdateProgress("Creating Back-Up Directory", MessageType.Message);
 
             //TODO change test5 after testing
             string backupDirectory = "a:/test5";
@@ -114,11 +145,11 @@ namespace BetterRouterProgram
 
                 if (response.Contains("not Found"))
                 {
-                    UpdateProgressWindow($"**Error: Backup of {file} in {backupDirectory} could not be made");
+                    UpdateProgress($"Backup of {file} in {backupDirectory} could not be made", MessageType.Error);
                 }
                 else
                 {
-                    UpdateProgressWindow($"Created backup of {file} in {backupDirectory}");
+                    UpdateProgress($"Created backup of {file} in {backupDirectory}", MessageType.Success);
                 }
             }
 
@@ -129,12 +160,12 @@ namespace BetterRouterProgram
         /// </summary>
         /// <param name="password">The password used at the corresponding site/zone of the system</param>
         public static void SetPassword(string password) {
-            UpdateProgressWindow("Setting Password");
+            UpdateProgress("Setting Password", MessageType.Message);
 
             password = password.Trim(' ', '\t', '\r', '\n');
             
             if(password.Equals(SerialConnection.GetSetting("initial password"))){
-                UpdateProgressWindow("**Password cannot be set to the same value. Skipping Step...");
+                UpdateProgress("Password cannot be set to the same value. Skipping Step...", MessageType.Error);
                 return;
             }
 
@@ -145,20 +176,34 @@ namespace BetterRouterProgram
             ));
 
             if (message.Contains("Password changed")) {
-                UpdateProgressWindow("Password Succesfully Changed");
+                UpdateProgress("Password Succesfully Changed", MessageType.Success);
             }
             else if (message.Contains("Invalid password")) {
                 
-                UpdateProgressWindow("**Password used doesn't meet requirements. Skipping Step...");
+                UpdateProgress("Password used doesn't meet requirements. Skipping Step...", MessageType.Error);
                 return;
             }
 	        else {
-                UpdateProgressWindow($"**Error: {message.Substring(0, 50)}...");
+                UpdateProgress($"{message.Substring(0, 50)}...", MessageType.Error);
                 return;
             }
 
             SerialConnection.RunInstruction($"setd -ac secret = \"{SerialConnection.GetSetting("secret")}\"");
-            UpdateProgressWindow("Secret Password Set", Progress.Password);
+            UpdateProgress("Secret Password Set", MessageType.Success, Progress.Password);
+        }
+
+        private void MoveCompletedFiles()
+        {
+            string routerID = SerialConnection.GetSetting("router id");
+            string configDir = SerialConnection.GetSetting("router id");
+
+            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName))
+            {
+                if(file.StartsWith(routerID))
+                {
+                    File.Move(configDir + @"\" + file, configDir + @"\Completed\" + file);
+                }
+            }
         }
 
         /// <summary>
@@ -172,19 +217,21 @@ namespace BetterRouterProgram
             {
                 if (rebootChecked)
                 {
-                    UpdateProgressWindow("Rebooting the Router");
+                    UpdateProgress("Rebooting the Router", MessageType.Message);
                     SerialConnection.RunInstruction("rb");
                 }
+
+                MoveCompletedFiles();
             }
             else
             {
-                UpdateProgressWindow("An Error occurred during runtime. The router will not be rebooted.");
+                UpdateProgress("An Error occurred during runtime. The router will not be rebooted.", MessageType.Message);
                 Thread.Sleep(1000);
             }
 
-            //close the progress window
+            //close the progress window and filewriter
             ProgressWindow.Close();
-
+            StreamWriter.Close();
         }
 
         /// <summary>

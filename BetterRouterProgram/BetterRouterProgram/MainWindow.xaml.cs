@@ -137,10 +137,13 @@ namespace BetterRouterProgram
                         UpdateFileOptions();
 
                         //creates /done and /logs directories
-                        if (!Directory.Exists(fbd.SelectedPath + @"\done") && !Directory.Exists(fbd.SelectedPath + @"\logs")) 
+                        if (!Directory.Exists(fbd.SelectedPath + @"\Completed")) 
                         {
-                            Directory.CreateDirectory(fbd.SelectedPath + @"\done");
-                            Directory.CreateDirectory(fbd.SelectedPath + @"\logs");
+                            Directory.CreateDirectory(fbd.SelectedPath + @"\Completed");
+                        }
+                        if (!Directory.Exists(fbd.SelectedPath + @"\Logs")) 
+                        {
+                            Directory.CreateDirectory(fbd.SelectedPath + @"\Logs");
                         }
 
                         //shortens the path for cleanliness
@@ -224,7 +227,7 @@ namespace BetterRouterProgram
             string configDir = filepathToolTip.Text;
             string secret = secretPassword.Text;
             //string hostIP = "10.10.10.100";
-            string hostIP = this.hostIP.Text;
+            string hostIP = hostIP.Text;
 
             errorText.Text = "";
 
