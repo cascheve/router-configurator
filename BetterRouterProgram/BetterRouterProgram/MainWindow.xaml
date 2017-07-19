@@ -53,14 +53,14 @@
         <TextBlock Text="Your Ethernet IP Address " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" >
             <TextBlock.ToolTip>
                 <ToolTip>
-                    <TextBlock TextWrapping="Wrap" Width="300">Make sure to change your Ethernet Adapter IP Setting in order to interface with the router. If the adapter's IP is not correct, check your adapter setting in the Network and Sharing Center, then click refresh.</TextBlock>
+                    <TextBlock TextWrapping="Wrap" Width="300">Change your Ethernet Adapter IP Setting in order to interface with the router. If the adapter's IP is not correct, check your adapter setting in the Network and Sharing Center, then click refresh.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
 
         <TextBox Name="hostIP" Text="" IsReadOnly="True" Grid.Row="1" Grid.Column="3" Width="100" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
 
-        <Button Name="refresh" Content="Refresh IP" Click="refresh_Click" Grid.Row="1" Grid.Column="3" Margin="110,0,0,0" Width="70" HorizontalAlignment="Left"/>
+        <Button Name="refresh" Content="Refresh IP" Click="refresh_Click" Grid.Row="1" Grid.Column="3" Margin="110,0,0,0" Width="70" HorizontalAlignment="Left" Height="25"/>
 
         <TextBlock Text="Choose the Serial Port: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
             <TextBlock.ToolTip>

@@ -48,24 +48,14 @@ namespace BetterRouterProgram
 
         private static void FillHostIP(MainWindow m)
         {
-            //Create process
-            System.Diagnostics.Process pProcess = new System.Diagnostics.Process();
-
-            //strCommand is path and file name of command to run
+            Process pProcess = new Process();
             pProcess.StartInfo.FileName = "ipconfig";
-
             pProcess.StartInfo.UseShellExecute = false;
-
-            //Set output of program to be written to process output stream
             pProcess.StartInfo.RedirectStandardOutput = true;
-
-            //Start the process
             pProcess.Start();
 
-            //Get program output
             string strOutput = pProcess.StandardOutput.ReadToEnd();
 
-            //Wait for process to finish
             pProcess.WaitForExit();
 
             Thread.Sleep(200);
