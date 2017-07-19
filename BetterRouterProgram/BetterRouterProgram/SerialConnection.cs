@@ -318,6 +318,7 @@ namespace BetterRouterProgram
                 FunctionUtil.UpdateProgressWindow("**Error: Connection Attempt timed out. \nCheck your Serial Connection and try again.");
                 FunctionUtil.PromptDisconnect();
             }
+            
         }
 
         /// <summary>

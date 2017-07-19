@@ -69,18 +69,18 @@ namespace BetterRouterProgram
             {
                 if(file.StartsWith("z0") || file.StartsWith("cen"))
                 {
-                    currentFile = file.Split('_')[0];
+                    currentID = file.Split('_')[0];
                     try 
                     {
-                        if((configFiles[currentFile] == 2 && currentFile.Contains("ggsn"))
-                            || configFiles[currentFile] >= 1) 
+                        if((configFiles[currentID] == 2 && currentID.Contains("ggsn"))
+                            || configFiles[currentID] == 1) 
                         {
                             cBoxItem = new ComboBoxItem();
-                            cBoxItem.Content = currentFile;
+                            cBoxItem.Content = currentID;
                             routerID_DD.Items.Add(cBoxItem);
                         }
                         else {
-                            configFiles[currentFile]++;
+                            configFiles[currentID]++;
                         }
                     }
                     catch(KeyNotFoundException) 
@@ -105,7 +105,7 @@ namespace BetterRouterProgram
 
             bool xgsnCheck = false;
 
-            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray())
+            foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName))
             {
                 if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
                 {
@@ -114,7 +114,7 @@ namespace BetterRouterProgram
             }
 
             xgsn.IsEnabled = xgsnCheck;
-            xgsn.IsChecked = false;
+            xgsn.IsChecked = xgsnCheck;
         }
 
         /// <summary>
@@ -231,8 +231,6 @@ namespace BetterRouterProgram
             string routerID = routerID_DD.Text;
             string configDir = filepathToolTip.Text;
             string secret = secretPassword.Text;
-            bool rebootStatus = rebootCheckbox.IsChecked.HasValue ? rebootCheckbox.IsChecked.Value : false;
-
             //string hostIP = "10.10.10.100";
             string hostIP = this.hostIP.Text;
 
@@ -296,7 +294,7 @@ namespace BetterRouterProgram
                         {acl.Content.ToString(),
                             acl.IsChecked.HasValue ? acl.IsChecked.Value : false}
                     },
-                    rebootStatus,
+                    rebootCheckbox.IsChecked.HasValue ? rebootCheckbox.IsChecked.Value : false,
                     comPort, iString, sString, secret, 
                     routerID, configDir, hostIP
                 );
