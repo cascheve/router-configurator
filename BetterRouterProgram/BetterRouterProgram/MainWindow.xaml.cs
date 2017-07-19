@@ -16,7 +16,6 @@ namespace BetterRouterProgram
 {
     public partial class MainWindow : Window
     {
-
         private static MainWindow MWRef= null;
 
         /// <summary>
@@ -49,6 +48,10 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Gets the IP address and fills in the text block with the address
+        /// </summary>
+        /// <param name="m">Reference to 'this' main window</param>
         private static void FillHostIP(MainWindow m)
         {
             Process pProcess = new Process();
@@ -57,37 +60,25 @@ namespace BetterRouterProgram
             pProcess.StartInfo.RedirectStandardOutput = true;
             pProcess.Start();
 
-            string strOutput = pProcess.StandardOutput.ReadToEnd();
+            // split the output around the newlines
+            string[] tokens = pProcess.StandardOutput.ReadToEnd().Split('\n');
 
             pProcess.WaitForExit();
 
             Thread.Sleep(200);
 
-            // split the output around the newlines
-            string[] tokens = strOutput.Split('\n');
             int i = 0;
 
             //get the ethernet adapter ip address
-            for (; tokens[i] != "Ethernet adapter Ethernet:\r" && i < 100; i++)
-            {
-            }
+            for (; tokens[i] != "Ethernet adapter Ethernet:\r" && i < tokens.Count; i++){}
 
-            //get to the ipv4 line of the output
-            if (i < 100)
-            {
-                i += 4;
-
-                //split across the colon character and trim
-                strOutput = (tokens[i].Split(':'))[1].Trim();
-
-                m.hostIP.Text = strOutput;
-                return;
-            }
-
-            m.hostIP.Text = "0.0.0.0";
-
+            m.hostIP.Text = i+4>tokens.Count ? "0.0.0.0" : (tokens[i+4].Split(':'))[1].Trim();
         }
 
+        /// <summary>
+        /// Updates the ID list for the routers in the current directory.
+        /// Called on <see cref="MoveCompletedFiles"/>
+        /// </summary>
         public static void UpdateIDs()
         {
             MWRef.PopulateIDs(SerialConnection.GetSetting("config directory"));
@@ -345,6 +336,12 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// Refreshes the host IP address.
+        /// Called by the user when they change their IP address
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void refresh_Click(object sender, RoutedEventArgs e)
         {
             FillHostIP(this);

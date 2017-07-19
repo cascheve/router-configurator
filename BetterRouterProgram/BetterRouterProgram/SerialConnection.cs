@@ -35,11 +35,19 @@ namespace BetterRouterProgram
     public class SerialConnection
     {
         /// <summary>
+        /// Varialbe to store whether the user wants to reboot the router or not
+        /// </summary>
+        private static bool RebootStatus = false;
+
+        /// <summary>
+        /// Variable to store whether the ethernet connection was lost
+        /// </summary>
+        private static bool ConnectionLost = false;
+
+        /// <summary>
         /// SerialPort object use to communicate via serial with the router.
         /// </summary>
         private static SerialPort SerialPort = null;
-
-        private static bool ConnectionLost = false;
 
         /// <summary>
         /// Data structure used to quickly access router
@@ -56,8 +64,6 @@ namespace BetterRouterProgram
         /// worker used to update ui asynchronous.
         /// </summary>
         private static BackgroundWorker TransferWorker = null;
-
-        private static bool RebootStatus = false;
 
         /// <summary>
         /// Class used to encaupsulate information to be passed to the <see cref="ProgressBar"/>
@@ -504,7 +510,7 @@ namespace BetterRouterProgram
 
         /// <summary>
         /// Formats the host file.
-        /// Used in see <cref="TransferWorkerDoWork"/>
+        /// Used in see <see cref="TransferWorkerDoWork"/>
         /// </summary>
         /// <param name="file">The file.</param>
         /// <returns>The host file as a string in the correct format.</returns>

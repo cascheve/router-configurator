@@ -15,9 +15,19 @@ namespace BetterRouterProgram
     /// </summary>
     public class FunctionUtil
     {
-        private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
+        /// <summary>
+        /// Progress Window reference to update on command
+        /// </summary>
         private static ProgressWindow ProgressWindow = null;
+
+        /// <summary>
+        /// tftpd32 application reference to open and close on command
+        /// </summary>
         private static Process Tftp = null;
+
+        /// <summary>
+        /// Writer used to write to the log file for the current router
+        /// </summary>
         private static StreamWriter LogFileWriter = null;
 
         /// <summary>
@@ -33,6 +43,9 @@ namespace BetterRouterProgram
             Reboot = 100
         };
 
+        /// <summary>
+        /// Enum to determine the type of message coming through <see cref="UpdateProgress"/>
+        /// </summary>
         public enum MessageType : int {
             Message,
             Success,
@@ -193,6 +206,9 @@ namespace BetterRouterProgram
             UpdateProgress("Secret Password Set", MessageType.Success, Progress.Password);
         }
 
+        /// <summary>
+        /// Moves the files from the config directory to the /Completed directory
+        /// </summary>
         private static void MoveCompletedFiles()
         {
             string routerID = SerialConnection.GetSetting("router ID");
@@ -214,7 +230,6 @@ namespace BetterRouterProgram
         /// </summary>
         public static void ConfigurationFinished(bool rebootChecked, bool error) 
         {
-
             if (!error)
             {
                 if (rebootChecked)
@@ -225,8 +240,6 @@ namespace BetterRouterProgram
 
                 UpdateProgress("All Processes Complete", MessageType.Message);
                 MoveCompletedFiles();
-
-
             }
             else
             {
