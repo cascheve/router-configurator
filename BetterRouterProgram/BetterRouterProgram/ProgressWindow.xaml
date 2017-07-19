@@ -41,7 +41,7 @@
             <Border BorderBrush="Gray" BorderThickness="2" Padding="2, 2, 2, 2">
                 <TextBlock Name="currentTask" Text="Attempting to Connect" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             </Border>
-        </ScrollViewer>
+        </ScrollViewer> 
 
     </Grid>
 </Window>

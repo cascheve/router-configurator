@@ -62,7 +62,7 @@ namespace BetterRouterProgram
             routerID_DD.Items.Clear();
 
             Dictionary<string, int> configFiles = new Dictionary<string, int>();
-            string currentFile = "";
+            string currentID = "";
             ComboBoxItem cBoxItem = null;
 
             foreach (var file in Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName))
@@ -85,7 +85,7 @@ namespace BetterRouterProgram
                     }
                     catch(KeyNotFoundException) 
                     {
-                        configFiles.Add(currentFile, 1);
+                        configFiles.Add(currentID, 1);
                     }
                 }
             }
@@ -145,10 +145,10 @@ namespace BetterRouterProgram
                         UpdateFileOptions();
 
                         //creates /done and /logs directories
-                        if (!Directory.Exists(filepathText.Text)) 
+                        if (!Directory.Exists(fbd.SelectedPath + @"\done") && !Directory.Exists(fbd.SelectedPath + @"\logs")) 
                         {
-                            Directory.CreateDirectory(filepathText.Text + @"\done");
-                            Directory.CreateDirectory(filepathText.Text + @"\logs");
+                            Directory.CreateDirectory(fbd.SelectedPath + @"\done");
+                            Directory.CreateDirectory(fbd.SelectedPath + @"\logs");
                         }
 
                         //shortens the path for cleanliness

@@ -92,10 +92,11 @@
         <TextBlock Text="Enter the Secret Password: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
                 <ToolTip>
-                    <TextBlock TextWrapping="Wrap" Width="300">Enter the secret password. Leaving this blank will set the secret password to the System Password. </TextBlock>
+                    <TextBlock TextWrapping="Wrap" Width="300">Enter the secret password. In some cases, this is similar to the system password. </TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
+        
         <TextBox Name="secretPassword" Text="" Grid.Row="9" Grid.Column="3" Width="250" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
 
         <TextBlock Name="filepathPrompt" Text="File Path of Router Configuration: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">

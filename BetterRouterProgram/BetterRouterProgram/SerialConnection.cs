@@ -94,12 +94,14 @@ namespace BetterRouterProgram
         public static void InitializeAndConnect(Dictionary<string, bool> filesToTransfer, bool rebootStatus, params string[] settings)
         {
             RebootStatus = rebootStatus;
-            string logFile = settings[4] + @"\" + 
-                $"{settings[3]}_log_{DateTime.Today.ToString(@"MM\/dd\/yyyy_HH:mm")}.txt";
+            string logFile = settings[5] + @"\logs\" + 
+                $"{settings[4]}_log_{DateTime.Today.ToString(@"MM.dd.yyyy")}.txt";
+
             if (File.Exists(logFile))
             {
                 File.Delete(logFile);
             }
+
             FileStream fs = File.Create(logFile);
            
             try
