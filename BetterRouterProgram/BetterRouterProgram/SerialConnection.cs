@@ -103,8 +103,6 @@ namespace BetterRouterProgram
             {
                 File.Delete(logFile);
             }
-
-            FileStream fs = File.Create(logFile);
            
             try
             {
