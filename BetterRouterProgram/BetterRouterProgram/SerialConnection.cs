@@ -91,17 +91,22 @@ namespace BetterRouterProgram
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         /// <param name="settings">The settings for the router configuration.</param>
-        public static void InitializeAndConnect(Dictionary<string, bool> extraFilesToTransfer, bool rebootStatus, params string[] settings)
+        public static void InitializeAndConnect(Dictionary<string, bool> filesToTransfer, bool rebootStatus, params string[] settings)
         {
             RebootStatus = rebootStatus;
-
+            string logFile = settings[4] + @"\" + 
+                $"{settings[3]}_log_{DateTime.Today.ToString(@"MM\/dd\/yyyy_HH:mm")}.txt";
+            if (File.Exists(logFile))
+            {
+                File.Delete(logFile);
+            }
+            FileStream fs = File.Create(logFile);
+           
             try
             {
-                if (InitializeConnection(extraFilesToTransfer, settings))
+                if (InitializeConnection(filesToTransfer, settings))
                 {
-                    FileStream fs = File.Create("");
                     //TODO: Login("root", currentPassword)
-
                     if (Login("root", "P25LACleco2016!"))
                     {
                         if (FunctionUtil.PingTest()){
@@ -144,6 +149,7 @@ namespace BetterRouterProgram
                 FunctionUtil.UpdateProgressWindow($"**Error: {ex.Message}");
                 FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
+
         }
 
         /// <summary>
@@ -316,6 +322,7 @@ namespace BetterRouterProgram
                 FunctionUtil.UpdateProgressWindow("**Error: Connection Attempt timed out. \nCheck your Serial Connection and try again.");
                 FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
+
         }
 
         /// <summary>
@@ -426,17 +433,17 @@ namespace BetterRouterProgram
         /// <remarks> Named this metod with a lack of a better one. 
         /// If a better name comes up, please rename it here and <see cref"InitializeConnection"/>
         /// </remarks>
-        private static bool InitializeConnection(Dictionary<string, bool> extraFilesToTransfer, string[] settings)
+        private static bool InitializeConnection(Dictionary<string, bool> filesToTransfer, string[] settings)
         {
             Settings = new Dictionary<string, string>()
             {
                 {"port", settings[0]},
                 {"initial password", settings[1]},
                 {"system password", settings[2]},
-                //TODO: secret and reboot bool
-                {"router ID", settings[3]},
-                {"config directory", settings[4]},
-                {"host ip address", settings[5]}
+                {"secret", settings[3]},
+                {"router ID", settings[4]},
+                {"config directory", settings[5]},
+                {"host ip address", settings[6]}
             };
 
             FunctionUtil.InitializeProgressWindow();
@@ -454,7 +461,7 @@ namespace BetterRouterProgram
                 TransferWorker.ProgressChanged += TransferWorkerProgressChanged;
                 TransferWorker.WorkerReportsProgress = true;
 
-                SetFilesToTransfer(extraFilesToTransfer);
+                SetFilesToTransfer(filesToTransfer);
             }
             catch (System.IO.FileNotFoundException)
             {
@@ -482,18 +489,13 @@ namespace BetterRouterProgram
         /// </summary>
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
-        private static void SetFilesToTransfer(Dictionary<string, bool> extraFilesToTransfer)
+        private static void SetFilesToTransfer(Dictionary<string, bool> filesToTransfer)
         {
-            //TODO: this will be replaced by new GUI setup
             FilesToTransfer = new List<string>();
-            FilesToTransfer.Add("boot.ppc");
-            FilesToTransfer.Add("boot.cfg");
-            FilesToTransfer.Add("acl.cfg");
-            //
 
-            foreach (var file in extraFilesToTransfer.Keys)
+            foreach (var file in filesToTransfer.Keys)
             {
-                if(extraFilesToTransfer[file])
+                if(filesToTransfer[file])
                 {
                     FilesToTransfer.Add(file);
                 }
