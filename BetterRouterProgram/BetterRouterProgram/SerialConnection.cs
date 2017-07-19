@@ -101,6 +101,7 @@ namespace BetterRouterProgram
             {
                 if (InitializeConnection(filesToTransfer, rebootStatus, settings))
                 {
+                    FileStream fs = File.Create(path);
                     //TODO: Login("root", currentPassword)
                     if (Login("root", "P25LACleco2016!"))
                     {
