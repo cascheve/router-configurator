@@ -23,8 +23,8 @@ namespace BetterRouterProgram
     /// </summary>
     public class FunctionUtil
     {
-        private static ProgressWindow ProgressWindow = null;
         private const string DateFormat = "yyyy/MM/dd HH:mm:ss";
+        private static ProgressWindow ProgressWindow = null;
         private static Process Tftp = null;
 
         /// <summary>

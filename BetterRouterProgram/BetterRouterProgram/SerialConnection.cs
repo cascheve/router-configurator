@@ -4,6 +4,7 @@ using System.Threading;
 using System.IO.Ports;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 
 namespace BetterRouterProgram
 {
@@ -56,6 +57,8 @@ namespace BetterRouterProgram
         /// </summary>
         private static BackgroundWorker TransferWorker = null;
 
+        private static bool RebootStatus = false;
+
         /// <summary>
         /// Class used to encaupsulate information to be passed to the <see cref="ProgressBar"/>
         /// </summary>
@@ -88,13 +91,17 @@ namespace BetterRouterProgram
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         /// <param name="settings">The settings for the router configuration.</param>
-        public static void InitializeAndConnect(Dictionary<string, bool> extraFilesToTransfer, params string[] settings)
+        public static void InitializeAndConnect(Dictionary<string, bool> extraFilesToTransfer, bool rebootStatus, params string[] settings)
         {
+            RebootStatus = rebootStatus;
+
             try
             {
                 if (InitializeConnection(extraFilesToTransfer, settings))
                 {
-                    //Login("root", currentPassword)
+                    FileStream fs = File.Create("");
+                    //TODO: Login("root", currentPassword)
+
                     if (Login("root", "P25LACleco2016!"))
                     {
                         if (FunctionUtil.PingTest()){

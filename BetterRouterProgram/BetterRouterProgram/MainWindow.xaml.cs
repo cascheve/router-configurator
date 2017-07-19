@@ -231,7 +231,7 @@ namespace BetterRouterProgram
             string routerID = routerID_DD.Text;
             string configDir = filepathToolTip.Text;
             string secret = secretPassword.Text;
-            bool rebootStatus = rebootCheckbox.IsChecked.HasValue ? rebootCheckbox.IsChecked.Value : false
+            bool rebootStatus = rebootCheckbox.IsChecked.HasValue ? rebootCheckbox.IsChecked.Value : false;
 
             //string hostIP = "10.10.10.100";
             string hostIP = this.hostIP.Text;
@@ -288,11 +288,11 @@ namespace BetterRouterProgram
                         {antiacl.Content.ToString(),
                             antiacl.IsChecked.HasValue ? antiacl.IsChecked.Value : false},
                         {xgsn.Content.ToString(),
-                            xgsn.IsChecked.HasValue ? xgsn.IsChecked.Value : false}
+                            xgsn.IsChecked.HasValue ? xgsn.IsChecked.Value : false},
                         {ppc.Content.ToString(),
-                            ppc.IsChecked.HasValue ? ppc.IsChecked.Value : false}
+                            ppc.IsChecked.HasValue ? ppc.IsChecked.Value : false},
                         {cfg.Content.ToString(),
-                            cfg.IsChecked.HasValue ? cfg.IsChecked.Value : false}
+                            cfg.IsChecked.HasValue ? cfg.IsChecked.Value : false},
                         {acl.Content.ToString(),
                             acl.IsChecked.HasValue ? acl.IsChecked.Value : false}
                     },
