@@ -8,7 +8,7 @@
         Background="#fbfbfb"
         Icon="icon1.ico"
         Title="Router Progress" 
-        Height="360" 
+        Height="390" 
         Width="600"
         ResizeMode="NoResize"
         Closing="DataWindow_Closing">
@@ -21,6 +21,7 @@
             <RowDefinition Height="10"/>
             <RowDefinition Height="270"/>
             <RowDefinition Height="10"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -33,7 +34,7 @@
 
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="16" TextDecorations="{x:Null}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <TextBlock Name="statusTitle" Text="Status: " Grid.Row="1" Grid.Column="1" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center" />
         <TextBlock x:Name="statusText" Grid.Row="1" Grid.Column="2"/>
         <ProgressBar Name="progressBar" Grid.Row="1" Grid.Column="2" Height="20"/>
        
@@ -41,7 +42,9 @@
             <Border BorderBrush="Gray" BorderThickness="2" Padding="2, 2, 2, 2">
                 <TextBlock Name="currentTask" Text="Attempting to Connect" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             </Border>
-        </ScrollViewer> 
+        </ScrollViewer>
+
+        <TextBlock Text="All status updates can be found in the log file" Foreground="DodgerBlue" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" />
 
     </Grid>
 </Window>

@@ -9,7 +9,6 @@ namespace BetterRouterProgram
     //TODO: Routine to wipe router of information
     // move config files to "done" directory
     // output to log file
-    // make user set their host ip to 10.1.1.2
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 

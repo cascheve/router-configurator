@@ -28,6 +28,8 @@ namespace BetterRouterProgram
             portNameDD.Background = Brushes.LightGray;
 
             FillPortNames(this);
+            FillHostIP(this);
+
         }
 
         /// <summary>
@@ -43,7 +45,56 @@ namespace BetterRouterProgram
                 m.portNameDD.Items.Add(cBoxItem);
             }
         }
-        
+
+        private static void FillHostIP(MainWindow m)
+        {
+            //Create process
+            System.Diagnostics.Process pProcess = new System.Diagnostics.Process();
+
+            //strCommand is path and file name of command to run
+            pProcess.StartInfo.FileName = "ipconfig";
+
+            pProcess.StartInfo.UseShellExecute = false;
+
+            //Set output of program to be written to process output stream
+            pProcess.StartInfo.RedirectStandardOutput = true;
+
+            //Start the process
+            pProcess.Start();
+
+            //Get program output
+            string strOutput = pProcess.StandardOutput.ReadToEnd();
+
+            //Wait for process to finish
+            pProcess.WaitForExit();
+
+            Thread.Sleep(200);
+
+            // split the output around the newlines
+            string[] tokens = strOutput.Split('\n');
+            int i = 0;
+
+            //get the ethernet adapter ip address
+            for (; tokens[i] != "Ethernet adapter Ethernet:\r" && i < 100; i++)
+            {
+            }
+
+            //get to the ipv4 line of the output
+            if (i < 100)
+            {
+                i += 4;
+
+                //split across the colon character and trim
+                strOutput = (tokens[i].Split(':'))[1].Trim();
+
+                m.hostIP.Text = strOutput;
+                return;
+            }
+
+            m.hostIP.Text = "0.0.0.0";
+
+        }
+
 
         /// <summary>
         /// Populates the ID list using the files found inside the configuration directory
@@ -292,6 +343,11 @@ namespace BetterRouterProgram
                     routerID, configDir, hostIP
                 );
             }
+        }
+
+        private void refresh_Click(object sender, RoutedEventArgs e)
+        {
+            FillHostIP(this);
         }
     }
 }
