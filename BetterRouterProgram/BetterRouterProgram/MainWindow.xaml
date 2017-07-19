@@ -150,12 +150,14 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-            <CheckBox Name="ppc" IsEnabled="True" IsChecked="True" Content="boot.ppc" Grid.Row="0" VerticalAlignment="Center"/>
-            <CheckBox Name="cfg" IsEnabled="True" IsChecked="True" Content="boot.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-            <CheckBox Name="acl" IsEnabled="True" IsChecked="True" Content="acl.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
-            <CheckBox Name="staticrp" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" VerticalAlignment="Center"/>
-            <CheckBox Name="antiacl" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
-            <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+            <CheckBox Name="cfg" IsEnabled="True" IsChecked="True" Content="boot.cfg" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="acl" IsEnabled="True" IsChecked="True" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+
+            <CheckBox Name="ppc" IsEnabled="True" IsChecked="True" Content="boot.ppc" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="staticrp" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="antiacl" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+            
         </Grid>
 
         <CheckBox Name="rebootCheckbox" IsEnabled="True" IsChecked="False" Content="Reboot After Configuration" Grid.Row="17" Grid.Column="3" VerticalAlignment="Bottom" VerticalContentAlignment="Center" HorizontalAlignment="Left"/>

@@ -19,31 +19,6 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Sends a reboot message to the router and closes the Serial connection
-        /// </summary>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        private void HandleReboot(object sender, RoutedEventArgs e)
-        {
-            FunctionUtil.HandleReboot();
-            Thread.Sleep(750);
-            HandleDisconnect(sender, e);
-        }
-
-        /// <summary>
-        /// Disconnects the host from the router
-        /// </summary>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
-        public void HandleDisconnect(object sender, RoutedEventArgs e)
-        {
-            SerialConnection.CloseConnection();
-
-            Thread.Sleep(250);
-
-            //close the window
-            Close();
-        }
-
-        /// <summary>
         /// If the window is closed by the user, make sure the COM port is freed
         /// </summary>
         /// <param name="e">The <see cref="CancelEventArgs"/> instance containing the event data.</param>

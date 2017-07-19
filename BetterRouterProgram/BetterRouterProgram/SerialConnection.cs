@@ -111,19 +111,19 @@ namespace BetterRouterProgram
                         }
                         else
                         {
-                            FunctionUtil.PromptDisconnect();
+                            FunctionUtil.ConfigurationFinished(RebootStatus, true);
                         }
                     }
                     else
                     {
                         FunctionUtil.UpdateProgressWindow("**Error: Could not log into the Router. \nCheck your login information and try again.");
-                        FunctionUtil.PromptDisconnect();
+                        FunctionUtil.ConfigurationFinished(RebootStatus, true);
                     }
                 }
                 else
                 {
                     FunctionUtil.UpdateProgressWindow("**Error: A connection to the Serial Port could not be made. \nPlease check your connection and try again");
-                    FunctionUtil.PromptDisconnect();
+                    FunctionUtil.ConfigurationFinished(RebootStatus, true);
                 }
             }
             catch (System.IO.FileNotFoundException)
@@ -137,12 +137,12 @@ namespace BetterRouterProgram
             catch (TimeoutException)
             {
                 FunctionUtil.UpdateProgressWindow("**Error: Connection Attempt timed out. \nCheck your Serial Connection and try again.");
-                FunctionUtil.PromptDisconnect();
+                FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
             catch (Exception ex)
             {
                 FunctionUtil.UpdateProgressWindow($"**Error: {ex.Message}");
-                FunctionUtil.PromptDisconnect();
+                FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
         }
 
@@ -255,7 +255,7 @@ namespace BetterRouterProgram
             catch (TimeoutException)
             {
                 FunctionUtil.UpdateProgressWindow("**Error: Connection Attempt timed out. \nCheck your Serial Connection and try again.");
-                FunctionUtil.PromptDisconnect();
+                FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
 
             SerialPort.ReadTimeout = 750;
@@ -309,14 +309,12 @@ namespace BetterRouterProgram
 
                 //FunctionUtil.SetPassword(GetSetting("system password"));
 
-                FunctionUtil.PromptReboot();
-
-                FunctionUtil.PromptDisconnect();
+                FunctionUtil.ConfigurationFinished(RebootStatus, false);
             }
             catch (TimeoutException)
             {
                 FunctionUtil.UpdateProgressWindow("**Error: Connection Attempt timed out. \nCheck your Serial Connection and try again.");
-                FunctionUtil.PromptDisconnect();
+                FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
         }
 

@@ -11,9 +11,7 @@ namespace BetterRouterProgram
     // move config files to "done" directory to reduce wrong file selection
     // all files to be moved added to connection dictionary
     // autocheck all 5 main files
-    // make reboot checkbox functional
     // log file for all output - name of file = {router_id}_log_{date}-{time}.txt
-    // auto disconnect, pause, and close of progress window
     // programatically find and check staticrp and antiacl file boxes if present
     // programmatically set computer's adapter ip address
 
@@ -170,32 +168,27 @@ namespace BetterRouterProgram
         /// <summary>
         /// Prompts and enables the user to reboot the router
         /// </summary>
-        public static void PromptReboot() 
+        public static void ConfigurationFinished(bool rebootChecked, bool error) 
         {
-            ProgressWindow.RebootButton.IsEnabled = true;
-            ProgressWindow.RebootText.Opacity = 1.0;
-            UpdateProgressWindow("Please Reboot or Disconnect");
-        }
+            SerialConnection.CloseConnection();
 
-        /// <summary>
-        /// Sends the reboot command to the router
-        /// </summary>
-        public static void HandleReboot()
-        {
-            SerialConnection.RunInstruction("rb");
+            if (!error)
+            {
+                if (rebootChecked)
+                {
+                    UpdateProgressWindow("Rebooting the Router");
+                    SerialConnection.RunInstruction("rb");
+                }
+            }
+            else
+            {
+                UpdateProgressWindow("An Error occurred during runtime. The router will not be rebooted.");
+                Thread.Sleep(1000);
+            }
 
-            UpdateProgressWindow("Reboot Command Sent", Progress.Reboot);
-        }
+            //close the progress window
+            ProgressWindow.Close();
 
-        /// <summary>
-        ///  Prompt and enable the user to disconnect from the current serial port (This does not reboot the router)
-        /// </summary>
-        public static void PromptDisconnect()
-        {
-            ProgressWindow.DisconnectButton.IsEnabled = true;
-            ProgressWindow.DisconnectText.Opacity = 1.0;
-
-            UpdateProgressWindow("Please Disconnect from the COM Port.");
         }
 
         /// <summary>

@@ -8,7 +8,7 @@
         Background="#fbfbfb"
         Icon="icon1.ico"
         Title="Router Progress" 
-        Height="400" 
+        Height="360" 
         Width="600"
         ResizeMode="NoResize"
         Closing="DataWindow_Closing">
@@ -16,8 +16,6 @@
     <Grid>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="30"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="10"/>
@@ -39,15 +37,7 @@
         <TextBlock x:Name="statusText" Grid.Row="1" Grid.Column="2"/>
         <ProgressBar Name="progressBar" Grid.Row="1" Grid.Column="2" Height="20"/>
        
-        <Button Name="RebootButton" Grid.Row="3" Grid.Column="3" IsEnabled="False" Click="HandleReboot">    
-            <TextBlock Name ="RebootText" Text="Reboot" Opacity="0.6"/>
-        </Button>
-
-        <Button Name="DisconnectButton" Grid.Row="3" Grid.Column="2" IsEnabled="False" Click="HandleDisconnect" Width="70" HorizontalAlignment="Right" Margin="0,0,10,0">
-            <TextBlock Name ="DisconnectText" Text="Disconnect" Opacity="0.6"/>
-        </Button>
-
-        <ScrollViewer Name="ScrollView" Grid.Row="5" Grid.Column="2" Background="White" SizeChanged="ScrollViewer_SizeChanged">
+        <ScrollViewer Name="ScrollView" Grid.Row="3" Grid.Column="2" Background="White" SizeChanged="ScrollViewer_SizeChanged">
             <Border BorderBrush="Gray" BorderThickness="2" Padding="2, 2, 2, 2">
                 <TextBlock Name="currentTask" Text="Attempting to Connect" VerticalAlignment="Top" HorizontalAlignment="Left"/>
             </Border>
