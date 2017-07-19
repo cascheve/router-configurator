@@ -7,13 +7,9 @@ using System.IO;
 namespace BetterRouterProgram
 {
     //TODO: Routine to wipe router of information
-    // Separate secret input
-    // move config files to "done" directory to reduce wrong file selection
-    // all files to be moved added to connection dictionary
-    // autocheck all 5 main files
-    // log file for all output - name of file = {router_id}_log_{date}-{time}.txt
-    // programatically find and check staticrp and antiacl file boxes if present
-    // programmatically set computer's adapter ip address
+    // move config files to "done" directory
+    // output to log file
+    // make user set their host ip to 10.1.1.2
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
@@ -161,7 +157,7 @@ namespace BetterRouterProgram
                 return;
             }
 
-            SerialConnection.RunInstruction($"setd -ac secret = \"{password}\"");
+            SerialConnection.RunInstruction($"setd -ac secret = \"{SerialConnection.GetSetting("secret")}\"");
             UpdateProgressWindow("Secret Password Set", Progress.Password);
         }
 

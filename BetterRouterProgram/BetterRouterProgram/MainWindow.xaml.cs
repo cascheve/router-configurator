@@ -43,15 +43,7 @@ namespace BetterRouterProgram
                 m.portNameDD.Items.Add(cBoxItem);
             }
         }
-
-        /// <summary>
-        /// Depopulates the router ID list in case of a new configuration directory being selected
-        /// </summary>
-        // TODO: delete if called nowhere else
-        private void DepopulateIDs()
-        {
-            routerID_DD.Items.Clear();
-        }
+        
 
         /// <summary>
         /// Populates the ID list using the files found inside the configuration directory
@@ -236,6 +228,8 @@ namespace BetterRouterProgram
 
             errorText.Text = "";
 
+            //TODO: passwords must comply with IA structure
+
             if (hostIP.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the host IP address";
@@ -264,7 +258,6 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "tftpd32.exe not found in directory";
             }
-            //TODO: secret password input not fully done
             else if (secret.Equals(string.Empty))
             {
                 errorText.Text = "Please select the router's secret";
