@@ -71,23 +71,24 @@ namespace BetterRouterProgram
                 ProgressWindow.progressBar.Value += toAdd;
             }
 
+            string progressUpdate = "";
             switch(type) {
                 case MessageType.Message:
-                    ProgressWindow.currentTask.Text += $"\n[Message]:\t{message}";
-                    LogFileWriter.WriteLine($"[Message]:\t{message}\r\n");
+                    progressUpdate = $"\n[Message]\t{message}"
                     break;
                 case MessageType.Success:
-                    ProgressWindow.currentTask.Text += $"\n[Success]:\t{message}";
-                    LogFileWriter.WriteLine($"[Success]:\t{message}\r\n");
+                    progressUpdate = $"\n[Success]\t{message}"
                     break;
                 case MessageType.Error:
-                    ProgressWindow.currentTask.Text += $"\n[Error]:\t{message}";
-                    LogFileWriter.WriteLine($"[Error]:\t{message}\r\n");
+                    progressUpdate = $"\n[Error]\t{message}"
                     break;
                 default:
                     break;
             }
 
+            ProgressWindow.currentTask.Text += progressUpdate;
+            LogFileWriter.WriteLine(progressUpdate);
+            LogFileWriter.WriteLine("");    
             LogFileWriter.Flush();
         }
 
@@ -217,8 +218,9 @@ namespace BetterRouterProgram
             {
                 if (rebootChecked)
                 {
-                    UpdateProgress("Rebooting the Router", MessageType.Message);
+                    UpdateProgress("Reboot command sent", MessageType.Message);
                     SerialConnection.RunInstruction("rb");
+                    UpdateProgress("All Processes Complete", MessageType.Message);
                 }
 
                 MoveCompletedFiles();
