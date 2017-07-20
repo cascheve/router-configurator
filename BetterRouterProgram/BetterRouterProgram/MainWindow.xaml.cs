@@ -61,20 +61,28 @@ namespace BetterRouterProgram
             pProcess.Start();
 
             // split the output around the newlines
-            string[] tokens = pProcess.StandardOutput.ReadToEnd().Split('\n');
-
+            string output = pProcess.StandardOutput.ReadToEnd();
             pProcess.WaitForExit();
-
             Thread.Sleep(200);
 
-            //TODO: Make sure ethernet cable is plugged in
-
-            int i = 0;
-
             //get the ethernet adapter ip address
-            for (; tokens[i] != "Ethernet adapter Ethernet:\r" && i < tokens.Count() - 5; i++){}
-
-            m.hostIP.Text = (i + 4 > tokens.Count() - 1) ? "0.0.0.0" : (tokens[i + 4].Split(':'))[1].Trim();
+            m.hostIP.Text = "0.0.0.0"
+            string[] toSplit = {"\n\n"};
+            string lineSecondHalf = "";
+            int start = output.IndexOf("Ethernet adapter Ethernet:") + "Ethernet adapter Ethernet:".Length;
+            string ethernetInfo =  output.Substring(start).Split(toSplit, 2, StringSplitOptions.RemoveEmptyEntries)[0];
+            
+            foreach(var line in ethernetInfo.Split('\n')) {
+                lineSecondHalf = line.Split(':')[1].Substring(1);
+                if(line.TrimStart().StartsWith("IPv4 Address")) {
+                    m.hostIP.Text = lineSecondHalf;
+                    break;
+                }
+                else if(lineSecondHalf.Equals("Media disconnected")) {
+                    //TODO: handle no ethernet connector;
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -273,9 +281,7 @@ namespace BetterRouterProgram
             string routerID = routerID_DD.Text;
             string configDir = filepathToolTip.Text;
             string secret = secretPassword.Text;
-            //string hostIP = "10.10.10.100";
             string hostIP = this.hostIP.Text;
-
             errorText.Text = "";
 
             //TODO: passwords must comply with IA structure
@@ -283,10 +289,6 @@ namespace BetterRouterProgram
             if (hostIP.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the host IP address";
-            }
-            else if ((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(hostIP).Count != 1)
-            {
-                errorText.Text = "Invalid IP address format";
             }
             else if (comPort.Equals(string.Empty))
             {
