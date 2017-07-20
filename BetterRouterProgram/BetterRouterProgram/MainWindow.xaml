@@ -84,7 +84,7 @@
         </TextBlock>
         <TextBox Name="currentPassword" Text="" Grid.Row="5" Grid.Column="3" Width="250" HorizontalAlignment="Left" VerticalContentAlignment="Center"></TextBox>
 
-        <TextBlock Text="Enter the System Password: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
+        <TextBlock Text="Enter the New Password: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Enter the password that the Router will use for future login authentication.</TextBlock>
@@ -157,19 +157,19 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-            <CheckBox Name="cfg" IsEnabled="True" IsChecked="True" Content="boot.cfg" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-            <CheckBox Name="acl" IsEnabled="True" IsChecked="True" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-            <CheckBox Name="xgsn" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+            <CheckBox Name="cfg_transfer" IsEnabled="True" IsChecked="True" Content="boot.cfg" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="acl_transfer" IsEnabled="True" IsChecked="True" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="xgsn_transfer" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
 
-            <CheckBox Name="ppc" IsEnabled="True" IsChecked="True" Content="boot.ppc" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-            <CheckBox Name="staticrp" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
-            <CheckBox Name="antiacl" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+            <CheckBox Name="ppc_transfer" IsEnabled="True" IsChecked="True" Content="boot.ppc" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="staticrp_transfer" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="antiacl_transfer" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
 
         </Grid>
 
-        <Separator Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="3" Width="500" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Separator Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="3" Width="500" HorizontalAlignment="Left" Height="10" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
 
-        <TextBlock Text="Files Transferred to Secondary: " Grid.Row="17" Grid.Column="1" VerticalAlignment="Center">
+        <TextBlock Text="Files Copied to Secondary: " Grid.Row="17" Grid.Column="1" VerticalAlignment="Center">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Select which of the files located in the Primary folder should be moved into the Secondary backup folder. Selecting all files copies the files selected above, as well as all auxiliary files. Selected files copies only the files selected above. Specific files copies only the files you want to move.</TextBlock>
@@ -177,13 +177,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <StackPanel Name="fileRadios" Grid.Row="17" Grid.Column="3" VerticalAlignment="Center">
-            <RadioButton GroupName="fileToCopy" Checked="RadioButton_Checked" Content="All Files" IsChecked="True" Width="100" HorizontalAlignment="Left"/>
-            <RadioButton GroupName="fileToCopy" Checked="RadioButton_Checked" Content="Selected Files" Width="100" HorizontalAlignment="Left"/>
-            <RadioButton GroupName="fileToCopy" Checked="RadioButton_Checked" Content="Specific Files" Width="100" HorizontalAlignment="Left"/>
-        </StackPanel>
-
-        <Grid Grid.Row="17" Grid.Column="3" Grid.RowSpan="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+        <Grid Grid.Row="17" Grid.Column="3" Grid.RowSpan="1" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>
@@ -195,13 +189,13 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-            <CheckBox Name="cfg2" IsEnabled="False" IsChecked="False" Content="boot.cfg" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-            <CheckBox Name="acl2" IsEnabled="False" IsChecked="False" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-            <CheckBox Name="xgsn2" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+            <CheckBox Name="cfg_copy" IsEnabled="True" IsChecked="False" Content="boot.cfg" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="acl_copy" IsEnabled="True" IsChecked="False" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="xgsn_copy" IsEnabled="True" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
 
-            <CheckBox Name="ppc2" IsEnabled="False" IsChecked="False" Content="boot.ppc" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
-            <CheckBox Name="staticrp2" IsEnabled="False" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
-            <CheckBox Name="antiacl2" IsEnabled="False" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
+            <CheckBox Name="ppc_copy" IsEnabled="False" IsChecked="True" Content="boot.ppc" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="staticrp_copy" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="antiacl_copy" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
 
         </Grid>
 

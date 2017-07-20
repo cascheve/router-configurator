@@ -58,7 +58,9 @@ namespace BetterRouterProgram
         /// <summary>
         /// List of files to transfer to the router
         /// </summary>
-        private static List <string> FilesToTransfer = null;
+        private static List <string> PrimaryFilesToTransfer = null;
+        private static List <string> SecondaryFilesToTransfer = null;
+
 
         /// <summary>
         /// worker used to update ui asynchronous.
@@ -99,13 +101,13 @@ namespace BetterRouterProgram
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         /// <param name="settings">The settings for the router configuration.</param>
-        public static void InitializeAndConnect(Dictionary<string, bool> filesToTransfer, bool rebootStatus, params string[] settings)
+        public static void InitializeAndConnect(Dictionary<string, bool> primaryFilesToTransfer, Dictionary<string, bool> secondaryFilesToTransfer, bool rebootStatus, params string[] settings)
         {
             RebootStatus = rebootStatus;
            
             try
             {
-                if (InitializeConnection(filesToTransfer, settings))
+                if (InitializeConnection(primaryFilesToTransfer, secondaryFilesToTransfer, settings))
                 {
                     //TODO: Login("root", currentPassword)
                     if (Login("root", "P25LACleco2016!"))
@@ -213,7 +215,7 @@ namespace BetterRouterProgram
             int i = 0;
             try
             {
-                foreach (var file in FilesToTransfer)
+                foreach (var file in PrimaryFilesToTransfer)
                 {
                     if (file.Equals("boot.ppc"))
                     {
@@ -256,7 +258,7 @@ namespace BetterRouterProgram
                     {
                         pm.Message = $"{FormatHostFile(file)} Successfully Transferred";
                         pm.Type =  FunctionUtil.MessageType.Success;
-                        pm.AmountToAdd = ((totalProgress) / FilesToTransfer.Count) * (++i);
+                        pm.AmountToAdd = ((totalProgress) / PrimaryFilesToTransfer.Count) * (++i);
 
                         TransferWorker.ReportProgress(0, pm);
                     }
@@ -315,7 +317,7 @@ namespace BetterRouterProgram
                     return;
                 }
 
-                FunctionUtil.CopyToSecondary(new List<string>(FilesToTransfer));
+                FunctionUtil.CopyToSecondary(new List<string>(PrimaryFilesToTransfer));
 
                 //FunctionUtil.SetPassword(GetSetting("system password"));
 
@@ -437,7 +439,7 @@ namespace BetterRouterProgram
         /// <remarks> Named this metod with a lack of a better one. 
         /// If a better name comes up, please rename it here and <see cref"InitializeConnection"/>
         /// </remarks>
-        private static bool InitializeConnection(Dictionary<string, bool> filesToTransfer, string[] settings)
+        private static bool InitializeConnection(Dictionary<string, bool> filesToTransfer, Dictionary<string, bool> filesToCopy, string[] settings)
         {
             Settings = new Dictionary<string, string>()
             {
@@ -467,6 +469,7 @@ namespace BetterRouterProgram
                 TransferWorker.WorkerReportsProgress = true;
 
                 SetFilesToTransfer(filesToTransfer);
+                SetFilesToCopy(filesToCopy);
             }
             catch (System.IO.FileNotFoundException)
             {
@@ -497,13 +500,26 @@ namespace BetterRouterProgram
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         private static void SetFilesToTransfer(Dictionary<string, bool> filesToTransfer)
         {
-            FilesToTransfer = new List<string>();
+            PrimaryFilesToTransfer = new List<string>();
 
             foreach (var file in filesToTransfer.Keys)
             {
                 if(filesToTransfer[file])
                 {
-                    FilesToTransfer.Add(file);
+                    PrimaryFilesToTransfer.Add(file);
+                }
+            }
+        }
+
+        private static void SetFilesToCopy(Dictionary<string, bool> filesToCopy)
+        {
+            SecondaryFilesToTransfer = new List<string>();
+
+            foreach (var file in filesToCopy.Keys)
+            {
+                if (filesToCopy[file])
+                {
+                    SecondaryFilesToTransfer.Add(file);
                 }
             }
         }

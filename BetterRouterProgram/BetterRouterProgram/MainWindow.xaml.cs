@@ -146,8 +146,10 @@ namespace BetterRouterProgram
                 }
             }
 
-            xgsn.IsEnabled = xgsnCheck;
-            xgsn.IsChecked = xgsnCheck;
+            xgsn_transfer.IsEnabled = xgsnCheck;
+            xgsn_transfer.IsChecked = xgsnCheck;
+            xgsn_copy.IsEnabled = xgsnCheck;
+            xgsn_copy.IsChecked = false;
         }
 
         /// <summary>
@@ -233,14 +235,18 @@ namespace BetterRouterProgram
                 }
             }
 
-            staticrp.IsEnabled = staticrpCheck;
-            staticrp.IsChecked = staticrpCheck;
+            staticrp_transfer.IsEnabled = staticrpCheck;
+            staticrp_transfer.IsChecked = staticrpCheck;
+            staticrp_copy.IsEnabled = staticrpCheck;
+            staticrp_copy.IsChecked = false;
 
-            antiacl.IsEnabled = antiaclCheck;
-            antiacl.IsChecked = antiaclCheck;
+            antiacl_transfer.IsEnabled = antiaclCheck;
+            antiacl_transfer.IsChecked = antiaclCheck;
+            antiacl_copy.IsEnabled = antiaclCheck;
+            antiacl_copy.IsChecked = false;
 
-            ppc.IsEnabled = ppcCheck;
-            ppc.IsChecked = ppcCheck;
+            ppc_transfer.IsEnabled = ppcCheck;
+            ppc_transfer.IsChecked = ppcCheck;
         }
 
         /// <summary>
@@ -315,21 +321,59 @@ namespace BetterRouterProgram
                     }
                 }
 
+                List<string> filesToTransfer = new List<string>();
+                List<string> filesToCopy = new List<string>();
+                string currentCheckBox = "";
+
+                foreach (Control c in this.Controls)
+                {
+                    if (c is CheckBox)
+                    {
+                        if (true/*TODO check if c is checked*/)
+                        {
+                            currentCheckBox = c.Name.ToString();
+                            if (currentCheckBox.EndsWith("copy"))
+                            {
+                                filesToCopy.Add(currentCheckBox);
+                            }
+                            else if (currentCheckBox.EndsWith("transfer"))
+                            {
+                                filesToTransfer.Add(currentCheckBox);
+                            }
+                        }
+                    }
+                }
+
                 SerialConnection.InitializeAndConnect(
                     new Dictionary<string, bool>()
                     {
-                        {staticrp.Content.ToString(),
-                            staticrp.IsChecked.HasValue ? staticrp.IsChecked.Value : false},
-                        {antiacl.Content.ToString(),
-                            antiacl.IsChecked.HasValue ? antiacl.IsChecked.Value : false},
-                        {xgsn.Content.ToString(),
-                            xgsn.IsChecked.HasValue ? xgsn.IsChecked.Value : false},
-                        {ppc.Content.ToString(),
-                            ppc.IsChecked.HasValue ? ppc.IsChecked.Value : false},
-                        {cfg.Content.ToString(),
-                            cfg.IsChecked.HasValue ? cfg.IsChecked.Value : false},
-                        {acl.Content.ToString(),
-                            acl.IsChecked.HasValue ? acl.IsChecked.Value : false}
+                        {staticrp_transfer.Content.ToString(),
+                            staticrp_transfer.IsChecked.HasValue ? staticrp_transfer.IsChecked.Value : false},
+                        {antiacl_transfer.Content.ToString(),
+                            antiacl_transfer.IsChecked.HasValue ? antiacl_transfer.IsChecked.Value : false},
+                        {xgsn_transfer.Content.ToString(),
+                            xgsn_transfer.IsChecked.HasValue ? xgsn_transfer.IsChecked.Value : false},
+                        {ppc_transfer.Content.ToString(),
+                            ppc_transfer.IsChecked.HasValue ? ppc_transfer.IsChecked.Value : false},
+                        {cfg_transfer.Content.ToString(),
+                            cfg_transfer.IsChecked.HasValue ? cfg_transfer.IsChecked.Value : false},
+                        {acl_transfer.Content.ToString(),
+                            acl_transfer.IsChecked.HasValue ? acl_transfer.IsChecked.Value : false}
+                    },
+                    new Dictionary<string, bool>()
+                    {
+                        {staticrp_copy.Content.ToString(),
+                            staticrp_copy.IsChecked.HasValue ? staticrp_copy.IsChecked.Value : false},
+                        {antiacl_copy.Content.ToString(),
+                            antiacl_copy.IsChecked.HasValue ? antiacl_copy.IsChecked.Value : false},
+                        {xgsn_copy.Content.ToString(),
+                            xgsn_copy.IsChecked.HasValue ? xgsn_copy.IsChecked.Value : false},
+                        {ppc_copy.Content.ToString(),
+                            ppc_copy.IsChecked.HasValue ? ppc_copy.IsChecked.Value : false},
+                        {cfg_copy.Content.ToString(),
+                            cfg_copy.IsChecked.HasValue ? cfg_copy.IsChecked.Value : false},
+                        {acl_copy.Content.ToString(),
+                            acl_copy.IsChecked.HasValue ? acl_copy.IsChecked.Value : false}
                     },
                     rebootCheckbox.IsChecked.HasValue ? rebootCheckbox.IsChecked.Value : false,
                     comPort, iString, sString, secret, 
@@ -348,48 +392,7 @@ namespace BetterRouterProgram
         {
             FillHostIP(this);
         }
-
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            //currentPassword.Text = ((System.Windows.Controls.RadioButton)sender).Content.ToString();
-            if (MWRef != null)
-            {
-                if (((System.Windows.Controls.RadioButton)sender).Content.ToString().Equals("Specific Files"))
-                {
-                    cfg2.IsEnabled = true;
-                    acl2.IsEnabled = true;
-                    ppc2.IsEnabled = false;
-                    ppc2.IsChecked = true;
-                    staticrp2.IsEnabled = true;
-                    antiacl2.IsEnabled = true;
-
-                    if (xgsn.IsEnabled)
-                    {
-                        xgsn2.IsEnabled = true;
-                    }
-                }
-                else
-                {
-                    cfg2.IsEnabled = false;
-                    cfg2.IsChecked = false;
-
-                    acl2.IsEnabled = false;
-                    acl2.IsChecked = false;
-
-                    ppc2.IsEnabled = false;
-                    ppc2.IsChecked = false;
-
-                    staticrp2.IsEnabled = false;
-                    staticrp2.IsChecked = false;
-
-                    antiacl2.IsEnabled = false;
-                    antiacl2.IsChecked = false;
-
-                    xgsn2.IsEnabled = false;
-                    xgsn2.IsChecked = false;
-                }
-            }
-        }
+        
     }
 }
 
