@@ -67,12 +67,14 @@ namespace BetterRouterProgram
 
             Thread.Sleep(200);
 
+            //TODO: Make sure ethernet cable is plugged in
+
             int i = 0;
 
             //get the ethernet adapter ip address
-            for (; tokens[i] != "Ethernet adapter Ethernet:\r" && i < tokens.Count; i++){}
+            for (; tokens[i] != "Ethernet adapter Ethernet:\r" && i < tokens.Count() - 5; i++){}
 
-            m.hostIP.Text = i+4>tokens.Count ? "0.0.0.0" : (tokens[i+4].Split(':'))[1].Trim();
+            m.hostIP.Text = (i + 4 > tokens.Count() - 1) ? "0.0.0.0" : (tokens[i + 4].Split(':'))[1].Trim();
         }
 
         /// <summary>
@@ -345,6 +347,48 @@ namespace BetterRouterProgram
         private void refresh_Click(object sender, RoutedEventArgs e)
         {
             FillHostIP(this);
+        }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            //currentPassword.Text = ((System.Windows.Controls.RadioButton)sender).Content.ToString();
+            if (MWRef != null)
+            {
+                if (((System.Windows.Controls.RadioButton)sender).Content.ToString().Equals("Specific Files"))
+                {
+                    cfg2.IsEnabled = true;
+                    acl2.IsEnabled = true;
+                    ppc2.IsEnabled = false;
+                    ppc2.IsChecked = true;
+                    staticrp2.IsEnabled = true;
+                    antiacl2.IsEnabled = true;
+
+                    if (xgsn.IsEnabled)
+                    {
+                        xgsn2.IsEnabled = true;
+                    }
+                }
+                else
+                {
+                    cfg2.IsEnabled = false;
+                    cfg2.IsChecked = false;
+
+                    acl2.IsEnabled = false;
+                    acl2.IsChecked = false;
+
+                    ppc2.IsEnabled = false;
+                    ppc2.IsChecked = false;
+
+                    staticrp2.IsEnabled = false;
+                    staticrp2.IsChecked = false;
+
+                    antiacl2.IsEnabled = false;
+                    antiacl2.IsChecked = false;
+
+                    xgsn2.IsEnabled = false;
+                    xgsn2.IsChecked = false;
+                }
+            }
         }
     }
 }
