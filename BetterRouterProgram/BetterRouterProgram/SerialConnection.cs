@@ -451,7 +451,7 @@ namespace BetterRouterProgram
             };
 
             FunctionUtil.InitializeProgress(settings[5] + @"\Logs\" +
-                $"{settings[4]}_log_{DateTime.Today.ToString(@"MM.dd.yyyy")}.txt");
+                $"{settings[4]}_log_{DateTime.Today.ToString(@"MM-dd-yyyy")}.txt");
 
             TransferWorker = new BackgroundWorker();
 

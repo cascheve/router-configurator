@@ -350,6 +350,48 @@ namespace BetterRouterProgram
         {
             FillHostIP(this);
         }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            //currentPassword.Text = ((System.Windows.Controls.RadioButton)sender).Content.ToString();
+            if (MWRef != null)
+            {
+                if (((System.Windows.Controls.RadioButton)sender).Content.ToString().Equals("Specific Files"))
+                {
+                    cfg2.IsEnabled = true;
+                    acl2.IsEnabled = true;
+                    ppc2.IsEnabled = false;
+                    ppc2.IsChecked = true;
+                    staticrp2.IsEnabled = true;
+                    antiacl2.IsEnabled = true;
+
+                    if (xgsn.IsEnabled)
+                    {
+                        xgsn2.IsEnabled = true;
+                    }
+                }
+                else
+                {
+                    cfg2.IsEnabled = false;
+                    cfg2.IsChecked = false;
+
+                    acl2.IsEnabled = false;
+                    acl2.IsChecked = false;
+
+                    ppc2.IsEnabled = false;
+                    ppc2.IsChecked = false;
+
+                    staticrp2.IsEnabled = false;
+                    staticrp2.IsChecked = false;
+
+                    antiacl2.IsEnabled = false;
+                    antiacl2.IsChecked = false;
+
+                    xgsn2.IsEnabled = false;
+                    xgsn2.IsChecked = false;
+                }
+            }
+        }
     }
 }
 
