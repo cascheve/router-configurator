@@ -8,6 +8,11 @@ using System.Linq;
 // TODO: find a place to runs set psk commands
 namespace BetterRouterProgram
 {
+    //TODO: PSK Option
+    //TODO: Boot Order
+    //TODO: Choose Port on Router (in IP Address)
+    //TODO: K Core noacl rename -> ask if it starts as acl or noacl
+
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
@@ -84,14 +89,13 @@ namespace BetterRouterProgram
             string progressUpdate = "";
             switch(type) {
                 case MessageType.Message:
-                    progressUpdate = "[Message]  ";
+                    progressUpdate = "[Message]    ";
                     break;
                 case MessageType.Success:
-                    progressUpdate = "[Success]  ";
-
+                    progressUpdate = "[Success]    ";
                     break;
                 case MessageType.Error:
-                    progressUpdate = "[Error]    ";
+                    progressUpdate = "[Error]      ";
                     break;
                 default:
                     break;
@@ -154,7 +158,8 @@ namespace BetterRouterProgram
         public static void CopyToSecondary(List<string> filesToCopy) {
             UpdateProgress("Creating Back-Up Directory", MessageType.Message);
 
-            //TODO change test5 after testing
+            //TODO Change back to primary and secondary
+            string primaryDirectory = "a:/test4";
             string backupDirectory = "a:/test5";
             string response = "";
 
@@ -164,8 +169,7 @@ namespace BetterRouterProgram
 
             foreach (var file in filesToCopy)
             {
-                //TODO change test3 after testing
-                response = SerialConnection.RunInstruction($"copy a:/test3/{file} {backupDirectory}/{file}");
+                response = SerialConnection.RunInstruction($"copy {primaryDirectory}/{file} {backupDirectory}/{file}");
 
                 if (response.Contains("not Found"))
                 {

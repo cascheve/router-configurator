@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Background="#fbfbfb"
         Icon="icon1.ico"
-        Title="Router Configuration Tool" 
-        Height="500" 
+        Title="CCSi Router Configuration Tool" 
+        Height="560" 
         Width="650"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
@@ -35,7 +35,7 @@
             <RowDefinition Height="15"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="80"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
 
@@ -49,7 +49,7 @@
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Mouse over each option for help" Foreground="DodgerBlue"  Grid.Row="21" Grid.Column="1" VerticalAlignment="Center" />
+        <TextBlock Text="Mouse over an option for help" Foreground="DodgerBlue"  Grid.Row="21" Grid.Column="1" VerticalAlignment="Center" />
 
         <TextBlock Text="Your Ethernet IP Address " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" >
             <TextBlock.ToolTip>
@@ -145,7 +145,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <Grid Name="transferGrid" Grid.Row="15" Grid.Column="3" Grid.RowSpan="1">
+        <Grid Name="TransferGrid" Grid.Row="15" Grid.Column="3" Grid.RowSpan="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>
@@ -177,7 +177,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <Grid Name="SecondaryGrid" Grid.Row="17" Grid.Column="3" Grid.RowSpan="1" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <Grid Name="CopyGrid" Grid.Row="17" Grid.Column="3" Grid.RowSpan="1" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>
@@ -191,7 +191,7 @@
 
             <CheckBox Name="cfg_copy" IsEnabled="True" IsChecked="False" Content="boot.cfg" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
             <CheckBox Name="acl_copy" IsEnabled="True" IsChecked="False" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
-            <CheckBox Name="xgsn_copy" IsEnabled="True" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
+            <CheckBox Name="xgsn_copy" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
 
             <CheckBox Name="ppc_copy" IsEnabled="False" IsChecked="True" Content="boot.ppc" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
             <CheckBox Name="staticrp_copy" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
@@ -199,9 +199,24 @@
 
         </Grid>
 
-        <Separator Grid.Row="18" Grid.Column="1" Grid.ColumnSpan="3" Width="500" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Center" />
+        <Separator Grid.Row="18" Grid.Column="1" Grid.ColumnSpan="3" Width="500" HorizontalAlignment="Left"/>
 
-        <CheckBox Name="rebootCheckbox" IsEnabled="True" IsChecked="False" Content="Reboot After Configuration" Grid.Row="19" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+        <TextBlock Text="PSK Profile (optional): " Grid.Row="19" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0" >
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="300">Select the profile found in PSK.cfg that will be used on this router, along with the Pre-Shared Key. This is an optional step for routers that will have this setting configured. If the PSK.cfg file is not found in the configuration directory specified, this setting can not be configured.</TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
+
+        <ComboBox Name="PSKProfile" Grid.Row="19" Grid.Column="3" Width="180" Height="22" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False" />
+
+        <TextBlock Text="Pre-Shared Key:" Grid.Row="19" Grid.Column="3" Margin="190,3,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Enter the Pre-Shared Key used for this Router Profile."/>
+        <TextBox Name="PSKValue" Text="" Grid.Row="19" Grid.Column="3" Width="100" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="290,0,0,0" Height="22" IsEnabled="False" />
+
+        <CheckBox Name="NoAclRename" IsEnabled="True" IsChecked="False" Content="Transfer acl.cfg as noacl.cfg (K Core Only)" Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="0,30,0,0" ToolTip="In a K Core System it is necessary to change the name of acl.cfg to noacl.cfg. If your system is not a K Core, you may skip this step."/>
+
+        <CheckBox Name="RebootCheckbox" IsEnabled="True" IsChecked="False" Content="Reboot After Configuration (Recommended)" Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="0,55,0,0" ToolTip="If you want to send a Reboot command to the router after all operations have been completed, check this box. In the event of an error, the reboot command will not be sent."/>
 
         <Separator Grid.Row="20" Grid.Column="1" Grid.ColumnSpan="3" />
 
