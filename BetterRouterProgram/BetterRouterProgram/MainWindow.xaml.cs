@@ -323,62 +323,9 @@ namespace BetterRouterProgram
                     }
                 }
 
-                //List<string> filesToTransfer = new List<string>();
-                //List<string> filesToCopy = new List<string>();
-                //string currentCheckBox = "";
-
-                //foreach (Control c in this.Controls)
-                //{
-                //    if (c is CheckBox)
-                //    {
-                //        if (true/*TODO check if c is checked*/)
-                //        {
-                //            currentCheckBox = c.Name.ToString();
-                //            if (currentCheckBox.EndsWith("copy"))
-                //            {
-                //                filesToCopy.Add(currentCheckBox);
-                //            }
-                //            else if (currentCheckBox.EndsWith("transfer"))
-                //            {
-                //                filesToTransfer.Add(currentCheckBox);
-                //            }
-                //        }
-                //    }
-                //}
-
-                //TODO: Iterate over all checkboxes or sets of CBs and add them to respective lists if checked
-
                 SerialConnection.InitializeAndConnect(
-                    new Dictionary<string, bool>()
-                    {
-                        {staticrp_transfer.Content.ToString(),
-                            staticrp_transfer.IsChecked.HasValue ? staticrp_transfer.IsChecked.Value : false},
-                        {antiacl_transfer.Content.ToString(),
-                            antiacl_transfer.IsChecked.HasValue ? antiacl_transfer.IsChecked.Value : false},
-                        {xgsn_transfer.Content.ToString(),
-                            xgsn_transfer.IsChecked.HasValue ? xgsn_transfer.IsChecked.Value : false},
-                        {ppc_transfer.Content.ToString(),
-                            ppc_transfer.IsChecked.HasValue ? ppc_transfer.IsChecked.Value : false},
-                        {cfg_transfer.Content.ToString(),
-                            cfg_transfer.IsChecked.HasValue ? cfg_transfer.IsChecked.Value : false},
-                        {acl_transfer.Content.ToString(),
-                            acl_transfer.IsChecked.HasValue ? acl_transfer.IsChecked.Value : false}
-                    },
-                    new Dictionary<string, bool>()
-                    {
-                        {staticrp_copy.Content.ToString(),
-                            staticrp_copy.IsChecked.HasValue ? staticrp_copy.IsChecked.Value : false},
-                        {antiacl_copy.Content.ToString(),
-                            antiacl_copy.IsChecked.HasValue ? antiacl_copy.IsChecked.Value : false},
-                        {xgsn_copy.Content.ToString(),
-                            xgsn_copy.IsChecked.HasValue ? xgsn_copy.IsChecked.Value : false},
-                        {ppc_copy.Content.ToString(),
-                            ppc_copy.IsChecked.HasValue ? ppc_copy.IsChecked.Value : false},
-                        {cfg_copy.Content.ToString(),
-                            cfg_copy.IsChecked.HasValue ? cfg_copy.IsChecked.Value : false},
-                        {acl_copy.Content.ToString(),
-                            acl_copy.IsChecked.HasValue ? acl_copy.IsChecked.Value : false}
-                    },
+                    GetCheckboxContents(TransferGrid),
+                    GetCheckboxContents(CopyGrid),
                     rebootCheckbox.IsChecked.HasValue ? rebootCheckbox.IsChecked.Value : false,
                     comPort, iString, sString, secret, 
                     routerID, configDir, hostIP

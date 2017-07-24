@@ -187,14 +187,14 @@ namespace BetterRouterProgram
 
             password = password.Trim(' ', '\t', '\r', '\n');
             
-            if(password.Equals(SerialConnection.GetSetting("initial password"))){
+            if(password.Equals(SerialConnection.GetSetting("current password"))){
                 UpdateProgress("Password cannot be set to the same value. Skipping Step...", MessageType.Error);
                 return;
             }
 
             string message = SerialConnection.RunInstruction(String.Format(
                 "SETDefault -SYS NMPassWord = \"{0}\" \"{1}\" \"{2}\"",
-                SerialConnection.GetSetting("initial password"),
+                SerialConnection.GetSetting("current password"),
                 password, password
             ));
 
