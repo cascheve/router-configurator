@@ -401,7 +401,7 @@ namespace BetterRouterProgram
         {
             FillPortNames(this);
 
-            foreach (var checkbox in GetCheckboxContents(transferGrid))
+            foreach (var checkbox in GetCheckboxContents(TransferGrid))
             {
                 currentPassword.Text += checkbox.ToString() + '\n';
             }
