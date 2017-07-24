@@ -400,6 +400,40 @@ namespace BetterRouterProgram
         private void refreshPorts_Click(object sender, RoutedEventArgs e)
         {
             FillPortNames(this);
+
+            foreach (var checkbox in GetCheckboxContents(transferGrid))
+            {
+                currentPassword.Text += checkbox.ToString() + '\n';
+            }
+        }
+
+        private static List <string> GetCheckboxContents(Visual parent)
+        {
+            List<string> allChecks = new List<string>();
+
+            if (parent != null)
+            {
+                int count = VisualTreeHelper.GetChildrenCount(parent);
+
+                for (int i = 0; i < count; i++)
+                {
+                    // Retrieve child visual at specified index value.
+                    Visual child = VisualTreeHelper.GetChild(parent, i) as Visual;
+
+                    if (child != null)
+                    {
+                        System.Windows.Controls.CheckBox checkbox = (System.Windows.Controls.CheckBox)child;
+
+                        if ((bool)checkbox.IsChecked)
+                        {
+                            allChecks.Add(checkbox.Content.ToString());
+                        }
+                    }
+
+                }
+            }
+
+            return allChecks;
         }
     }
 }

@@ -62,7 +62,7 @@
         <TextBox Name="hostIP" Text="" IsReadOnly="True" Grid.Row="1" Grid.Column="3" Width="100" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
 
         <Button Name="refreshIP" Content="Refresh IP" Click="refreshIP_Click" Grid.Row="1" Grid.Column="3" Margin="110,0,0,0" Width="80" HorizontalAlignment="Left"/>
-
+        
         <TextBlock Text="Choose the Serial Port: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
             <TextBlock.ToolTip>
                 <ToolTip>
@@ -145,7 +145,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <Grid Grid.Row="15" Grid.Column="3" Grid.RowSpan="1">
+        <Grid Name="transferGrid" Grid.Row="15" Grid.Column="3" Grid.RowSpan="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>
