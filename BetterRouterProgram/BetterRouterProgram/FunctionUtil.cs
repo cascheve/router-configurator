@@ -16,32 +16,24 @@ namespace BetterRouterProgram
     public class FunctionUtil
     {
         /// <summary>
+        /// Writer used to write to the log file for the current router
+        /// </summary>
+        private static double UpdateAmount;
+
+        /// <summary>
         /// Progress Window reference to update on command
         /// </summary>
-        private static ProgressWindow ProgressWindow = null;
+        private static ProgressWindow ProgressWindow;
 
         /// <summary>
         /// tftpd32 application reference to open and close on command
         /// </summary>
-        private static Process Tftp = null;
+        private static Process Tftp;
 
         /// <summary>
         /// Writer used to write to the log file for the current router
         /// </summary>
-        private static StreamWriter LogFileWriter = null;
-
-        /// <summary>
-        /// A list of shorthand enumerables used to indicate how far along the progress of the program is.
-        /// </summary>
-        public enum Progress : int {
-            None = 0,
-            Login = 5, 
-            Ping = 10,
-            TransferFilesStart = 10, //goes to 60 - length: 50
-            CopyToSecondary = 80, 
-            Password = 95,
-            Reboot = 100
-        };
+        private static StreamWriter LogFileWriter;
 
         /// <summary>
         /// Enum to determine the type of message coming through <see cref="UpdateProgress"/>
@@ -56,9 +48,21 @@ namespace BetterRouterProgram
         /// Initializes and shows the progress window, used to show the user how far along the program is.
         /// also used to show any errors that may arise.
         /// </summary>
-        public static void InitializeProgress(string logFilePath) {
+        public static void InitializeProgress(string logFilePath, bool setPsk, bool reboot) {
+            double instructionCount = 5;
+            if(setPsk) 
+            {
+                instructionCount += 1;
+            }
+            if(reboot)
+            {
+                instructionCount += 1;
+            }
+
+            UpdateAmount = 100/instructionCount;
+
             ProgressWindow = new ProgressWindow();
-            ProgressWindow.progressBar.Value = (int)Progress.None;
+            ProgressWindow.progressBar.Value = 0;
             ProgressWindow.Topmost = true;
             ProgressWindow.Show();
 
@@ -76,12 +80,7 @@ namespace BetterRouterProgram
         /// <param name="text">The message to be displayed in the textblock</param>
         /// <param name="setValue">The value to set the progress bar to</param>
         /// <param name="toAdd">The amount of progress to be added to the current progress level</param>
-        public static void UpdateProgress(string message, MessageType type, Progress setValue = Progress.None, double toAdd = 0) {
-            if(setValue != Progress.None) {
-                ProgressWindow.progressBar.Value = (int)setValue;   
-                ProgressWindow.progressBar.Value += toAdd;
-            }
-
+        public static void UpdateProgress(string message, MessageType type) {
             string progressUpdate = "";
             switch(type) {
                 case MessageType.Message:
@@ -89,6 +88,7 @@ namespace BetterRouterProgram
                     break;
                 case MessageType.Success:
                     progressUpdate = "[Success]  ";
+
                     break;
                 case MessageType.Error:
                     progressUpdate = "[Error]    ";
@@ -100,8 +100,9 @@ namespace BetterRouterProgram
             progressUpdate += message;
 
             ProgressWindow.currentTask.Text += '\n' + progressUpdate;
-            LogFileWriter.WriteLine(progressUpdate);
-            LogFileWriter.WriteLine("");    
+            ProgressWindow.progressBar.Value += UpdateAmount;
+
+            LogFileWriter.WriteLine(progressUpdate + "\n");   
             LogFileWriter.Flush();
         }
 
@@ -122,25 +123,25 @@ namespace BetterRouterProgram
             }
             
             //TODO: uncomment after testing
-            //SerialConnection.RunInstruction($"setd !1 -ip neta = {routerIP} 255.255.255.0");
+            //SerialConnection.RunInstruction($"setd !{routerport#} -ip neta = {routerIP} 255.255.255.0");
             
             string message = SerialConnection.RunInstruction($"ping {SerialConnection.GetSetting("host ip address")}");
 
             bool retVal = false;
             
             if (message.Contains("is alive")) {
-                UpdateProgress("Ping Successful", MessageType.Success, Progress.Ping);
+                UpdateProgress("Ping Successful", MessageType.Success);
                 retVal = true;
             }
 	        else {
 		        if(message.Contains("Host unreachable")){
-                    UpdateProgress("Host IP Address Cannot be Reached", MessageType.Error, Progress.Ping);
+                    UpdateProgress("Host IP Address Cannot be Reached", MessageType.Error);
                 }
                 else if(message.Contains("Request timed out")) {
-                    UpdateProgress("Connection Attempt has Timed Out", MessageType.Error, Progress.Ping);
+                    UpdateProgress("Connection Attempt has Timed Out", MessageType.Error);
                 }
                 else {
-                    UpdateProgress($"Ping testing failed with message: {message}", MessageType.Error, Progress.Ping);
+                    UpdateProgress($"Ping testing failed with message: {message}", MessageType.Error);
                 }
             }
 
@@ -212,7 +213,22 @@ namespace BetterRouterProgram
             }
 
             SerialConnection.RunInstruction($"setd -ac secret = \"{SerialConnection.GetSetting("secret")}\"");
-            UpdateProgress("Secret Password Set", MessageType.Success, Progress.Password);
+            UpdateProgress("Secret Password Set", MessageType.Success, Progress);
+        }
+
+        /// <summary>
+        /// Sets the psk addresses of the router
+        /// </summary>
+        /// <param name="ipList">list of the ips to set the psk for</param>
+        public static void SetPsk(List<string> ipList) {
+            UpdateProgress($"Setting PSKs for {/*TODO insert setting here*/}", MessageType.Message);
+
+           foreach(var ip in ipList) 
+           {
+                SerialConnection.RunInstruction($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()} \"{/*psk*/}\" \"{/*psk*/}\"");
+           }
+
+            UpdateProgress("PSKs Set", MessageType.Success, Progress);
         }
 
         /// <summary>
@@ -237,14 +253,18 @@ namespace BetterRouterProgram
         /// <summary>
         /// Prompts and enables the user to reboot the router
         /// </summary>
-        public static void ConfigurationFinished(bool rebootChecked, bool error) 
+        public static void ConfigurationFinished(bool reboot, bool error) 
         {
             if (!error)
             {
-                if (rebootChecked)
+                if (reboot)
                 {
-                    UpdateProgress("Reboot command sent", MessageType.Message);
+                    UpdateProgress("Reboot command sent", MessageType.Success);
                     SerialConnection.RunInstruction("rb");
+                }
+                else
+                {
+                    UpdateProgress("Reboot command not sent", MessageType.Message);
                 }
 
                 UpdateProgress("All Processes Complete", MessageType.Message);

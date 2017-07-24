@@ -16,9 +16,9 @@ namespace BetterRouterProgram
 {
     public partial class MainWindow : Window
     {
-        private static MainWindow MWRef= null;
+        private static MainWindow MWRef;
 
-        Dictionary<string, List<string>> PskList = null;
+        Dictionary<string, List<string>> PskList;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -75,13 +75,16 @@ namespace BetterRouterProgram
             int start = output.IndexOf("Ethernet adapter Ethernet:") + "Ethernet adapter Ethernet:".Length;
             string ethernetInfo =  output.Substring(start).Split(new string[] {"\r\n\r\n"}, 2, StringSplitOptions.RemoveEmptyEntries)[0];
             
-            foreach(var line in ethernetInfo.Split(new string[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries)) {
+            foreach(var line in ethernetInfo.Split(new string[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries)) 
+            {
                 lineSecondHalf = line.Split(':')[1].Substring(1);
-                if(line.TrimStart().StartsWith("IPv4 Address")) {
+                if(line.TrimStart().StartsWith("IPv4 Address")) 
+                {
                     m.hostIP.Text = lineSecondHalf;
                     break;
                 }
-                else if(lineSecondHalf.Equals("Media disconnected")) {
+                else if(lineSecondHalf.Equals("Media disconnected")) 
+                {
                     break;
                 }
             }
@@ -205,12 +208,15 @@ namespace BetterRouterProgram
                             string line = "";
                             string currentID = "";
                             PskList = new Dictionary<string, List<string>>();
-                            while((line = file.ReadLine()) != null) {
-                                if(line.StartsWith("[") && line.EndsWith("]")) {
+                            while((line = file.ReadLine()) != null) 
+                            {
+                                if(line.StartsWith("[") && line.EndsWith("]")) 
+                                {
                                     currentID = line.Substring(1, line.Length-2);
                                     pskList.Add(currentID, new List<string>());
                                 }
-                                else if(line.Length > 1 && line.Contains("ADD")) {
+                                else if(line.Length > 1 && line.Contains("ADD")) 
+                                {
                                     pskList[currentID].Add((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(line)[0].ToString());
                                 }
                             }
@@ -335,8 +341,10 @@ namespace BetterRouterProgram
             }
             else
             {
-                foreach(var file in Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray()) {
-                    if(file.StartsWith(routerID) && !file.Contains("_acl")) {
+                foreach(var file in Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray()) 
+                {
+                    if(file.StartsWith(routerID) && !file.Contains("_acl")) 
+                    {
                         routerID = file.Substring(0, file.Length - 4);
                         break;
                     }

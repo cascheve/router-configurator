@@ -37,44 +37,43 @@ namespace BetterRouterProgram
         /// <summary>
         /// Varialbe to store whether the user wants to reboot the router or not
         /// </summary>
-        private static bool RebootStatus = false;
+        private static bool RebootStatus;
 
         /// <summary>
         /// Variable to store whether the ethernet connection was lost
         /// </summary>
-        private static bool ConnectionLost = false;
+        private static bool ConnectionLost;
 
         /// <summary>
         /// Data structure used to quickly access router
         /// configuration settings.
         /// </summary>
-        private static Dictionary<string, string> Settings = null;
+        private static Dictionary<string, string> Settings;
 
         /// <summary>
         /// List of files to transfer to the router
         /// </summary>
-        private static List <string> FilesToTransfer = null;
+        private static List <string> FilesToTransfer;
         
         /// <summary>
         /// List of IP addresses to set the psk for
         /// </summary>
-        private static List <string> PskIPList = null;
+        private static List <string> PskIPList;
 
         /// <summary>
         /// List of files to create a backup of
         /// </summary>
-        private static List <string> FilesToCopy = null;
+        private static List <string> FilesToCopy;
 
         /// <summary>
         /// SerialPort object use to communicate via serial with the router.
         /// </summary>
-        private static SerialPort SerialPort = null;
-
+        private static SerialPort SerialPort;
 
         /// <summary>
         /// worker used to update ui asynchronous.
         /// </summary>
-        private static BackgroundWorker TransferWorker = null;
+        private static BackgroundWorker TransferWorker;
 
         /// <summary>
         /// Class used to encaupsulate information to be passed to the <see cref="ProgressBar"/>
@@ -182,7 +181,7 @@ namespace BetterRouterProgram
 
             if (!SerialPort.IsOpen)
             {
-                FunctionUtil.UpdateProgress("Login Unsuccessful: serial connection lost", FunctionUtil.MessageType.Error, FunctionUtil.Progress.None);
+                FunctionUtil.UpdateProgress("Login Unsuccessful: serial connection lost", FunctionUtil.MessageType.Error);
                 return false;
             }
             
@@ -199,7 +198,7 @@ namespace BetterRouterProgram
 
             //if the serial connection fails using the username and password specified
             if (ReadResponse('#').Length > 0) {
-                FunctionUtil.UpdateProgress("Login Successful", FunctionUtil.MessageType.Success, FunctionUtil.Progress.Login);
+                FunctionUtil.UpdateProgress("Login Successful", FunctionUtil.MessageType.Success);
                 return true;
             }
             
@@ -302,12 +301,7 @@ namespace BetterRouterProgram
         {
             ProgressMessage pm = e.UserState as ProgressMessage;
 
-            FunctionUtil.UpdateProgress(
-                pm.Message,
-                pm.Type,
-                FunctionUtil.Progress.TransferFilesStart, 
-                pm.AmountToAdd
-            );
+            FunctionUtil.UpdateProgress(pm.Message, pm.Type);
 
             Thread.Sleep(200);
         }
