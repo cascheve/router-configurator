@@ -39,6 +39,8 @@ namespace BetterRouterProgram
         /// </summary>
         private static bool RebootStatus = false;
 
+        private static bool RenameAcl = false;
+
         /// <summary>
         /// Variable to store whether the ethernet connection was lost
         /// </summary>
@@ -106,18 +108,18 @@ namespace BetterRouterProgram
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         /// <param name="settings">The settings for the router configuration.</param>
         public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, 
-                                                bool rebootStatus, params string[] settings)
+                                                bool rebootStatus, bool renameAcl, params string[] settings)
         {
             RebootStatus = rebootStatus;
+            RenameAcl = renameAcl;
             FilesToTransfer = filesToTransfer;
             FilesToCopy = filesToCopy;
 
             try
             {
-                if (InitializeConnection(filesToTransfer, filesToCopy, settings))
+                if (InitializeConnection(settings))
                 {
-                    //TODO: Login("root", currentPassword)
-                    if (Login("root", "P25LACleco2016!"))
+                    if (Login("root", GetSetting("current password")))
                     {
                         if (FunctionUtil.PingTest()){
                             //this will run, and upon completion the worker will proceed with the remaining functions
@@ -137,7 +139,7 @@ namespace BetterRouterProgram
                 }
                 else
                 {
-                    FunctionUtil.UpdateProgress("A connection to the Serial Port could not be made." +
+                    FunctionUtil.UpdateProgress("A connection to the Serial Port could not be made." + 
                         "\nPlease check your connection and try again", FunctionUtil.MessageType.Error);
                     FunctionUtil.ConfigurationFinished(RebootStatus, true);
                 }
@@ -218,10 +220,11 @@ namespace BetterRouterProgram
             ProgressMessage pm = new ProgressMessage("Transferring Configuration Files", FunctionUtil.MessageType.Message);
             TransferWorker.ReportProgress(0, pm);
 
-            //TODO: change back to primary after testing
-            RunInstruction(@"cd a:\test3");
+            //TODO Change to primary
+            RunInstruction(@"cd a:\test4");
 
             int i = 0;
+
             try
             {
                 foreach (var file in FilesToTransfer)
@@ -322,11 +325,11 @@ namespace BetterRouterProgram
             {
                 if (ConnectionLost)
                 {
-                    FunctionUtil.UpdateProgress("Ethernet connection has been lost", FunctionUtil.MessageType.Error);
+                    FunctionUtil.UpdateProgress("Ethernet Connection has been Lost", FunctionUtil.MessageType.Error);
                     return;
                 }
 
-                FunctionUtil.CopyToSecondary(new List<string>(FilesToTransfer));
+                FunctionUtil.CopyToSecondary(new List<string>(FilesToCopy));
 
                 //FunctionUtil.SetPassword(GetSetting("system password"));
 

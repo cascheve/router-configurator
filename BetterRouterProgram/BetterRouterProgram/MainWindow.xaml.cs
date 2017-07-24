@@ -224,6 +224,7 @@ namespace BetterRouterProgram
             bool staticrpCheck = false;
             bool antiaclCheck = false;
             bool ppcCheck = false;
+            bool PSKCheck = false;
 
             foreach (var file in Directory.GetFiles(filepathToolTip.Text).Select(Path.GetFileName))
             {
@@ -237,6 +238,9 @@ namespace BetterRouterProgram
                         break;
                     case "boot.ppc":
                         ppcCheck = true;
+                        break;
+                    case "PSK.cfg":
+                        PSKCheck = true;
                         break;
                     default:
                         break;
@@ -255,6 +259,9 @@ namespace BetterRouterProgram
 
             ppc_transfer.IsEnabled = ppcCheck;
             ppc_transfer.IsChecked = ppcCheck;
+
+            PSKProfile.IsEnabled = PSKCheck;
+            PSKValue.IsEnabled = PSKCheck;
         }
 
         /// <summary>
@@ -326,7 +333,8 @@ namespace BetterRouterProgram
                 SerialConnection.InitializeAndConnect(
                     GetCheckboxContents(TransferGrid),
                     GetCheckboxContents(CopyGrid),
-                    rebootCheckbox.IsChecked.HasValue ? rebootCheckbox.IsChecked.Value : false,
+                    RebootCheckbox.IsChecked.HasValue ? RebootCheckbox.IsChecked.Value : false,
+                    NoAclRename.IsChecked.HasValue ? NoAclRename.IsChecked.Value : false,
                     comPort, iString, sString, secret, 
                     routerID, configDir, hostIP
                 );
@@ -347,11 +355,6 @@ namespace BetterRouterProgram
         private void refreshPorts_Click(object sender, RoutedEventArgs e)
         {
             FillPortNames(this);
-
-            foreach (var checkbox in GetCheckboxContents(TransferGrid))
-            {
-                currentPassword.Text += checkbox.ToString() + '\n';
-            }
         }
 
         private static List <string> GetCheckboxContents(Visual parent)
