@@ -54,6 +54,11 @@ namespace BetterRouterProgram
         /// List of files to transfer to the router
         /// </summary>
         private static List <string> FilesToTransfer = null;
+        
+        /// <summary>
+        /// List of IP addresses to set the psk for
+        /// </summary>
+        private static List <string> PskIPList = null;
 
         /// <summary>
         /// List of files to create a backup of
@@ -106,11 +111,12 @@ namespace BetterRouterProgram
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         /// <param name="settings">The settings for the router configuration.</param>
         public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, 
-                                                bool rebootStatus, params string[] settings)
+                                                List<string> pskIPList, bool rebootStatus, params string[] settings)
         {
             RebootStatus = rebootStatus;
             FilesToTransfer = filesToTransfer;
             FilesToCopy = filesToCopy;
+            PskIPList = pskIPList;
 
             try
             {

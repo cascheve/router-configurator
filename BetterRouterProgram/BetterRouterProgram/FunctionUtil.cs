@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
+// TODO: find a place to runs set psk commands
 namespace BetterRouterProgram
 {
-    //TODO: Routine to wipe router of information
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 

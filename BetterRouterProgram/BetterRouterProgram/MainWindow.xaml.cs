@@ -18,6 +18,8 @@ namespace BetterRouterProgram
     {
         private static MainWindow MWRef= null;
 
+        Dictionary<string, List<string>> PskList = null;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// This includes filling the port and timezone DropDown lists
@@ -32,7 +34,7 @@ namespace BetterRouterProgram
             FillHostIP(this);
 
             MWRef = this;
-        }
+        }        
 
         /// <summary>
         /// Programmatically locates the available COM ports on the host computer and fills the DropDown list
@@ -197,6 +199,23 @@ namespace BetterRouterProgram
                             Directory.CreateDirectory(fbd.SelectedPath + @"\Logs");
                         }
 
+                        //initializePSK list
+                        if(File.Exists(fbd.SelectedPath + "PSK.cfg")) {
+                            StreamReader pskFile = new StreamReader(fbd.SelectedPath + @"\PSK.cfg");
+                            string line = "";
+                            string currentID = "";
+                            PskList = new Dictionary<string, List<string>>();
+                            while((line = file.ReadLine()) != null) {
+                                if(line.StartsWith("[") && line.EndsWith("]")) {
+                                    currentID = line.Substring(1, line.Length-2);
+                                    pskList.Add(currentID, new List<string>());
+                                }
+                                else if(line.Length > 1 && line.Contains("ADD")) {
+                                    pskList[currentID].Add((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(line)[0].ToString());
+                                }
+                            }
+                        }
+
                         //shortens the path for cleanliness
                         filepathText.Text = fbd.SelectedPath.Length > 35? 
                             fbd.SelectedPath.Substring(0, 35) + "..." : fbd.SelectedPath;
@@ -326,6 +345,7 @@ namespace BetterRouterProgram
                 SerialConnection.InitializeAndConnect(
                     GetCheckboxContents(TransferGrid),
                     GetCheckboxContents(CopyGrid),
+                    PskList[""/*TODO: instert id here*/],
                     rebootCheckbox.IsChecked.HasValue ? rebootCheckbox.IsChecked.Value : false,
                     comPort, iString, sString, secret, 
                     routerID, configDir, hostIP
