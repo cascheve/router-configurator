@@ -208,16 +208,16 @@ namespace BetterRouterProgram
                             string line = "";
                             string currentID = "";
                             PskList = new Dictionary<string, List<string>>();
-                            while((line = file.ReadLine()) != null) 
+                            while((line = pskFile.ReadLine()) != null) 
                             {
                                 if(line.StartsWith("[") && line.EndsWith("]")) 
                                 {
                                     currentID = line.Substring(1, line.Length-2);
-                                    pskList.Add(currentID, new List<string>());
+                                    PskList.Add(currentID, new List<string>());
                                 }
                                 else if(line.Length > 1 && line.Contains("ADD")) 
                                 {
-                                    pskList[currentID].Add((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(line)[0].ToString());
+                                    PskList[currentID].Add((new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Matches(line)[0].ToString());
                                 }
                             }
                         }

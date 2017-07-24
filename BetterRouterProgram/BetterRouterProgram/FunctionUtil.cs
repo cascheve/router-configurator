@@ -217,7 +217,7 @@ namespace BetterRouterProgram
             }
 
             SerialConnection.RunInstruction($"setd -ac secret = \"{SerialConnection.GetSetting("secret")}\"");
-            UpdateProgress("Secret Password Set", MessageType.Success, Progress);
+            UpdateProgress("Secret Password Set", MessageType.Success);
         }
 
         /// <summary>
@@ -225,14 +225,14 @@ namespace BetterRouterProgram
         /// </summary>
         /// <param name="ipList">list of the ips to set the psk for</param>
         public static void SetPsk(List<string> ipList) {
-            UpdateProgress($"Setting PSKs for {/*TODO insert setting here*/}", MessageType.Message);
+            UpdateProgress($"Setting PSKs for {/*TODO insert setting here*/111111}", MessageType.Message);
 
            foreach(var ip in ipList) 
            {
-                SerialConnection.RunInstruction($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()} \"{/*psk*/}\" \"{/*psk*/}\"");
+                SerialConnection.RunInstruction($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()} \"{/*psk*/111111}\" \"{/*psk*/111111}\"");
            }
 
-            UpdateProgress("PSKs Set", MessageType.Success, Progress);
+            UpdateProgress("PSKs Set", MessageType.Success);
         }
 
         /// <summary>

@@ -39,7 +39,7 @@ namespace BetterRouterProgram
         /// </summary>
         private static bool RebootStatus;
 
-        private static bool RenameAcl = false;
+        private static bool RenameAcl;
 
         /// <summary>
         /// Variable to store whether the ethernet connection was lost
@@ -105,14 +105,28 @@ namespace BetterRouterProgram
             return Settings[setting];
         }
 
-        /// <summary>
+        /*/// <summary>
         /// Initializes the serial connection and connects to the router
         /// </summary>
-        /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
-        /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
+        /// <param name="filesToTransfer">The files to transfer.</param>
+        /// <param name="filesToCopy">The files to copy.</param>
+        /// <param name="pskIPList">The PSK ip list.</param>
+        /// <param name="rebootStatus">if set to <c>true</c> [reboot status].</param>
+        /// <param name="renameAcl">if set to <c>true</c> [rename acl].</param>
         /// <param name="settings">The settings for the router configuration.</param>
-        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList
-                                                bool rebootStatus, bool renameAcl, params string[] settings)
+        /// <remarks>
+        /// 'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)
+        /// </remarks>*/
+        /// <summary>
+        /// Initializes the and connect.
+        /// </summary>
+        /// <param name="filesToTransfer">The files to transfer.</param>
+        /// <param name="filesToCopy">The files to copy.</param>
+        /// <param name="pskIPList">The PSK ip list.</param>
+        /// <param name="rebootStatus">if set to <c>true</c> [reboot status].</param>
+        /// <param name="renameAcl">if set to <c>true</c> [rename acl].</param>
+        /// <param name="settings">The settings.</param>
+        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, bool rebootStatus, bool renameAcl, params string[] settings)
         {
             RebootStatus = rebootStatus;
             RenameAcl = renameAcl;
@@ -122,7 +136,7 @@ namespace BetterRouterProgram
 
             try
             {
-                if (InitializeConnection(settings))
+                if (InitializeConnection(settings, rebootStatus, pskIPList==null?true:false))
                 {
                     if (Login("root", GetSetting("current password")))
                     {
@@ -451,7 +465,7 @@ namespace BetterRouterProgram
         /// <remarks> Named this metod with a lack of a better one. 
         /// If a better name comes up, please rename it here and <see cref"InitializeConnection"/>
         /// </remarks>
-        private static bool InitializeConnection(string[] settings)
+        private static bool InitializeConnection(string[] settings, bool reboot, bool setPsk)
         {
             Settings = new Dictionary<string, string>()
             {
@@ -465,7 +479,8 @@ namespace BetterRouterProgram
             };
 
             FunctionUtil.InitializeProgress(settings[5] + @"\Logs\" +
-                $"{settings[4]}_log_{DateTime.Today.ToString(@"MM-dd-yyyy")}.txt");
+                $"{settings[4]}_log_{DateTime.Today.ToString(@"MM-dd-yyyy")}.txt",
+                reboot, setPsk);
 
             TransferWorker = new BackgroundWorker();
 
