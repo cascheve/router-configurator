@@ -203,11 +203,11 @@ namespace BetterRouterProgram
                         }
 
                         //initializePSK list
+                        PskList = new Dictionary<string, List<string>>();
                         if(File.Exists(fbd.SelectedPath + "PSK.cfg")) {
                             StreamReader pskFile = new StreamReader(fbd.SelectedPath + @"\PSK.cfg");
                             string line = "";
                             string currentID = "";
-                            PskList = new Dictionary<string, List<string>>();
                             while((line = pskFile.ReadLine()) != null) 
                             {
                                 if(line.StartsWith("[") && line.EndsWith("]")) 
@@ -307,44 +307,46 @@ namespace BetterRouterProgram
         /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void AttemptConnection(object sender, RoutedEventArgs e)
         {
-            string comPort = portNameDD.Text;
-            string iString = currentPassword.Text;
-            string sString = sysPassword.Text;
-            string routerID = routerID_DD.Text;
-            string configDir = filepathToolTip.Text;
-            string secret = secretPassword.Text;
-            string hostIP = this.hostIP.Text;
             errorText.Text = "";
 
-            //TODO: passwords must comply with IA structure
-
-            if (hostIP.Equals(string.Empty))
+            if (this.hostIP.Text.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the host IP address";
             }
-            else if (comPort.Equals(string.Empty))
+            else if (portNameDD.Text.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the port number";
             }
-            else if (sString.Equals(string.Empty))
+            else if (sysPassword.Text.Equals(string.Empty))
             {
                 errorText.Text = "Please fill in the system password";
             }
-            else if (routerID.Equals(string.Empty))
+            else if (routerID_DD.Text.Equals(string.Empty))
             {
                 errorText.Text = "Please select the router's ID";
             }
-            else if (configDir.Equals(string.Empty))
+            else if (filepathToolTip.Text.Equals(string.Empty))
             {
                 errorText.Text = "Please fill the configuration file directory";
             }
-            else if (!File.Exists(configDir + @"\tftpd32.exe"))
+            else if (!File.Exists(filepathToolTip.Text + @"\tftpd32.exe"))
             {
                 errorText.Text = "tftpd32.exe not found in directory";
             }
-            else if (secret.Equals(string.Empty))
+            else if (secretPassword.Equals(string.Empty))
             {
                 errorText.Text = "Please select the router's secret";
+            }
+            else if(PSKProfile.IsEnabled)
+            {
+                if(PSKProfile.Equals(string.Empty))
+                {
+                    errorText.Text = "Please select the PSK profile";
+                }
+                else if(PSKValue.Equals(string.Empty))
+                {
+                    errorText.Text = "Please select the PSK value";
+                }
             }
             else
             {
@@ -360,11 +362,12 @@ namespace BetterRouterProgram
                 SerialConnection.InitializeAndConnect(
                     GetCheckboxContents(TransferGrid),
                     GetCheckboxContents(CopyGrid),
-                    PskList[""/*TODO: instert id here*/],
-                    RebootCheckbox.IsChecked.HasValue ? RebootCheckbox.IsChecked.Value : false,
-                    NoAclRename.IsChecked.HasValue ? NoAclRename.IsChecked.Value : false,
-                    comPort, iString, sString, secret, 
-                    routerID, configDir, hostIP
+                    PskList.Count!=0?PskList[PSKProfile.Text]:null,
+                    RebootCheckbox.IsChecked.HasValue? RebootCheckbox.IsChecked.Value : false,
+                    NoAclRename.IsChecked.HasValue? NoAclRename.IsChecked.Value : false,
+                    portNameDD.Text, currentPassword.Text, sysPassword.Text, 
+                    secretPassword.Text, routerID_DD.Text, filepathToolTip.Text, 
+                    this.hostIP.Text PSKProfile.Text, PSKValue.Text
                 );
             }
         }

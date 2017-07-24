@@ -126,7 +126,8 @@ namespace BetterRouterProgram
         /// <param name="rebootStatus">if set to <c>true</c> [reboot status].</param>
         /// <param name="renameAcl">if set to <c>true</c> [rename acl].</param>
         /// <param name="settings">The settings.</param>
-        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, bool rebootStatus, bool renameAcl, params string[] settings)
+        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, 
+                                                bool rebootStatus, bool renameAcl, params string[] settings)
         {
             RebootStatus = rebootStatus;
             RenameAcl = renameAcl;
@@ -476,6 +477,8 @@ namespace BetterRouterProgram
                 {"router ID", settings[4]},
                 {"config directory", settings[5]},
                 {"host ip address", settings[6]}
+                {"psk ID", settings[7]}
+                {"psk value", settings[8]}
             };
 
             FunctionUtil.InitializeProgress(settings[5] + @"\Logs\" +

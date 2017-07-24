@@ -225,11 +225,17 @@ namespace BetterRouterProgram
         /// </summary>
         /// <param name="ipList">list of the ips to set the psk for</param>
         public static void SetPsk(List<string> ipList) {
-            UpdateProgress($"Setting PSKs for {/*TODO insert setting here*/111111}", MessageType.Message);
+            UpdateProgress($"Setting PSKs for {SerialConnection.GetSetting("psk ID")}", MessageType.Message);
 
            foreach(var ip in ipList) 
            {
-                SerialConnection.RunInstruction($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()} \"{/*psk*/111111}\" \"{/*psk*/111111}\"");
+                /*SerialConnection.RunInstruction($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()}"+
+                                                " \"{SerialConnection.GetSetting("psk ID")}\""+
+                                                " \"{SerialConnection.GetSetting("psk ID")}\"");*/
+                UpdateProgress($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()}"+
+                                " \"{SerialConnection.GetSetting("psk ID")}\""+
+                                " \"{SerialConnection.GetSetting("psk ID")}\"", 
+                                MessageType.Message);
            }
 
             UpdateProgress("PSKs Set", MessageType.Success);
