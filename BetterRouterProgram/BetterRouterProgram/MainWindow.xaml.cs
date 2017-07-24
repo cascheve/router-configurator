@@ -357,7 +357,7 @@ namespace BetterRouterProgram
             FillPortNames(this);
         }
 
-        private static List <string> GetCheckboxContents(Visual parent)
+        private List <string> GetCheckboxContents(Visual parent)
         {
             List<string> allChecks = new List<string>();
 
@@ -376,7 +376,14 @@ namespace BetterRouterProgram
 
                         if ((bool)checkbox.IsChecked)
                         {
-                            allChecks.Add(checkbox.Content.ToString());
+                            if (checkbox.Content.ToString().Equals("acl.cfg") && (bool)NoAclRename.IsChecked)
+                            {
+                                allChecks.Add("noacl.cfg");
+                            }
+                            else
+                            {
+                                allChecks.Add(checkbox.Content.ToString());
+                            }
                         }
                     }
 
