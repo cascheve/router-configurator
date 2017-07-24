@@ -105,13 +105,16 @@ namespace BetterRouterProgram
         /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         /// <param name="settings">The settings for the router configuration.</param>
-        public static void InitializeAndConnect(Dictionary<string, bool> primaryFilesToTransfer, Dictionary<string, bool> secondaryFilesToTransfer, bool rebootStatus, params string[] settings)
+        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, 
+                                                bool rebootStatus, params string[] settings)
         {
             RebootStatus = rebootStatus;
-           
+            FilesToTransfer = filesToTransfer;
+            FilesToCopy = filesToCopy;
+
             try
             {
-                if (InitializeConnection(primaryFilesToTransfer, secondaryFilesToTransfer, settings))
+                if (InitializeConnection(filesToTransfer, filesToCopy, settings))
                 {
                     //TODO: Login("root", currentPassword)
                     if (Login("root", "P25LACleco2016!"))
@@ -127,13 +130,15 @@ namespace BetterRouterProgram
                     }
                     else
                     {
-                        FunctionUtil.UpdateProgress("Could not log into the Router. \nCheck your login information and try again.", FunctionUtil.MessageType.Error);
+                        FunctionUtil.UpdateProgress("Could not log into the Router." + 
+                            "\nCheck your login information and try again.", FunctionUtil.MessageType.Error);
                         FunctionUtil.ConfigurationFinished(RebootStatus, true);
                     }
                 }
                 else
                 {
-                    FunctionUtil.UpdateProgress("A connection to the Serial Port could not be made. \nPlease check your connection and try again", FunctionUtil.MessageType.Error);
+                    FunctionUtil.UpdateProgress("A connection to the Serial Port could not be made." +
+                        "\nPlease check your connection and try again", FunctionUtil.MessageType.Error);
                     FunctionUtil.ConfigurationFinished(RebootStatus, true);
                 }
             }
@@ -443,12 +448,12 @@ namespace BetterRouterProgram
         /// <remarks> Named this metod with a lack of a better one. 
         /// If a better name comes up, please rename it here and <see cref"InitializeConnection"/>
         /// </remarks>
-        private static bool InitializeConnection(Dictionary<string, bool> filesToTransfer, Dictionary<string, bool> filesToCopy, string[] settings)
+        private static bool InitializeConnection(string[] settings)
         {
             Settings = new Dictionary<string, string>()
             {
                 {"port", settings[0]},
-                {"initial password", settings[1]},
+                {"current password", settings[1]},
                 {"system password", settings[2]},
                 {"secret", settings[3]},
                 {"router ID", settings[4]},
@@ -471,9 +476,6 @@ namespace BetterRouterProgram
                 TransferWorker.RunWorkerCompleted += TransferWorkerCompleted;
                 TransferWorker.ProgressChanged += TransferWorkerProgressChanged;
                 TransferWorker.WorkerReportsProgress = true;
-
-                SetFilesToTransfer(filesToTransfer);
-                SetFilesToCopy(filesToCopy);
             }
             catch (System.IO.FileNotFoundException)
             {
@@ -495,37 +497,6 @@ namespace BetterRouterProgram
             }
 
             return InitializeSerialPort(settings[0]);
-        }
-
-        /// <summary>
-        /// Creates the list of all the files to transfer.
-        /// </summary>
-        /// <param name="extraFilesToTransfer">The extra files to transfer.</param>
-        /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
-        private static void SetFilesToTransfer(Dictionary<string, bool> filesToTransfer)
-        {
-            FilesToTransfer = new List<string>();
-
-            foreach (var file in filesToTransfer.Keys)
-            {
-                if(filesToTransfer[file])
-                {
-                    FilesToTransfer.Add(file);
-                }
-            }
-        }
-
-        private static void SetFilesToCopy(Dictionary<string, bool> filesToCopy)
-        {
-            FilesToCopy = new List<string>();
-
-            foreach (var file in filesToCopy.Keys)
-            {
-                if (filesToCopy[file])
-                {
-                    FilesToCopy.Add(file);
-                }
-            }
         }
 
         /// <summary>
