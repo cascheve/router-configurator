@@ -45,11 +45,6 @@ namespace BetterRouterProgram
         private static bool ConnectionLost = false;
 
         /// <summary>
-        /// SerialPort object use to communicate via serial with the router.
-        /// </summary>
-        private static SerialPort SerialPort = null;
-
-        /// <summary>
         /// Data structure used to quickly access router
         /// configuration settings.
         /// </summary>
@@ -58,8 +53,17 @@ namespace BetterRouterProgram
         /// <summary>
         /// List of files to transfer to the router
         /// </summary>
-        private static List <string> PrimaryFilesToTransfer = null;
-        private static List <string> SecondaryFilesToTransfer = null;
+        private static List <string> FilesToTransfer = null;
+
+        /// <summary>
+        /// List of files to create a backup of
+        /// </summary>
+        private static List <string> FilesToCopy = null;
+
+        /// <summary>
+        /// SerialPort object use to communicate via serial with the router.
+        /// </summary>
+        private static SerialPort SerialPort = null;
 
 
         /// <summary>
@@ -215,7 +219,7 @@ namespace BetterRouterProgram
             int i = 0;
             try
             {
-                foreach (var file in PrimaryFilesToTransfer)
+                foreach (var file in FilesToTransfer)
                 {
                     if (file.Equals("boot.ppc"))
                     {
@@ -258,7 +262,7 @@ namespace BetterRouterProgram
                     {
                         pm.Message = $"{FormatHostFile(file)} Successfully Transferred";
                         pm.Type =  FunctionUtil.MessageType.Success;
-                        pm.AmountToAdd = ((totalProgress) / PrimaryFilesToTransfer.Count) * (++i);
+                        pm.AmountToAdd = ((totalProgress) / FilesToTransfer.Count) * (++i);
 
                         TransferWorker.ReportProgress(0, pm);
                     }
@@ -317,7 +321,7 @@ namespace BetterRouterProgram
                     return;
                 }
 
-                FunctionUtil.CopyToSecondary(new List<string>(PrimaryFilesToTransfer));
+                FunctionUtil.CopyToSecondary(new List<string>(FilesToTransfer));
 
                 //FunctionUtil.SetPassword(GetSetting("system password"));
 
@@ -500,26 +504,26 @@ namespace BetterRouterProgram
         /// <remarks>'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)</remarks>
         private static void SetFilesToTransfer(Dictionary<string, bool> filesToTransfer)
         {
-            PrimaryFilesToTransfer = new List<string>();
+            FilesToTransfer = new List<string>();
 
             foreach (var file in filesToTransfer.Keys)
             {
                 if(filesToTransfer[file])
                 {
-                    PrimaryFilesToTransfer.Add(file);
+                    FilesToTransfer.Add(file);
                 }
             }
         }
 
         private static void SetFilesToCopy(Dictionary<string, bool> filesToCopy)
         {
-            SecondaryFilesToTransfer = new List<string>();
+            FilesToCopy = new List<string>();
 
             foreach (var file in filesToCopy.Keys)
             {
                 if (filesToCopy[file])
                 {
-                    SecondaryFilesToTransfer.Add(file);
+                    FilesToCopy.Add(file);
                 }
             }
         }
