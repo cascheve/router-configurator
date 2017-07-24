@@ -85,19 +85,19 @@ namespace BetterRouterProgram
             string progressUpdate = "";
             switch(type) {
                 case MessageType.Message:
-                    progressUpdate = "[Message]";
+                    progressUpdate = "[Message]  ";
                     break;
                 case MessageType.Success:
-                    progressUpdate = "[Success]";
+                    progressUpdate = "[Success]  ";
                     break;
                 case MessageType.Error:
-                    progressUpdate = "[Error]";
+                    progressUpdate = "[Error]    ";
                     break;
                 default:
                     break;
             }
 
-            progressUpdate += ":\t" + message;
+            progressUpdate += message;
 
             ProgressWindow.currentTask.Text += '\n' + progressUpdate;
             LogFileWriter.WriteLine(progressUpdate);

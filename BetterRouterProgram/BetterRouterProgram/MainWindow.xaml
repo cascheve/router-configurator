@@ -61,7 +61,7 @@
 
         <TextBox Name="hostIP" Text="" IsReadOnly="True" Grid.Row="1" Grid.Column="3" Width="100" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
 
-        <Button Name="refresh" Content="Refresh IP" Click="refresh_Click" Grid.Row="1" Grid.Column="3" Margin="110,0,0,0" Width="70" HorizontalAlignment="Left" Height="25"/>
+        <Button Name="refreshIP" Content="Refresh IP" Click="refreshIP_Click" Grid.Row="1" Grid.Column="3" Margin="110,0,0,0" Width="80" HorizontalAlignment="Left"/>
 
         <TextBlock Text="Choose the Serial Port: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
             <TextBlock.ToolTip>
@@ -72,8 +72,9 @@
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <ComboBox x:Name="portNameDD" Grid.Row="3" Grid.Column="3" Width="100" Height="22" HorizontalAlignment="Left" VerticalAlignment="Center">
-        </ComboBox>
+        <ComboBox x:Name="portNameDD" Grid.Row="3" Grid.Column="3" Width="100" Height="22" HorizontalAlignment="Left"/>
+
+        <Button Name="refreshPorts" Content="Refresh Ports" Click="refreshPorts_Click" Grid.Row="3" Grid.Column="3" Margin="110,0,0,0" Width="80" HorizontalAlignment="Left"/>
 
         <TextBlock Text="Enter the Current Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" >
             <TextBlock.ToolTip>
@@ -132,8 +133,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <ComboBox x:Name="routerID_DD" Grid.Row="13" Grid.Column="3" Width="250" Height="22" SelectionChanged="RouterIDSelectionChanged" HorizontalAlignment="Left" VerticalAlignment="Center">
-        </ComboBox>
+        <ComboBox x:Name="routerID_DD" Grid.Row="13" Grid.Column="3" Width="250" Height="22" SelectionChanged="RouterIDSelectionChanged" HorizontalAlignment="Left"/>
 
         <Separator Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="3" Width="500" HorizontalAlignment="Left" Height="10" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
 
@@ -177,7 +177,7 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <Grid Grid.Row="17" Grid.Column="3" Grid.RowSpan="1" HorizontalAlignment="Left" VerticalAlignment="Center">
+        <Grid Name="SecondaryGrid" Grid.Row="17" Grid.Column="3" Grid.RowSpan="1" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>

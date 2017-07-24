@@ -40,6 +40,8 @@ namespace BetterRouterProgram
         /// <param name="m">A reference to the window object</param>
         private static void FillPortNames(MainWindow m)
         {
+            m.portNameDD.Items.Clear();
+
             foreach (string s in SerialPort.GetPortNames())
             {
                 ComboBoxItem cBoxItem = new ComboBoxItem();
@@ -66,20 +68,18 @@ namespace BetterRouterProgram
             Thread.Sleep(200);
 
             //get the ethernet adapter ip address
-            m.hostIP.Text = "0.0.0.0"
-            string[] toSplit = {"\n\n"};
+            m.hostIP.Text = "0.0.0.0";
             string lineSecondHalf = "";
             int start = output.IndexOf("Ethernet adapter Ethernet:") + "Ethernet adapter Ethernet:".Length;
-            string ethernetInfo =  output.Substring(start).Split(toSplit, 2, StringSplitOptions.RemoveEmptyEntries)[0];
+            string ethernetInfo =  output.Substring(start).Split(new string[] {"\r\n\r\n"}, 2, StringSplitOptions.RemoveEmptyEntries)[0];
             
-            foreach(var line in ethernetInfo.Split('\n')) {
+            foreach(var line in ethernetInfo.Split(new string[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries)) {
                 lineSecondHalf = line.Split(':')[1].Substring(1);
                 if(line.TrimStart().StartsWith("IPv4 Address")) {
                     m.hostIP.Text = lineSecondHalf;
                     break;
                 }
                 else if(lineSecondHalf.Equals("Media disconnected")) {
-                    //TODO: handle no ethernet connector;
                     break;
                 }
             }
@@ -323,28 +323,30 @@ namespace BetterRouterProgram
                     }
                 }
 
-                List<string> filesToTransfer = new List<string>();
-                List<string> filesToCopy = new List<string>();
-                string currentCheckBox = "";
+                //List<string> filesToTransfer = new List<string>();
+                //List<string> filesToCopy = new List<string>();
+                //string currentCheckBox = "";
 
-                foreach (Control c in this.Controls)
-                {
-                    if (c is CheckBox)
-                    {
-                        if (true/*TODO check if c is checked*/)
-                        {
-                            currentCheckBox = c.Name.ToString();
-                            if (currentCheckBox.EndsWith("copy"))
-                            {
-                                filesToCopy.Add(currentCheckBox);
-                            }
-                            else if (currentCheckBox.EndsWith("transfer"))
-                            {
-                                filesToTransfer.Add(currentCheckBox);
-                            }
-                        }
-                    }
-                }
+                //foreach (Control c in this.Controls)
+                //{
+                //    if (c is CheckBox)
+                //    {
+                //        if (true/*TODO check if c is checked*/)
+                //        {
+                //            currentCheckBox = c.Name.ToString();
+                //            if (currentCheckBox.EndsWith("copy"))
+                //            {
+                //                filesToCopy.Add(currentCheckBox);
+                //            }
+                //            else if (currentCheckBox.EndsWith("transfer"))
+                //            {
+                //                filesToTransfer.Add(currentCheckBox);
+                //            }
+                //        }
+                //    }
+                //}
+
+                //TODO: Iterate over all checkboxes or sets of CBs and add them to respective lists if checked
 
                 SerialConnection.InitializeAndConnect(
                     new Dictionary<string, bool>()
@@ -390,11 +392,15 @@ namespace BetterRouterProgram
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void refresh_Click(object sender, RoutedEventArgs e)
+        private void refreshIP_Click(object sender, RoutedEventArgs e)
         {
             FillHostIP(this);
         }
-        
+
+        private void refreshPorts_Click(object sender, RoutedEventArgs e)
+        {
+            FillPortNames(this);
+        }
     }
 }
 
