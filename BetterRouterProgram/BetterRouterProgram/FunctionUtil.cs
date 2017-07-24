@@ -112,8 +112,17 @@ namespace BetterRouterProgram
         public static bool PingTest() {
             UpdateProgress("Pinging Host Machine", MessageType.Message);
 
+            string hostIP = SerialConnection.GetSetting("host ip address");
+            string routerIP = "";
+            if(hostIP.Split('.')[3].Equals("1")) {
+                routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.')+1) + "2";
+            }
+            else {
+                routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.')+1) + "1";
+            }
+            
             //TODO: uncomment after testing
-            //SerialConnection.RunInstruction("setd !1 -ip neta = 10.1.1.1 255.255.255.0");
+            //SerialConnection.RunInstruction($"setd !1 -ip neta = {routerIP} 255.255.255.0");
             
             string message = SerialConnection.RunInstruction($"ping {SerialConnection.GetSetting("host ip address")}");
 
