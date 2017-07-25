@@ -126,8 +126,7 @@ namespace BetterRouterProgram
         /// <param name="rebootStatus">if set to <c>true</c> [reboot status].</param>
         /// <param name="renameAcl">if set to <c>true</c> [rename acl].</param>
         /// <param name="settings">The settings.</param>
-        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, 
-                                                bool rebootStatus, bool renameAcl, params string[] settings)
+        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, bool rebootStatus, bool renameAcl, params string[] settings)
         {
             RebootStatus = rebootStatus;
             RenameAcl = renameAcl;
@@ -137,7 +136,7 @@ namespace BetterRouterProgram
 
             try
             {
-                if (InitializeConnection(settings, rebootStatus, pskIPList==null?true:false))
+                if (InitializeConnection(settings, rebootStatus, pskIPList==null ? true:false))
                 {
                     if (Login("root", GetSetting("current password")))
                     {
@@ -253,8 +252,12 @@ namespace BetterRouterProgram
                     {
                         SerialPort.ReadTimeout = 30000;
                     }
+
+                    string formattedHostFile = FormatHostFile(file);
+
                     Thread.Sleep(500);
-                    pm.Message = $"Transferring File '{FormatHostFile(file)}' as '{file}'";
+                    pm.Message = $"Transferring File '{formattedHostFile}' as '{file}'";
+
                     TransferWorker.ReportProgress(0, pm);
                     Thread.Sleep(500);
 
@@ -262,13 +265,13 @@ namespace BetterRouterProgram
                     string message = RunInstruction(
                         String.Format("copy {0}:{1} {2}",
                         GetSetting("host ip address"),
-                        FormatHostFile(file), file
+                        formattedHostFile, file
                     ));
 
                     //update the progress window according to the file's transfer status
                     if (message.EndsWith("DOWN"))
                     {
-                        pm.Message = $"Ethernet connection was lost. {FormatHostFile(file)} could not be copied";
+                        pm.Message = $"Ethernet connection was lost. {formattedHostFile} could not be copied";
                         pm.Type =  FunctionUtil.MessageType.Error;
                         TransferWorker.ReportProgress(0, pm);
                         ConnectionLost = true;
@@ -276,19 +279,19 @@ namespace BetterRouterProgram
                     }
                     else if (message.Contains("File not found"))
                     {
-                        pm.Message = $"{FormatHostFile(file)} not found in host configuration directory";
+                        pm.Message = $"{formattedHostFile} not found in host configuration directory";
                         pm.Type =  FunctionUtil.MessageType.Error;
                         TransferWorker.ReportProgress(0, pm);
                     }
                     else if (message.Contains("Cannot route"))
                     {
-                        pm.Message = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection.";
+                        pm.Message = "Cannot connect to the Router via TFTP. \nCheck your ethernet connection and settings.";
                         pm.Type =  FunctionUtil.MessageType.Error;
                         TransferWorker.ReportProgress(0, pm);
                     }
                     else
                     {
-                        pm.Message = $"{FormatHostFile(file)} Successfully Transferred";
+                        pm.Message = $"{formattedHostFile} Successfully Transferred";
                         pm.Type =  FunctionUtil.MessageType.Success;
                         pm.AmountToAdd = ((totalProgress) / FilesToTransfer.Count) * (++i);
 
@@ -344,7 +347,9 @@ namespace BetterRouterProgram
                     return;
                 }
 
-                FunctionUtil.CopyToSecondary(new List<string>(FilesToCopy));
+                //FunctionUtil.CopyToSecondary(new List<string>(FilesToCopy));
+
+                SetBootOrder();
 
                 //FunctionUtil.SetPassword(GetSetting("system password"));
 
@@ -476,8 +481,8 @@ namespace BetterRouterProgram
                 {"secret", settings[3]},
                 {"router ID", settings[4]},
                 {"config directory", settings[5]},
-                {"host ip address", settings[6]}
-                {"psk ID", settings[7]}
+                {"host ip address", settings[6]},
+                {"psk ID", settings[7]},
                 {"psk value", settings[8]}
             };
 
@@ -535,14 +540,54 @@ namespace BetterRouterProgram
                 case "boot.ppc":
                     return file;
                 case "acl.cfg":
+                case "noacl.cfg":
+                    return SerialConnection.GetSetting("router ID") + "_acl.cfg";
                 case "xgsn.cfg":
                     return SerialConnection.GetSetting("router ID") + "_" + file;
                 case "boot.cfg":
-                    return SerialConnection.GetSetting("router ID") + ".cfg";;
+                    return SerialConnection.GetSetting("router ID") + ".cfg";
                 default:
                     return "";
             }
         }
+
+        private static void SetBootOrder()
+        {
+
+            if (SerialPort.IsOpen)
+            {
+                ResetConnectionBuffers();
+                SerialPort.Write("sf 7\r\n");
+                ReadToBootPrompt();
+
+                ResetConnectionBuffers();
+                SerialPort.Write("2\r\n");
+                ReadToBootPrompt();
+
+                ResetConnectionBuffers();
+                SerialPort.Write("q\r\n");
+                ReadResponse();
+
+                FunctionUtil.UpdateProgress("Boot Order Set", FunctionUtil.MessageType.Success);
+            }
+            else
+            {
+                throw new TimeoutException();
+            }
+
+        }
+
+        private static void ReadToBootPrompt()
+        {
+            while (true)
+            {
+                if ((char)(SerialPort.ReadChar()) == ')')
+                {
+                    return;
+                }
+            }
+        }
+
     }
 
 }

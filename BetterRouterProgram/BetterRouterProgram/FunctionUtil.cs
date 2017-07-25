@@ -9,10 +9,7 @@ using System.Linq;
 namespace BetterRouterProgram
 {
     //TODO: PSK Option
-    //TODO: Boot Order
-    //TODO: Choose Port on Router (in IP Address)
-    //TODO: K Core noacl rename -> ask if it starts as acl or noacl
-
+    //TODO: Choose Port on Router (in IP Address) -> optional dropdown in mainwindow that sets port 1 - 4
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
@@ -116,6 +113,8 @@ namespace BetterRouterProgram
         /// <returns>Indicates whether or not the ping test successfully pinged the host</returns>
         public static bool PingTest() {
             UpdateProgress("Pinging Host Machine", MessageType.Message);
+
+            ProgressWindow.Hide();
 
             string hostIP = SerialConnection.GetSetting("host ip address");
             string routerIP = "";
@@ -232,9 +231,9 @@ namespace BetterRouterProgram
                 /*SerialConnection.RunInstruction($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()}"+
                                                 " \"{SerialConnection.GetSetting("psk ID")}\""+
                                                 " \"{SerialConnection.GetSetting("psk ID")}\"");*/
-                UpdateProgress($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()}"+
-                                " \"{SerialConnection.GetSetting("psk ID")}\""+
-                                " \"{SerialConnection.GetSetting("psk ID")}\"", 
+                UpdateProgress($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()}" +
+                                $" \"{SerialConnection.GetSetting("psk ID")}\""+
+                                $" \"{SerialConnection.GetSetting("psk ID")}\"", 
                                 MessageType.Message);
            }
 

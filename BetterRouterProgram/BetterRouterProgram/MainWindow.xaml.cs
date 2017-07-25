@@ -16,6 +16,7 @@ namespace BetterRouterProgram
 {
     public partial class MainWindow : Window
     {
+        //reference used to update the MainWindow from FunctionUtil, where the Router IDs are updated
         private static MainWindow MWRef;
 
         Dictionary<string, List<string>> PskList;
@@ -350,24 +351,27 @@ namespace BetterRouterProgram
             }
             else
             {
-                foreach(var file in Directory.GetFiles(configDir, "*.cfg").Select(Path.GetFileName).ToArray()) 
+                foreach(var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray()) 
                 {
-                    if(file.StartsWith(routerID) && !file.Contains("_acl")) 
+                    if(file.StartsWith(routerID_DD.Text) && !file.Contains("_acl")) 
                     {
-                        routerID = file.Substring(0, file.Length - 4);
+                        routerID_DD.Text = file.Substring(0, file.Length - 4);
                         break;
                     }
                 }
 
+                //TODO delet this
+                currentPassword.Text = "";
+
                 SerialConnection.InitializeAndConnect(
                     GetCheckboxContents(TransferGrid),
                     GetCheckboxContents(CopyGrid),
-                    PskList.Count!=0?PskList[PSKProfile.Text]:null,
+                    PskList.Count != 0 ? PskList[PSKProfile.Text] : null,
                     RebootCheckbox.IsChecked.HasValue? RebootCheckbox.IsChecked.Value : false,
                     NoAclRename.IsChecked.HasValue? NoAclRename.IsChecked.Value : false,
                     portNameDD.Text, currentPassword.Text, sysPassword.Text, 
                     secretPassword.Text, routerID_DD.Text, filepathToolTip.Text, 
-                    this.hostIP.Text PSKProfile.Text, PSKValue.Text
+                    this.hostIP.Text, PSKProfile.Text, PSKValue.Text
                 );
             }
         }
@@ -409,6 +413,7 @@ namespace BetterRouterProgram
                         {
                             if (checkbox.Content.ToString().Equals("acl.cfg") && (bool)NoAclRename.IsChecked)
                             {
+                                //this is done so that the acl file is correctly renamed
                                 allChecks.Add("noacl.cfg");
                             }
                             else

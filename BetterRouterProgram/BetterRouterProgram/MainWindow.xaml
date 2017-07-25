@@ -204,7 +204,7 @@
         <TextBlock Text="PSK Profile (optional): " Grid.Row="19" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0" >
             <TextBlock.ToolTip>
                 <ToolTip>
-                    <TextBlock TextWrapping="Wrap" Width="300">Select the profile found in PSK.cfg that will be used on this router, along with the Pre-Shared Key. This is an optional step for routers that will have this setting configured. If the PSK.cfg file is not found in the configuration directory specified, this setting can not be configured.</TextBlock>
+                    <TextBlock TextWrapping="Wrap" Width="300">This is an optional step only available to systems with a PSK.cfg file in the speciifed directory. Select the profile found in PSK.cfg that will be used on this router, along with the corresponding Pre-Shared Key. If the PSK.cfg file is not found in the configuration directory specified, this setting can not be configured.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
