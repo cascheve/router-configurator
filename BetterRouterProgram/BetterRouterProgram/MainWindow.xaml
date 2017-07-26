@@ -8,7 +8,7 @@
         Background="#fbfbfb"
         Icon="icon1.ico"
         Title="CCSi Router Configuration Tool" 
-        Height="560" 
+        Height="570" 
         Width="650"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
@@ -35,7 +35,7 @@
             <RowDefinition Height="15"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
 
@@ -214,9 +214,24 @@
         <TextBlock Text="Pre-Shared Key:" Grid.Row="19" Grid.Column="3" Margin="190,3,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Enter the Pre-Shared Key used for this Router Profile."/>
         <TextBox Name="PSKValue" Text="" Grid.Row="19" Grid.Column="3" Width="100" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="290,0,0,0" Height="22" IsEnabled="False" />
 
-        <CheckBox Name="NoAclRename" IsEnabled="True" IsChecked="False" Content="Transfer acl.cfg as noacl.cfg (K Core Only)" Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="0,30,0,0" ToolTip="In a K Core System it is necessary to change the name of acl.cfg to noacl.cfg. If your system is not a K Core, you may skip this step."/>
+        <TextBlock Text="Set the Ethernet Port (optional): " Grid.Row="19" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,30,0,0" >
+            <TextBlock.ToolTip>
+                <ToolTip>
+                    <TextBlock TextWrapping="Wrap" Width="300">Select the ethernet port on the router used for file transfer. </TextBlock>
+                </ToolTip>
+            </TextBlock.ToolTip>
+        </TextBlock>
 
-        <CheckBox Name="RebootCheckbox" IsEnabled="True" IsChecked="False" Content="Reboot After Configuration (Recommended)" Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="0,55,0,0" ToolTip="If you want to send a Reboot command to the router after all operations have been completed, check this box. In the event of an error, the reboot command will not be sent."/>
+        <ComboBox Name="EthernetPort" Grid.Row="19" Grid.Column="3" Width="80" Height="22" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="True" Margin="0,25,0,0">
+            <ComboBoxItem Content="1" IsSelected="True"/>
+            <ComboBoxItem Content="2"/>
+            <ComboBoxItem Content="3"/>
+            <ComboBoxItem Content="4"/>
+        </ComboBox>
+
+        <CheckBox Name="NoAclRename" IsEnabled="True" IsChecked="False" Content="Transfer acl.cfg as noacl.cfg (K Core Only)" Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="0,55,0,0" ToolTip="In a K Core System it is necessary to change the name of acl.cfg to noacl.cfg. If your system is not a K Core, you may skip this step."/>
+
+        <CheckBox Name="RebootCheckbox" IsEnabled="True" IsChecked="False" Content="Reboot After Configuration (Recommended)" Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="0,80,0,0" ToolTip="If you want to send a Reboot command to the router after all operations have been completed, check this box. In the event of an error, the reboot command will not be sent."/>
 
         <Separator Grid.Row="20" Grid.Column="1" Grid.ColumnSpan="3" />
 

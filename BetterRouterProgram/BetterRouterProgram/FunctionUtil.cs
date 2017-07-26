@@ -5,11 +5,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-// TODO: find a place to runs set psk commands
 namespace BetterRouterProgram
 {
-    //TODO: PSK Option
-    //TODO: Choose Port on Router (in IP Address) -> optional dropdown in mainwindow that sets port 1 - 4
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
@@ -111,24 +108,28 @@ namespace BetterRouterProgram
         /// Pings the host machine (the user's computer) from the router to get a bearing on network capability and the connections
         /// </summary>
         /// <returns>Indicates whether or not the ping test successfully pinged the host</returns>
-        public static bool PingTest() {
+        public static bool PingTest(string routerPort) {
             UpdateProgress("Pinging Host Machine", MessageType.Message);
 
-            ProgressWindow.Hide();
+            //ProgressWindow.Hide();
 
             string hostIP = SerialConnection.GetSetting("host ip address");
             string routerIP = "";
             if(hostIP.Split('.')[3].Equals("1")) {
-                routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.')+1) + "2";
+                routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.') + 1) + "2";
             }
             else {
-                routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.')+1) + "1";
+                routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.') + 1) + "1";
             }
             
-            //TODO: uncomment after testing
-            //SerialConnection.RunInstruction($"setd !{routerport#} -ip neta = {routerIP} 255.255.255.0");
-            
-            string message = SerialConnection.RunInstruction($"ping {SerialConnection.GetSetting("host ip address")}");
+            string message = SerialConnection.RunInstruction($"setd !{routerPort} -ip neta = {routerIP} 255.255.255.0");
+
+            if (message.Contains("exists"))
+            {
+                UpdateProgress("Router IP Address has already been set", MessageType.Message);
+            }
+
+            message = SerialConnection.RunInstruction($"ping {SerialConnection.GetSetting("host ip address")}");
 
             bool retVal = false;
             
@@ -137,14 +138,14 @@ namespace BetterRouterProgram
                 retVal = true;
             }
 	        else {
-		        if(message.Contains("Host unreachable")){
+		        if(message.Contains("unreachable")){
                     UpdateProgress("Host IP Address Cannot be Reached", MessageType.Error);
                 }
                 else if(message.Contains("Request timed out")) {
                     UpdateProgress("Connection Attempt has Timed Out", MessageType.Error);
                 }
                 else {
-                    UpdateProgress($"Ping testing failed with message: {message}", MessageType.Error);
+                    UpdateProgress($"Ping test failed", MessageType.Error);
                 }
             }
 
@@ -157,9 +158,8 @@ namespace BetterRouterProgram
         public static void CopyToSecondary(List<string> filesToCopy) {
             UpdateProgress("Creating Back-Up Directory", MessageType.Message);
 
-            //TODO Change back to primary and secondary
-            string primaryDirectory = "a:/test4";
-            string backupDirectory = "a:/test5";
+            string primaryDirectory = "a:/primary";
+            string backupDirectory = "a:/secondary";
             string response = "";
 
             //SerialConnection.RunInstruction("cd a:/");
@@ -228,13 +228,7 @@ namespace BetterRouterProgram
 
            foreach(var ip in ipList) 
            {
-                /*SerialConnection.RunInstruction($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()}"+
-                                                " \"{SerialConnection.GetSetting("psk ID")}\""+
-                                                " \"{SerialConnection.GetSetting("psk ID")}\"");*/
-                UpdateProgress($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()}" +
-                                $" \"{SerialConnection.GetSetting("psk ID")}\""+
-                                $" \"{SerialConnection.GetSetting("psk ID")}\"", 
-                                MessageType.Message);
+                SerialConnection.RunInstruction($"ADD -CRYPTO FipsPreShrdKey {ip.Trim()} \"{SerialConnection.GetSetting("psk value")}\" \"{SerialConnection.GetSetting("psk value")}\"");
            }
 
             UpdateProgress("PSKs Set", MessageType.Success);
@@ -257,6 +251,19 @@ namespace BetterRouterProgram
             }
 
             MainWindow.UpdateIDs();
+        }
+
+        public static void SetBootOrder()
+        {
+
+            SerialConnection.RunInstruction("sf 7", ')');
+
+            SerialConnection.RunInstruction("2", ')');
+
+            SerialConnection.RunInstruction("q");
+
+            UpdateProgress("Boot Order Set", FunctionUtil.MessageType.Success);
+
         }
 
         /// <summary>

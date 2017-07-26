@@ -205,7 +205,10 @@ namespace BetterRouterProgram
 
                         //initializePSK list
                         PskList = new Dictionary<string, List<string>>();
-                        if(File.Exists(fbd.SelectedPath + "PSK.cfg")) {
+                        PSKProfile.Items.Clear();
+                        PSKValue.Clear();
+
+                        if(File.Exists(fbd.SelectedPath + @"\PSK.cfg")) {
                             StreamReader pskFile = new StreamReader(fbd.SelectedPath + @"\PSK.cfg");
                             string line = "";
                             string currentID = "";
@@ -215,6 +218,10 @@ namespace BetterRouterProgram
                                 {
                                     currentID = line.Substring(1, line.Length-2);
                                     PskList.Add(currentID, new List<string>());
+
+                                    ComboBoxItem cBoxItem = new ComboBoxItem();
+                                    cBoxItem.Content = currentID;
+                                    PSKProfile.Items.Add(cBoxItem);
                                 }
                                 else if(line.Length > 1 && line.Contains("ADD")) 
                                 {
@@ -224,13 +231,12 @@ namespace BetterRouterProgram
                         }
 
                         //shortens the path for cleanliness
-                        filepathText.Text = fbd.SelectedPath.Length > 35? 
-                            fbd.SelectedPath.Substring(0, 35) + "..." : fbd.SelectedPath;
+                        filepathText.Text = fbd.SelectedPath.Length > 35 ? fbd.SelectedPath.Substring(0, 35) + "..." : fbd.SelectedPath;
                     }
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.Forms.MessageBox.Show("Error selecting the given folder: " + ex.Message);
+                    System.Windows.Forms.MessageBox.Show("Error: " + ex.Message);
                 }
             }
             else
@@ -338,20 +344,24 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "Please select the router's secret";
             }
-            else if(PSKProfile.IsEnabled)
-            {
-                if(PSKProfile.Equals(string.Empty))
-                {
-                    errorText.Text = "Please select the PSK profile";
-                }
-                else if(PSKValue.Equals(string.Empty))
-                {
-                    errorText.Text = "Please select the PSK value";
-                }
-            }
             else
             {
-                foreach(var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray()) 
+
+                if (PSKProfile.IsEnabled)
+                {
+                    if (PSKProfile.Equals(string.Empty))
+                    {
+                        errorText.Text = "Please select the PSK profile";
+                        return;
+                    }
+                    else if (PSKValue.Equals(string.Empty))
+                    {
+                        errorText.Text = "Please select the PSK value";
+                        return;
+                    }
+                }
+
+                foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray()) 
                 {
                     if(file.StartsWith(routerID_DD.Text) && !file.Contains("_acl")) 
                     {
@@ -360,9 +370,6 @@ namespace BetterRouterProgram
                     }
                 }
 
-                //TODO delet this
-                currentPassword.Text = "";
-
                 SerialConnection.InitializeAndConnect(
                     GetCheckboxContents(TransferGrid),
                     GetCheckboxContents(CopyGrid),
@@ -370,8 +377,8 @@ namespace BetterRouterProgram
                     RebootCheckbox.IsChecked.HasValue? RebootCheckbox.IsChecked.Value : false,
                     NoAclRename.IsChecked.HasValue? NoAclRename.IsChecked.Value : false,
                     portNameDD.Text, currentPassword.Text, sysPassword.Text, 
-                    secretPassword.Text, routerID_DD.Text, filepathToolTip.Text, 
-                    this.hostIP.Text, PSKProfile.Text, PSKValue.Text
+                    secretPassword.Text, routerID_DD.Text, filepathToolTip.Text,
+                    this.hostIP.Text, PSKProfile.Text, PSKValue.Text, EthernetPort.Text
                 );
             }
         }

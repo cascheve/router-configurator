@@ -45,7 +45,7 @@ namespace BetterRouterProgram
         /// Variable to store whether the ethernet connection was lost
         /// </summary>
         private static bool ConnectionLost;
-
+        
         /// <summary>
         /// Data structure used to quickly access router
         /// configuration settings.
@@ -136,11 +136,11 @@ namespace BetterRouterProgram
 
             try
             {
-                if (InitializeConnection(settings, rebootStatus, pskIPList==null ? true:false))
+                if (InitializeConnection(settings, rebootStatus, pskIPList == null ? true : false))
                 {
                     if (Login("root", GetSetting("current password")))
                     {
-                        if (FunctionUtil.PingTest()){
+                        if (FunctionUtil.PingTest(settings[9])){
                             //this will run, and upon completion the worker will proceed with the remaining functions
                             TransferWorker.RunWorkerAsync();
                         }
@@ -239,8 +239,7 @@ namespace BetterRouterProgram
             ProgressMessage pm = new ProgressMessage("Transferring Configuration Files", FunctionUtil.MessageType.Message);
             TransferWorker.ReportProgress(0, pm);
 
-            //TODO Change to primary
-            RunInstruction(@"cd a:\test4");
+            RunInstruction(@"cd a:\primary");
 
             int i = 0;
 
@@ -347,11 +346,16 @@ namespace BetterRouterProgram
                     return;
                 }
 
-                //FunctionUtil.CopyToSecondary(new List<string>(FilesToCopy));
+                FunctionUtil.CopyToSecondary(new List<string>(FilesToCopy));
 
-                SetBootOrder();
+                FunctionUtil.SetBootOrder();
 
-                //FunctionUtil.SetPassword(GetSetting("system password"));
+                if (PskIPList != null)
+                {
+                    FunctionUtil.SetPsk(PskIPList);
+                }
+
+                FunctionUtil.SetPassword(GetSetting("system password"));
 
                 FunctionUtil.ConfigurationFinished(RebootStatus, false);
             }
@@ -399,7 +403,7 @@ namespace BetterRouterProgram
         /// The whole message returned is just after a run instruction.
         /// This means that the message is the response from the instruction.
         /// </remarks>
-        private static string ReadResponse(char endChar = '#')
+        private static string ReadResponse(char endChar)
         {
             char currentResponse = ' ';
             string response = "";
@@ -426,7 +430,7 @@ namespace BetterRouterProgram
         /// </summary>
         /// <param name="instruction">The instruction to be run.</param>
         /// <returns> the response from the router after the instruction is run.</returns>
-        public static string RunInstruction(string instruction)
+        public static string RunInstruction(string instruction, char endChar = '#')
         {
             string retVal = "**Error: No Connection to the Serial Port";
 
@@ -434,7 +438,7 @@ namespace BetterRouterProgram
             {
                 ResetConnectionBuffers();
                 SerialPort.Write(instruction + "\r\n");
-                retVal = ReadResponse();
+                retVal = ReadResponse(endChar);
             }
 
             return retVal;
@@ -549,44 +553,7 @@ namespace BetterRouterProgram
                 default:
                     return "";
             }
-        }
-
-        private static void SetBootOrder()
-        {
-
-            if (SerialPort.IsOpen)
-            {
-                ResetConnectionBuffers();
-                SerialPort.Write("sf 7\r\n");
-                ReadToBootPrompt();
-
-                ResetConnectionBuffers();
-                SerialPort.Write("2\r\n");
-                ReadToBootPrompt();
-
-                ResetConnectionBuffers();
-                SerialPort.Write("q\r\n");
-                ReadResponse();
-
-                FunctionUtil.UpdateProgress("Boot Order Set", FunctionUtil.MessageType.Success);
-            }
-            else
-            {
-                throw new TimeoutException();
-            }
-
-        }
-
-        private static void ReadToBootPrompt()
-        {
-            while (true)
-            {
-                if ((char)(SerialPort.ReadChar()) == ')')
-                {
-                    return;
-                }
-            }
-        }
+        }        
 
     }
 
