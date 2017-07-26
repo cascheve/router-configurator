@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
+//TODO  documentation, move login to functionutil
 namespace BetterRouterProgram
 {
     /// <summary>
@@ -15,7 +16,7 @@ namespace BetterRouterProgram
     /// <remarks>
     /// <list type="bullet">
     ///     <listheader>
-    ///         <description> Data ontained in this class/description>
+    ///         <description> Data contained in this class/description>
     ///    </listheader>
     ///         <item>
     ///             <description>Serial connection information</description>
@@ -26,7 +27,7 @@ namespace BetterRouterProgram
     ///         <item>
     ///             <description>BackgroundWorker used for UI updates</description>
     ///         </item>
-    ///</list>
+    /// </list>
     /// The neccessety of a BackgroundWorker caused <see cref="TransferWorkerDoWork"/>
     /// functionality to be in this clas rather than <see cref="FunctionUtil"/>.
     /// 
@@ -39,6 +40,9 @@ namespace BetterRouterProgram
         /// </summary>
         private static bool RebootStatus;
 
+        /// <summary>
+        /// Varialbe to store whether the user wants to rename the acl file to noacl
+        /// </summary>
         private static bool RenameAcl;
 
         /// <summary>
@@ -83,13 +87,11 @@ namespace BetterRouterProgram
         private class ProgressMessage
         {
             public string Message { get; set; }
-            public double AmountToAdd { get; set; }
             public FunctionUtil.MessageType Type { get; set; }
 
-            public ProgressMessage(string message = "", FunctionUtil.MessageType type = FunctionUtil.MessageType.Message, double amountToAdd = 0)
+            public ProgressMessage(string message = "", FunctionUtil.MessageType type = FunctionUtil.MessageType.Message)
             {
                 Message = message;
-                AmountToAdd = amountToAdd;
                 Type = type;
             }
         }
@@ -105,28 +107,17 @@ namespace BetterRouterProgram
             return Settings[setting];
         }
 
-        /*/// <summary>
-        /// Initializes the serial connection and connects to the router
-        /// </summary>
-        /// <param name="filesToTransfer">The files to transfer.</param>
-        /// <param name="filesToCopy">The files to copy.</param>
-        /// <param name="pskIPList">The PSK ip list.</param>
-        /// <param name="rebootStatus">if set to <c>true</c> [reboot status].</param>
-        /// <param name="renameAcl">if set to <c>true</c> [rename acl].</param>
-        /// <param name="settings">The settings for the router configuration.</param>
-        /// <remarks>
-        /// 'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)
-        /// </remarks>*/
         /// <summary>
         /// Initializes the and connect.
         /// </summary>
-        /// <param name="filesToTransfer">The files to transfer.</param>
-        /// <param name="filesToCopy">The files to copy.</param>
-        /// <param name="pskIPList">The PSK ip list.</param>
-        /// <param name="rebootStatus">if set to <c>true</c> [reboot status].</param>
-        /// <param name="renameAcl">if set to <c>true</c> [rename acl].</param>
-        /// <param name="settings">The settings.</param>
-        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, bool rebootStatus, bool renameAcl, params string[] settings)
+        /// <param name="filesToTransfer">The files to transfer to the router.</param>
+        /// <param name="filesToCopy">The files to copy from the primary to the secondary directory.</param>
+        /// <param name="pskIPList">The list of ip addresses to set the psk for.</param>
+        /// <param name="rebootStatus">if set to <c>true</c>, the router will reboot.</param>
+        /// <param name="renameAcl">if set to <c>true</c>, the "acl.cfg" file will be renamed to "noacl.cfg".</param>
+        /// <param name="settings">The list of connection and script settings</param>
+        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, 
+                                                bool rebootStatus, bool renameAcl, params string[] settings)
         {
             RebootStatus = rebootStatus;
             RenameAcl = renameAcl;
@@ -138,7 +129,7 @@ namespace BetterRouterProgram
             {
                 if (InitializeConnection(settings, rebootStatus, pskIPList == null ? true : false))
                 {
-                    if (Login("root", GetSetting("current password")))
+                    if (FunctionUtil.Login("root", GetSetting("current password")))
                     {
                         if (FunctionUtil.PingTest(settings[9])){
                             //this will run, and upon completion the worker will proceed with the remaining functions
@@ -234,14 +225,10 @@ namespace BetterRouterProgram
         /// </remarks>
         private static void TransferWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            double totalProgress = 50;
-
             ProgressMessage pm = new ProgressMessage("Transferring Configuration Files", FunctionUtil.MessageType.Message);
             TransferWorker.ReportProgress(0, pm);
 
             RunInstruction(@"cd a:\primary");
-
-            int i = 0;
 
             try
             {
@@ -292,8 +279,6 @@ namespace BetterRouterProgram
                     {
                         pm.Message = $"{formattedHostFile} Successfully Transferred";
                         pm.Type =  FunctionUtil.MessageType.Success;
-                        pm.AmountToAdd = ((totalProgress) / FilesToTransfer.Count) * (++i);
-
                         TransferWorker.ReportProgress(0, pm);
                     }
                 }
@@ -495,41 +480,18 @@ namespace BetterRouterProgram
                 {"psk value", settings[8]}
             };
 
-            FunctionUtil.InitializeProgress(settings[5] + @"\Logs\" +
-                $"{settings[4]}_log_{DateTime.Today.ToString(@"MM-dd-yyyy")}.txt",
+            FunctionUtil.InitializeProgress(settings[5] + @"\Logs\" + $"{settings[4]}_LOG.txt",
                 reboot, setPsk);
 
+            //a separate worker thread that takes care of the transferring of files.
+            //this is done to allow responsive GUI updates.
             TransferWorker = new BackgroundWorker();
+            TransferWorker.DoWork += TransferWorkerDoWork;
+            TransferWorker.RunWorkerCompleted += TransferWorkerCompleted;
+            TransferWorker.ProgressChanged += TransferWorkerProgressChanged;
+            TransferWorker.WorkerReportsProgress = true;
 
-            try 
-            {
-                FunctionUtil.StartTftp();
-                    
-                //a separate worker thread that takes care of the transferring of files
-                //this is done to allow responsive GUI updates
-                TransferWorker.DoWork += TransferWorkerDoWork;
-                TransferWorker.RunWorkerCompleted += TransferWorkerCompleted;
-                TransferWorker.ProgressChanged += TransferWorkerProgressChanged;
-                TransferWorker.WorkerReportsProgress = true;
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                FunctionUtil.UpdateProgress("Unable to locate the Specified File, please try again.", FunctionUtil.MessageType.Error);
-            }
-            catch (System.ComponentModel.Win32Exception)
-            {
-                FunctionUtil.UpdateProgress("Could not find the TFTP Client executable in the folder specified. "
-                    +"Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.", FunctionUtil.MessageType.Error);
-            }
-            catch (TimeoutException)
-            {
-                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", FunctionUtil.MessageType.Error);
-            }
-            catch (Exception ex)
-            {
-                FunctionUtil.UpdateProgress(ex.Message, FunctionUtil.MessageType.Error);
-                CloseConnection();
-            }
+             FunctionUtil.StartTftp();
 
             return InitializeSerialPort(settings[0]);
         }

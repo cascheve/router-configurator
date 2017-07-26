@@ -82,6 +82,7 @@ namespace BetterRouterProgram
         /// <param name="setValue">The value to set the progress bar to</param>
         /// <param name="toAdd">The amount of progress to be added to the current progress level</param>
         public static void UpdateProgress(string message, MessageType type) {
+            //TODO update only on success
             string progressUpdate = "";
             switch(type) {
                 case MessageType.Message:
@@ -89,6 +90,7 @@ namespace BetterRouterProgram
                     break;
                 case MessageType.Success:
                     progressUpdate = "[Success]    ";
+                    ProgressWindow.progressBar.Value += UpdateAmount;                    
                     break;
                 case MessageType.Error:
                     progressUpdate = "[Error]      ";
@@ -100,10 +102,33 @@ namespace BetterRouterProgram
             progressUpdate += message;
 
             ProgressWindow.currentTask.Text += '\n' + progressUpdate;
-            ProgressWindow.progressBar.Value += UpdateAmount;
 
             LogFileWriter.WriteLine(progressUpdate + "\n");   
             LogFileWriter.Flush();
+        }
+
+        /// <summary>
+        /// Logins with the specified username and password.
+        /// </summary>
+        /// <param name="username">The router username.</param>
+        /// <param name="password">The current router password.</param>
+        /// <returns> whether the login was successful or not.</returns>
+        public static bool Login(string username, string password)
+        {
+            UpdateProgress("Logging In", FunctionUtil.MessageType.Message);
+            
+            Thread.Sleep(500);
+
+            try {
+                SerialConnection.RunInstruction("", ':');
+                SerialConnection.RunInstruction(username, ':');
+                SerialConnection.RunInstruction(password);
+                FunctionUtil.UpdateProgress("Login Successful", FunctionUtil.MessageType.Success);
+                return true;
+            }
+            catch(TimeoutException e) {
+                return false;
+            }  
         }
 
         /// <summary>
@@ -147,7 +172,7 @@ namespace BetterRouterProgram
                     UpdateProgress("Connection Attempt has Timed Out", MessageType.Error);
                 }
                 else {
-                    UpdateProgress($"Ping test failed", MessageType.Error);
+                    UpdateProgress("Ping test failed", MessageType.Error);
                 }
             }
 
@@ -158,8 +183,7 @@ namespace BetterRouterProgram
         /// Copies the previously loaded file directory into a back-up directory in case of an error on the router
         /// </summary>
         public static void CopyToSecondary(List<string> filesToCopy) {
-            UpdateProgress("Creating Back-Up Directory", MessageType.Message);
-
+            //TODO insert literal values into instruction
             string primaryDirectory = "a:/primary";
             string backupDirectory = "a:/secondary";
             string response = "";
@@ -170,11 +194,12 @@ namespace BetterRouterProgram
 
             foreach (var file in filesToCopy)
             {
-
                 if (file.Equals("boot.ppc"))
                 {
                     SerialConnection.SetSerialPortTimeout(30000);
                 }
+
+                UpdateProgress($"Creating backup of {file}", MessageType.Message);
 
                 response = SerialConnection.RunInstruction($"copy {primaryDirectory}/{file} {backupDirectory}/{file}");
 
