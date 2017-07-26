@@ -107,28 +107,17 @@ namespace BetterRouterProgram
             return Settings[setting];
         }
 
-        /*/// <summary>
-        /// Initializes the serial connection and connects to the router
-        /// </summary>
-        /// <param name="filesToTransfer">The files to transfer.</param>
-        /// <param name="filesToCopy">The files to copy.</param>
-        /// <param name="pskIPList">The PSK ip list.</param>
-        /// <param name="rebootStatus">if set to <c>true</c> [reboot status].</param>
-        /// <param name="renameAcl">if set to <c>true</c> [rename acl].</param>
-        /// <param name="settings">The settings for the router configuration.</param>
-        /// <remarks>
-        /// 'Extra' meaning other files that arent mandatory (e.g. xgsn, staticRP, antiacl)
-        /// </remarks>*/
         /// <summary>
         /// Initializes the and connect.
         /// </summary>
-        /// <param name="filesToTransfer">The files to transfer.</param>
-        /// <param name="filesToCopy">The files to copy.</param>
-        /// <param name="pskIPList">The PSK ip list.</param>
-        /// <param name="rebootStatus">if set to <c>true</c> [reboot status].</param>
-        /// <param name="renameAcl">if set to <c>true</c> [rename acl].</param>
-        /// <param name="settings">The settings.</param>
-        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, bool rebootStatus, bool renameAcl, params string[] settings)
+        /// <param name="filesToTransfer">The files to transfer to the router.</param>
+        /// <param name="filesToCopy">The files to copy from the primary to the secondary directory.</param>
+        /// <param name="pskIPList">The list of ip addresses to set the psk for.</param>
+        /// <param name="rebootStatus">if set to <c>true</c>, the router will reboot.</param>
+        /// <param name="renameAcl">if set to <c>true</c>, the "acl.cfg" file will be renamed to "noacl.cfg".</param>
+        /// <param name="settings">The list of connection and script settings</param>
+        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, 
+                                                bool rebootStatus, bool renameAcl, params string[] settings)
         {
             RebootStatus = rebootStatus;
             RenameAcl = renameAcl;
