@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
+//TODO  documentation, move login to functionutil
 namespace BetterRouterProgram
 {
     /// <summary>
@@ -15,7 +16,7 @@ namespace BetterRouterProgram
     /// <remarks>
     /// <list type="bullet">
     ///     <listheader>
-    ///         <description> Data ontained in this class/description>
+    ///         <description> Data contained in this class/description>
     ///    </listheader>
     ///         <item>
     ///             <description>Serial connection information</description>
@@ -26,7 +27,7 @@ namespace BetterRouterProgram
     ///         <item>
     ///             <description>BackgroundWorker used for UI updates</description>
     ///         </item>
-    ///</list>
+    /// </list>
     /// The neccessety of a BackgroundWorker caused <see cref="TransferWorkerDoWork"/>
     /// functionality to be in this clas rather than <see cref="FunctionUtil"/>.
     /// 
@@ -39,6 +40,9 @@ namespace BetterRouterProgram
         /// </summary>
         private static bool RebootStatus;
 
+        /// <summary>
+        /// Varialbe to store whether the user wants to rename the acl file to noacl
+        /// </summary>
         private static bool RenameAcl;
 
         /// <summary>
@@ -83,13 +87,11 @@ namespace BetterRouterProgram
         private class ProgressMessage
         {
             public string Message { get; set; }
-            public double AmountToAdd { get; set; }
             public FunctionUtil.MessageType Type { get; set; }
 
-            public ProgressMessage(string message = "", FunctionUtil.MessageType type = FunctionUtil.MessageType.Message, double amountToAdd = 0)
+            public ProgressMessage(string message = "", FunctionUtil.MessageType type = FunctionUtil.MessageType.Message)
             {
                 Message = message;
-                AmountToAdd = amountToAdd;
                 Type = type;
             }
         }
@@ -234,14 +236,10 @@ namespace BetterRouterProgram
         /// </remarks>
         private static void TransferWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            double totalProgress = 50;
-
             ProgressMessage pm = new ProgressMessage("Transferring Configuration Files", FunctionUtil.MessageType.Message);
             TransferWorker.ReportProgress(0, pm);
 
             RunInstruction(@"cd a:\primary");
-
-            int i = 0;
 
             try
             {
@@ -292,8 +290,6 @@ namespace BetterRouterProgram
                     {
                         pm.Message = $"{formattedHostFile} Successfully Transferred";
                         pm.Type =  FunctionUtil.MessageType.Success;
-                        pm.AmountToAdd = ((totalProgress) / FilesToTransfer.Count) * (++i);
-
                         TransferWorker.ReportProgress(0, pm);
                     }
                 }
@@ -490,41 +486,18 @@ namespace BetterRouterProgram
                 {"psk value", settings[8]}
             };
 
-            FunctionUtil.InitializeProgress(settings[5] + @"\Logs\" +
-                $"{settings[4]}_log_{DateTime.Today.ToString(@"MM-dd-yyyy")}.txt",
+            FunctionUtil.InitializeProgress(settings[5] + @"\Logs\" + $"{settings[4]}_LOG.txt",
                 reboot, setPsk);
 
+            //a separate worker thread that takes care of the transferring of files.
+            //this is done to allow responsive GUI updates.
             TransferWorker = new BackgroundWorker();
+            TransferWorker.DoWork += TransferWorkerDoWork;
+            TransferWorker.RunWorkerCompleted += TransferWorkerCompleted;
+            TransferWorker.ProgressChanged += TransferWorkerProgressChanged;
+            TransferWorker.WorkerReportsProgress = true;
 
-            try 
-            {
-                FunctionUtil.StartTftp();
-                    
-                //a separate worker thread that takes care of the transferring of files
-                //this is done to allow responsive GUI updates
-                TransferWorker.DoWork += TransferWorkerDoWork;
-                TransferWorker.RunWorkerCompleted += TransferWorkerCompleted;
-                TransferWorker.ProgressChanged += TransferWorkerProgressChanged;
-                TransferWorker.WorkerReportsProgress = true;
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                FunctionUtil.UpdateProgress("Unable to locate the Specified File, please try again.", FunctionUtil.MessageType.Error);
-            }
-            catch (System.ComponentModel.Win32Exception)
-            {
-                FunctionUtil.UpdateProgress("Could not find the TFTP Client executable in the folder specified. "
-                    +"Please move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.", FunctionUtil.MessageType.Error);
-            }
-            catch (TimeoutException)
-            {
-                FunctionUtil.UpdateProgress("Connection Attempt timed out. \nCheck your Serial Connection and try again.", FunctionUtil.MessageType.Error);
-            }
-            catch (Exception ex)
-            {
-                FunctionUtil.UpdateProgress(ex.Message, FunctionUtil.MessageType.Error);
-                CloseConnection();
-            }
+             FunctionUtil.StartTftp();
 
             return InitializeSerialPort(settings[0]);
         }

@@ -80,6 +80,7 @@ namespace BetterRouterProgram
         /// <param name="setValue">The value to set the progress bar to</param>
         /// <param name="toAdd">The amount of progress to be added to the current progress level</param>
         public static void UpdateProgress(string message, MessageType type) {
+            //TODO update only on success
             string progressUpdate = "";
             switch(type) {
                 case MessageType.Message:
@@ -87,6 +88,7 @@ namespace BetterRouterProgram
                     break;
                 case MessageType.Success:
                     progressUpdate = "[Success]    ";
+                    ProgressWindow.progressBar.Value += UpdateAmount;                    
                     break;
                 case MessageType.Error:
                     progressUpdate = "[Error]      ";
@@ -98,7 +100,6 @@ namespace BetterRouterProgram
             progressUpdate += message;
 
             ProgressWindow.currentTask.Text += '\n' + progressUpdate;
-            ProgressWindow.progressBar.Value += UpdateAmount;
 
             LogFileWriter.WriteLine(progressUpdate + "\n");   
             LogFileWriter.Flush();
@@ -145,7 +146,7 @@ namespace BetterRouterProgram
                     UpdateProgress("Connection Attempt has Timed Out", MessageType.Error);
                 }
                 else {
-                    UpdateProgress($"Ping test failed", MessageType.Error);
+                    UpdateProgress("Ping test failed", MessageType.Error);
                 }
             }
 
@@ -156,8 +157,7 @@ namespace BetterRouterProgram
         /// Copies the previously loaded file directory into a back-up directory in case of an error on the router
         /// </summary>
         public static void CopyToSecondary(List<string> filesToCopy) {
-            UpdateProgress("Creating Back-Up Directory", MessageType.Message);
-
+            //TODO insert literal values into instruction
             string primaryDirectory = "a:/primary";
             string backupDirectory = "a:/secondary";
             string response = "";
@@ -168,6 +168,7 @@ namespace BetterRouterProgram
 
             foreach (var file in filesToCopy)
             {
+                UpdateProgress($"Creating backup of {file}", MessageType.Message);
                 response = SerialConnection.RunInstruction($"copy {primaryDirectory}/{file} {backupDirectory}/{file}");
 
                 if (response.Contains("not Found"))
