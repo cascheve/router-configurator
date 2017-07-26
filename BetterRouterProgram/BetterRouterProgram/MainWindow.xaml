@@ -157,11 +157,11 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-            <CheckBox Name="cfg_transfer" IsEnabled="True" IsChecked="True" Content="boot.cfg" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="ppc_transfer" IsEnabled="True" IsChecked="True" Content="boot.ppc" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
             <CheckBox Name="acl_transfer" IsEnabled="True" IsChecked="True" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
             <CheckBox Name="xgsn_transfer" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
 
-            <CheckBox Name="ppc_transfer" IsEnabled="True" IsChecked="True" Content="boot.ppc" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="cfg_transfer" IsEnabled="True" IsChecked="True" Content="boot.cfg" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
             <CheckBox Name="staticrp_transfer" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
             <CheckBox Name="antiacl_transfer" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
 
@@ -189,11 +189,11 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-            <CheckBox Name="cfg_copy" IsEnabled="True" IsChecked="False" Content="boot.cfg" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="ppc_copy" IsEnabled="False" IsChecked="True" Content="boot.ppc" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
             <CheckBox Name="acl_copy" IsEnabled="True" IsChecked="False" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
             <CheckBox Name="xgsn_copy" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
 
-            <CheckBox Name="ppc_copy" IsEnabled="False" IsChecked="True" Content="boot.ppc" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="cfg_copy" IsEnabled="True" IsChecked="False" Content="boot.cfg" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
             <CheckBox Name="staticrp_copy" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
             <CheckBox Name="antiacl_copy" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
 

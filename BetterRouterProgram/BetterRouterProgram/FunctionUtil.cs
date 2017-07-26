@@ -8,6 +8,8 @@ using System.Linq;
 namespace BetterRouterProgram
 {
 
+    //TODO error catch for boot.ppc not transferring
+
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
     /// This class acts as a toolbox for each operation required to configure the router
@@ -168,6 +170,12 @@ namespace BetterRouterProgram
 
             foreach (var file in filesToCopy)
             {
+
+                if (file.Equals("boot.ppc"))
+                {
+                    SerialConnection.SetSerialPortTimeout(30000);
+                }
+
                 response = SerialConnection.RunInstruction($"copy {primaryDirectory}/{file} {backupDirectory}/{file}");
 
                 if (response.Contains("not Found"))
@@ -178,6 +186,9 @@ namespace BetterRouterProgram
                 {
                     UpdateProgress($"Created backup of {file} in {backupDirectory}", MessageType.Success);
                 }
+
+                SerialConnection.SetSerialPortTimeout(750);
+
             }
 
         }

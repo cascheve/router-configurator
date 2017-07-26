@@ -355,7 +355,7 @@ namespace BetterRouterProgram
                     FunctionUtil.SetPsk(PskIPList);
                 }
 
-                FunctionUtil.SetPassword(GetSetting("system password"));
+                //FunctionUtil.SetPassword(GetSetting("system password"));
 
                 FunctionUtil.ConfigurationFinished(RebootStatus, false);
             }
@@ -464,6 +464,11 @@ namespace BetterRouterProgram
             {
                 return false;
             }
+        }
+
+        public static void SetSerialPortTimeout(int timeout)
+        {
+            SerialPort.ReadTimeout = timeout;
         }
 
         /// <summary>
