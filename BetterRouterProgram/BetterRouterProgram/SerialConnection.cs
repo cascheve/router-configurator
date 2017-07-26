@@ -129,7 +129,7 @@ namespace BetterRouterProgram
             {
                 if (InitializeConnection(settings, rebootStatus, pskIPList == null ? true : false))
                 {
-                    if (Login("root", GetSetting("current password")))
+                    if (FunctionUtil.Login("root", GetSetting("current password")))
                     {
                         if (FunctionUtil.PingTest(settings[9])){
                             //this will run, and upon completion the worker will proceed with the remaining functions

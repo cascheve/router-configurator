@@ -106,6 +106,30 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
+        /// Logins with the specified username and password.
+        /// </summary>
+        /// <param name="username">The router username.</param>
+        /// <param name="password">The current router password.</param>
+        /// <returns> whether the login was successful or not.</returns>
+        public static bool Login(string username, string password)
+        {
+            UpdateProgress("Logging In", FunctionUtil.MessageType.Message);
+            
+            Thread.Sleep(500);
+
+            try {
+                SerialConnection.RunInstruction("", ':');
+                SerialConnection.RunInstruction(username, ':');
+                SerialConnection.RunInstruction(password);
+                FunctionUtil.UpdateProgress("Login Successful", FunctionUtil.MessageType.Success);
+                return true;
+            }
+            catch(TimeoutException e) {
+                return false;
+            }  
+        }
+
+        /// <summary>
         /// Pings the host machine (the user's computer) from the router to get a bearing on network capability and the connections
         /// </summary>
         /// <returns>Indicates whether or not the ping test successfully pinged the host</returns>
