@@ -16,20 +16,20 @@ namespace BetterRouterProgram
 {
     public partial class MainWindow : Window
     {
-        //reference used to update the MainWindow from FunctionUtil, where the Router IDs are updated
+        //reference used to update the MainWindow from FunctionUtil, where the Router IDs are updated once files have been moved
         private static MainWindow MWRef;
 
+        //used to hold the PSK router keys and the corresponding commands for the particular router
         Dictionary<string, List<string>> PskList;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class.
-        /// This includes filling the port and timezone DropDown lists
-        /// </summary>
+        ///<summary>
+        ///Initializes a new instance of the <see cref="MainWindow"/> class.
+        ///The COM ports available to the user and the host IP address are filled on startup
+        ///A reference to this window is made, effectively making this a basic singleton
+        ///</summary>
         public MainWindow()
         {
             InitializeComponent();
-
-            portNameDD.Background = Brushes.LightGray;
 
             FillPortNames(this);
             FillHostIP(this);
@@ -37,10 +37,10 @@ namespace BetterRouterProgram
             MWRef = this;
         }        
 
-        /// <summary>
-        /// Programmatically locates the available COM ports on the host computer and fills the DropDown list
-        /// </summary>
-        /// <param name="m">A reference to the window object</param>
+        ///<summary>
+        ///Programmatically locates the available COM ports on the host computer and fills the DropDown list
+        ///</summary>
+        ///<param name="m">A reference to the window object</param>
         private static void FillPortNames(MainWindow m)
         {
             m.portNameDD.Items.Clear();
@@ -53,24 +53,26 @@ namespace BetterRouterProgram
             }
         }
 
-        /// <summary>
-        /// Gets the IP address and fills in the text block with the address
-        /// </summary>
-        /// <param name="m">Reference to 'this' main window</param>
+        ///<summary>
+        ///Gets the Host's Ethernet Adapter IP address and fills in the text block with that address
+        ///</summary>
+        ///<param name="m">Reference to 'this' main window</param>
         private static void FillHostIP(MainWindow m)
         {
+            //The simplest way found to get the Ethernet Adapter IP is to 
+            //start a new command line window and use the stdout from the ipconfig command
             Process pProcess = new Process();
             pProcess.StartInfo.FileName = "ipconfig";
             pProcess.StartInfo.UseShellExecute = false;
             pProcess.StartInfo.RedirectStandardOutput = true;
             pProcess.Start();
 
-            // split the output around the newlines
             string output = pProcess.StandardOutput.ReadToEnd();
             pProcess.WaitForExit();
             Thread.Sleep(200);
 
-            //get the ethernet adapter ip address
+            //this default IP will yield a bad connection if a connection is attempted 
+            //the following lines split the output from ipconfig into parts that contain the IPv4 address and remaining characters
             m.hostIP.Text = "0.0.0.0";
             string lineSecondHalf = "";
             int start = output.IndexOf("Ethernet adapter Ethernet:") + "Ethernet adapter Ethernet:".Length;
@@ -91,19 +93,19 @@ namespace BetterRouterProgram
             }
         }
 
-        /// <summary>
-        /// Updates the ID list for the routers in the current directory.
-        /// Called on <see cref="MoveCompletedFiles"/>
-        /// </summary>
+        ///<summary>
+        ///A helper function to update the List of IDs from outside of this class
+        ///Called on <see cref="MoveCompletedFiles"/> to indicate that files have been moved and should not be selectable
+        ///</summary>
         public static void UpdateIDs()
         {
             MWRef.PopulateIDs(SerialConnection.GetSetting("config directory"));
         }
 
-        /// <summary>
-        /// Populates the ID list using the files found inside the configuration directory
-        /// </summary>
-        /// <param name="directory">The directory.</param>
+        ///<summary>
+        ///Updates the List of IDs using the configuration directory selected
+        ///</summary>
+        ///<param name="directory">The configuration directory holding the desired files</param>
         private void PopulateIDs(string directory)
         {
             routerID_DD.Items.Clear();
@@ -112,6 +114,7 @@ namespace BetterRouterProgram
             string currentID = "";
             ComboBoxItem cBoxItem = null;
 
+            //select all of the .cfg files and determine if they match the pattern used by CCSi
             foreach (var file in Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName))
             {
                 if(file.StartsWith("z0") || file.StartsWith("cen"))
@@ -119,8 +122,8 @@ namespace BetterRouterProgram
                     currentID = file.Split('_')[0];
                     try 
                     {
-                        if((configFiles[currentID] == 2 && currentID.Contains("ggsn"))
-                            || configFiles[currentID] == 1) 
+                        //TODO automatically/manually create compliant directories? ASK
+                        if( (configFiles[currentID] == 2 && currentID.Contains("ggsn")) || configFiles[currentID] == 1 ) 
                         {
                             cBoxItem = new ComboBoxItem();
                             cBoxItem.Content = currentID;
@@ -138,11 +141,11 @@ namespace BetterRouterProgram
             }
         }
 
-        /// <summary>
-        /// When the configuration folder is changed, locate the configuration files
-        /// </summary>
-        /// <param name="sender">The sender of the selection change</param>
-        /// <param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
+        ///<summary>
+        ///When the Router ID selected has been changed determine if there are XGSN files that can be selected
+        ///</summary>
+        ///<param name="sender">The sender of the selection change</param>
+        ///<param name="e">The <see cref="SelectionChangedEventArgs"/> instance containing the event data.</param>
         private void RouterIDSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (filepathToolTip.Text.Equals(string.Empty) || routerID_DD.Text.Equals(string.Empty))
@@ -166,19 +169,19 @@ namespace BetterRouterProgram
             xgsn_copy.IsChecked = false;
         }
 
-        /// <summary>
-        /// Browses for the configuration directory containing the configuration files and TFTP application
-        /// </summary>
-        /// <param name="sender">The sender of the browse event</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        ///<summary>
+        ///Directs the user to browse for the configuration directory containing the configuration files and TFTP application
+        ///</summary>
+        ///<param name="sender">The sender of the browse event</param>
+        ///<param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void BrowseFiles(object sender, RoutedEventArgs e)
         {
             String myStream = null;
             FolderBrowserDialog fbd = new FolderBrowserDialog();
 
-            fbd.Description = "Select the directory holding the configuration (*.cfg) files and the TFTP Application.";
+            fbd.Description = "Select the directory holding the configuration (*.cfg) files, acl files, and the TFTPD32 Application.";
             fbd.ShowNewFolderButton = false;
-            errorText.Text = fbd.SelectedPath;
+            //errorText.Text = fbd.SelectedPath;
              
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -193,7 +196,7 @@ namespace BetterRouterProgram
                         PopulateIDs(fbd.SelectedPath);
                         UpdateFileOptions();
 
-                        //creates /done and /logs directories
+                        //creates /Completed and /Logs directories for progress logging
                         if (!Directory.Exists(fbd.SelectedPath + @"\Completed")) 
                         {
                             Directory.CreateDirectory(fbd.SelectedPath + @"\Completed");
@@ -203,7 +206,7 @@ namespace BetterRouterProgram
                             Directory.CreateDirectory(fbd.SelectedPath + @"\Logs");
                         }
 
-                        //initializePSK list
+                        //initialize the PSK list with IDs and their commands
                         PskList = new Dictionary<string, List<string>>();
                         PSKProfile.Items.Clear();
                         PSKValue.Clear();
@@ -248,9 +251,9 @@ namespace BetterRouterProgram
             }
         }
 
-        /// <summary>
-        /// Updates the file options based on the currently chosen configuration directory
-        /// </summary>
+        ///<summary>
+        ///Updates the files that can be selected based on the currently chosen directory
+        ///</summary>
         private void UpdateFileOptions()
         {
             bool staticrpCheck = false;
@@ -296,29 +299,29 @@ namespace BetterRouterProgram
             PSKValue.IsEnabled = PSKCheck;
         }
 
-        /// <summary>
-        /// Called when the window is closing, used to clean up the TFTP application
-        /// </summary>
-        /// <param name="sender">The sender of the close event</param>
-        /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
+        ///<summary>
+        ///Called when the window is closing, used to clean up the TFTPD32 application
+        ///</summary>
+        ///<param name="sender">The sender of the close event</param>
+        ///<param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
             FunctionUtil.StopTftp();
         }
 
-        /// <summary>
-        /// Attempts to connect to the router using the information provided by the user. 
-        /// Spawns a progress window that thereby notifies the user of all successes and failures.
-        /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        ///<summary>
+        ///Attempts to connect to the router using the information provided by the user. 
+        ///Spawns a progress window that then updates the user on all successes and failures.
+        ///</summary>
+        ///<param name="sender">The sender.</param>
+        ///<param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
         private void AttemptConnection(object sender, RoutedEventArgs e)
         {
             errorText.Text = "";
 
-            if (this.hostIP.Text.Equals(string.Empty))
+            if (this.hostIP.Text.Equals("0.0.0.0"))
             {
-                errorText.Text = "Please fill in the host IP address";
+                errorText.Text = "Please adjust your Ethernet Adapter settings";
             }
             else if (portNameDD.Text.Equals(string.Empty))
             {
@@ -338,7 +341,7 @@ namespace BetterRouterProgram
             }
             else if (!File.Exists(filepathToolTip.Text + @"\tftpd32.exe"))
             {
-                errorText.Text = "tftpd32.exe not found in directory";
+                errorText.Text = "tftpd32.exe not found in selected directory";
             }
             else if (secretPassword.Equals(string.Empty))
             {
@@ -361,6 +364,7 @@ namespace BetterRouterProgram
                     }
                 }
 
+                //Before making the connection, adjust the router ID displayed so that it can be properly used in the connection
                 foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray()) 
                 {
                     if(file.StartsWith(routerID_DD.Text) && !file.Contains("_acl")) 
@@ -383,12 +387,11 @@ namespace BetterRouterProgram
             }
         }
 
-        /// <summary>
-        /// Refreshes the host IP address.
-        /// Called by the user when they change their IP address
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        ///<summary>
+        ///Can be called by the user if they change their IP address
+        ///</summary>
+        ///<param name="sender"></param>
+        ///<param name="e"></param>
         private void refreshIP_Click(object sender, RoutedEventArgs e)
         {
             FillHostIP(this);
@@ -399,6 +402,11 @@ namespace BetterRouterProgram
             FillPortNames(this);
         }
 
+        /// <summary>
+        /// Gets the file checkbox contents to be transferred/copied to the router
+        /// </summary>
+        /// <param name="parent">The grid (or general visual component) that the checkboxes reside in</param>
+        /// <returns></returns>
         private List <string> GetCheckboxContents(Visual parent)
         {
             List<string> allChecks = new List<string>();
@@ -409,7 +417,7 @@ namespace BetterRouterProgram
 
                 for (int i = 0; i < count; i++)
                 {
-                    // Retrieve child visual at specified index value.
+                    //Retrieve child visual (checkbox) at the specified index value.
                     Visual child = VisualTreeHelper.GetChild(parent, i) as Visual;
 
                     if (child != null)
@@ -420,7 +428,7 @@ namespace BetterRouterProgram
                         {
                             if (checkbox.Content.ToString().Equals("acl.cfg") && (bool)NoAclRename.IsChecked)
                             {
-                                //this is done so that the acl file is correctly renamed
+                                //this is done so that the acl file is correctly renamed for K core systems
                                 allChecks.Add("noacl.cfg");
                             }
                             else

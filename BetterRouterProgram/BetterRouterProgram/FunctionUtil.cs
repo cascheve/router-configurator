@@ -9,6 +9,7 @@ namespace BetterRouterProgram
 {
 
     //TODO error catch for boot.ppc not transferring
+    //TODO TFTPD32 alternative?
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
@@ -60,19 +61,23 @@ namespace BetterRouterProgram
                 instructionCount += 1;
             }
 
-            UpdateAmount = 100/instructionCount;
+            UpdateAmount = 100 / instructionCount;
 
             ProgressWindow = new ProgressWindow();
             ProgressWindow.progressBar.Value = 0;
             ProgressWindow.Topmost = true;
             ProgressWindow.Show();
 
-            if (File.Exists(logFilePath))
+            //Using this method of log keeping deletes all previous logging on the file, which may be useful IF there are long term errors
+            /*if (File.Exists(logFilePath))
             {
                 File.Delete(logFilePath);
-            }
+            }*/
 
             LogFileWriter = File.AppendText(logFilePath);
+
+            LogFileWriter.WriteLine($"\n{DateTime.Now.ToString()}--------------------\n");
+            LogFileWriter.Flush();
         }
 
         /// <summary>
@@ -108,14 +113,14 @@ namespace BetterRouterProgram
         }
 
         /// <summary>
-        /// Logins with the specified username and password.
+        /// Logs in with the specified username and password.
         /// </summary>
         /// <param name="username">The router username.</param>
         /// <param name="password">The current router password.</param>
         /// <returns> whether the login was successful or not.</returns>
         public static bool Login(string username, string password)
         {
-            UpdateProgress("Logging In", FunctionUtil.MessageType.Message);
+            UpdateProgress("Logging In", MessageType.Message);
             
             Thread.Sleep(500);
 
@@ -123,10 +128,10 @@ namespace BetterRouterProgram
                 SerialConnection.RunInstruction("", ':');
                 SerialConnection.RunInstruction(username, ':');
                 SerialConnection.RunInstruction(password);
-                FunctionUtil.UpdateProgress("Login Successful", FunctionUtil.MessageType.Success);
+                UpdateProgress("Login Successful", MessageType.Success);
                 return true;
             }
-            catch(TimeoutException e) {
+            catch(TimeoutException) {
                 return false;
             }  
         }
@@ -194,9 +199,14 @@ namespace BetterRouterProgram
 
             foreach (var file in filesToCopy)
             {
+                //the timeout is adjusted for the much bigger file
                 if (file.Equals("boot.ppc"))
                 {
                     SerialConnection.SetSerialPortTimeout(30000);
+                }
+                else
+                {
+                    SerialConnection.SetSerialPortTimeout(750);
                 }
 
                 UpdateProgress($"Creating backup of {file}", MessageType.Message);
@@ -211,8 +221,6 @@ namespace BetterRouterProgram
                 {
                     UpdateProgress($"Created backup of {file} in {backupDirectory}", MessageType.Success);
                 }
-
-                SerialConnection.SetSerialPortTimeout(750);
 
             }
 
@@ -242,7 +250,7 @@ namespace BetterRouterProgram
                 UpdateProgress("Password Succesfully Changed", MessageType.Success);
             }
             else if (message.Contains("Invalid password")) {
-                
+                //TODO add IA compliance to the first menu to eliminate this error
                 UpdateProgress("Password used doesn't meet requirements. Skipping Step...", MessageType.Error);
                 return;
             }
@@ -325,10 +333,12 @@ namespace BetterRouterProgram
             else
             {
                 UpdateProgress("An Error occurred during runtime. The router will not be rebooted.", MessageType.Message);
-                Thread.Sleep(1000);
             }
 
             SerialConnection.CloseConnection();
+
+            //give the user time to read the update messages
+            Thread.Sleep(1000);
 
             //close the progress window and filewriter
             ProgressWindow.Close();

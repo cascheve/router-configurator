@@ -116,8 +116,7 @@ namespace BetterRouterProgram
         /// <param name="rebootStatus">if set to <c>true</c>, the router will reboot.</param>
         /// <param name="renameAcl">if set to <c>true</c>, the "acl.cfg" file will be renamed to "noacl.cfg".</param>
         /// <param name="settings">The list of connection and script settings</param>
-        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, 
-                                                bool rebootStatus, bool renameAcl, params string[] settings)
+        public static void InitializeAndConnect(List<string> filesToTransfer, List<string> filesToCopy, List<string> pskIPList, bool rebootStatus, bool renameAcl, params string[] settings)
         {
             RebootStatus = rebootStatus;
             RenameAcl = renameAcl;
@@ -143,14 +142,14 @@ namespace BetterRouterProgram
                     else
                     {
                         FunctionUtil.UpdateProgress("Could not log into the Router." + 
-                            "\nCheck your login information and try again.", FunctionUtil.MessageType.Error);
+                            "\n Check your login information and try again.", FunctionUtil.MessageType.Error);
                         FunctionUtil.ConfigurationFinished(RebootStatus, true);
                     }
                 }
                 else
                 {
                     FunctionUtil.UpdateProgress("A connection to the Serial Port could not be made." + 
-                        "\nPlease check your connection and try again", FunctionUtil.MessageType.Error);
+                        "\n Please check your connection and try again", FunctionUtil.MessageType.Error);
                     FunctionUtil.ConfigurationFinished(RebootStatus, true);
                 }
             }
@@ -182,35 +181,35 @@ namespace BetterRouterProgram
         /// <param name="username">The router username.</param>
         /// <param name="password">The current router password.</param>
         /// <returns> whether the login was successful or not.</returns>
-        private static bool Login(string username, string password)
-        {
-            FunctionUtil.UpdateProgress("Logging In", FunctionUtil.MessageType.Message);
+        //private static bool Login(string username, string password)
+        //{
+        //    FunctionUtil.UpdateProgress("Logging In", FunctionUtil.MessageType.Message);
 
-            if (!SerialPort.IsOpen)
-            {
-                FunctionUtil.UpdateProgress("Login Unsuccessful: serial connection lost", FunctionUtil.MessageType.Error);
-                return false;
-            }
+        //    if (!SerialPort.IsOpen)
+        //    {
+        //        FunctionUtil.UpdateProgress("Login Unsuccessful: serial connection lost", FunctionUtil.MessageType.Error);
+        //        return false;
+        //    }
             
-            Thread.Sleep(500);
+        //    Thread.Sleep(500);
 
-            SerialPort.Write("\r\n");
-            Thread.Sleep(500);
+        //    SerialPort.Write("\r\n");
+        //    Thread.Sleep(500);
 
-            SerialPort.Write(username + "\r\n");
-            Thread.Sleep(500);
+        //    SerialPort.Write(username + "\r\n");
+        //    Thread.Sleep(500);
 
-            SerialPort.Write(password + "\r\n");
-            Thread.Sleep(500);
+        //    SerialPort.Write(password + "\r\n");
+        //    Thread.Sleep(500);
 
-            //if the serial connection fails using the username and password specified
-            if (ReadResponse('#').Length > 0) {
-                FunctionUtil.UpdateProgress("Login Successful", FunctionUtil.MessageType.Success);
-                return true;
-            }
+        //    //if the serial connection fails using the username and password specified
+        //    if (ReadResponse('#').Length > 0) {
+        //        FunctionUtil.UpdateProgress("Login Successful", FunctionUtil.MessageType.Success);
+        //        return true;
+        //    }
             
-            return false;
-        }
+        //    return false;
+        //}
 
         /// <summary>
         /// Transfers files to the router as a BackgroundWorker.
@@ -331,7 +330,7 @@ namespace BetterRouterProgram
                     return;
                 }
 
-                FunctionUtil.CopyToSecondary(new List<string>(FilesToCopy));
+                //FunctionUtil.CopyToSecondary(new List<string>(FilesToCopy));
 
                 FunctionUtil.SetBootOrder();
 
