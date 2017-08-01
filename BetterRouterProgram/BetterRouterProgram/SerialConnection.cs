@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
-//TODO  documentation, move login to functionutil
+
 namespace BetterRouterProgram
 {
     /// <summary>
@@ -160,7 +160,7 @@ namespace BetterRouterProgram
             catch (System.ComponentModel.Win32Exception)
             {
                 FunctionUtil.UpdateProgress("Could not find the TFTP Client executable in the folder specified. "
-                    +"\nPlease move the TFTP Application File (.exe) into the desired directory or choose a different directory and try again.", FunctionUtil.MessageType.Error);
+                    +"\nPlease move the TFTP Application File (.exe) into the desired directory \n\tor choose a different directory and try again.", FunctionUtil.MessageType.Error);
             }
             catch (TimeoutException)
             {
@@ -324,13 +324,14 @@ namespace BetterRouterProgram
         {
             try
             {
+                //TODO switch between test and official
                 if (ConnectionLost)
                 {
                     FunctionUtil.UpdateProgress("Ethernet Connection has been Lost", FunctionUtil.MessageType.Error);
                     return;
                 }
 
-                //FunctionUtil.CopyToSecondary(new List<string>(FilesToCopy));
+                FunctionUtil.CopyToSecondary(new List<string>(FilesToCopy));
 
                 FunctionUtil.SetBootOrder();
 
@@ -339,7 +340,7 @@ namespace BetterRouterProgram
                     FunctionUtil.SetPsk(PskIPList);
                 }
 
-                //FunctionUtil.SetPassword(GetSetting("system password"));
+                FunctionUtil.SetPassword(GetSetting("system password"));
 
                 FunctionUtil.ConfigurationFinished(RebootStatus, false);
             }

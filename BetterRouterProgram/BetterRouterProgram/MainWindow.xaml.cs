@@ -110,35 +110,29 @@ namespace BetterRouterProgram
         {
             routerID_DD.Items.Clear();
 
-            Dictionary<string, int> configFiles = new Dictionary<string, int>();
             string currentID = "";
             ComboBoxItem cBoxItem = null;
+            ComboBoxItem dBoxItem = null;
 
             //select all of the .cfg files and determine if they match the pattern used by CCSi
             foreach (var file in Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName))
             {
                 if(file.StartsWith("z0") || file.StartsWith("cen"))
                 {
-                    currentID = file.Split('_')[0];
-                    try 
+                    currentID = file;
+
+                    if (!currentID.Contains("acl") && !currentID.Contains("xgsn"))
                     {
-                        //TODO automatically/manually create compliant directories? ASK
-                        if( (configFiles[currentID] == 2 && currentID.Contains("ggsn")) || configFiles[currentID] == 1 ) 
-                        {
-                            cBoxItem = new ComboBoxItem();
-                            cBoxItem.Content = currentID;
-                            routerID_DD.Items.Add(cBoxItem);
-                        }
-                        else {
-                            configFiles[currentID]++;
-                        }
-                    }
-                    catch(KeyNotFoundException) 
-                    {
-                        configFiles.Add(currentID, 1);
+                        dBoxItem = cBoxItem;
+                        cBoxItem = new ComboBoxItem();
+                        cBoxItem.Content = currentID.Split('_')[0];
+                        routerID_DD.Items.Add(cBoxItem);
                     }
                 }
             }
+
+            dBoxItem.IsSelected = true;
+            cBoxItem.IsSelected = true;
         }
 
         ///<summary>
@@ -153,20 +147,25 @@ namespace BetterRouterProgram
                 return;
             }
 
+
             bool xgsnCheck = false;
 
             foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName))
             {
-                if (file.StartsWith(routerID_DD.Text) && file.Contains("_xgsn"))
+                if (e.AddedItems[0].ToString().Split(':').Length > 1)
                 {
-                    xgsnCheck = true;
+                    if (file.StartsWith(e.AddedItems[0].ToString().Split(':')[1].Trim()) && file.Contains("_xgsn"))
+                    {
+                        xgsnCheck = true;
+                        break;
+                    }
                 }
             }
 
             xgsn_transfer.IsEnabled = xgsnCheck;
             xgsn_transfer.IsChecked = xgsnCheck;
             xgsn_copy.IsEnabled = xgsnCheck;
-            xgsn_copy.IsChecked = false;
+            xgsn_copy.IsChecked = xgsnCheck;
         }
 
         ///<summary>
@@ -285,12 +284,12 @@ namespace BetterRouterProgram
             staticrp_transfer.IsEnabled = staticrpCheck;
             staticrp_transfer.IsChecked = staticrpCheck;
             staticrp_copy.IsEnabled = staticrpCheck;
-            staticrp_copy.IsChecked = false;
+            staticrp_copy.IsChecked = staticrpCheck;
 
             antiacl_transfer.IsEnabled = antiaclCheck;
             antiacl_transfer.IsChecked = antiaclCheck;
             antiacl_copy.IsEnabled = antiaclCheck;
-            antiacl_copy.IsChecked = false;
+            antiacl_copy.IsChecked = antiaclCheck;
 
             ppc_transfer.IsEnabled = ppcCheck;
             ppc_transfer.IsChecked = ppcCheck;
@@ -327,10 +326,10 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "Please fill in the port number";
             }
-            else if (sysPassword.Text.Equals(string.Empty))
-            {
-                errorText.Text = "Please fill in the system password";
-            }
+            //else if (sysPassword.Text.Equals(string.Empty))
+            //{
+            //    errorText.Text = "Please fill in the system password";
+            //}
             else if (routerID_DD.Text.Equals(string.Empty))
             {
                 errorText.Text = "Please select the router's ID";
@@ -343,10 +342,10 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "tftpd32.exe not found in selected directory";
             }
-            else if (secretPassword.Equals(string.Empty))
-            {
-                errorText.Text = "Please select the router's secret";
-            }
+            //else if (secretPassword.Equals(string.Empty))
+            //{
+            //    errorText.Text = "Please select the router's secret";
+            //}
             else
             {
 

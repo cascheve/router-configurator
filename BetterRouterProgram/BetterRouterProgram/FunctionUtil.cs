@@ -7,8 +7,7 @@ using System.Linq;
 
 namespace BetterRouterProgram
 {
-
-    //TODO error catch for boot.ppc not transferring
+    //TODO Password IA in first menu
     //TODO TFTPD32 alternative?
 
     /// <summary>
@@ -87,7 +86,7 @@ namespace BetterRouterProgram
         /// <param name="setValue">The value to set the progress bar to</param>
         /// <param name="toAdd">The amount of progress to be added to the current progress level</param>
         public static void UpdateProgress(string message, MessageType type) {
-            //TODO update only on success
+
             string progressUpdate = "";
             switch(type) {
                 case MessageType.Message:
@@ -153,7 +152,9 @@ namespace BetterRouterProgram
             else {
                 routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.') + 1) + "1";
             }
-            
+
+            // setd !1 -ip neta = 10.1.1.1 255.255.255.0
+            // copy 10.1.1.2:boot.ppc a:/primary/boot.ppc
             string message = SerialConnection.RunInstruction($"setd !{routerPort} -ip neta = {routerIP} 255.255.255.0");
 
             if (message.Contains("exists"))
@@ -188,7 +189,10 @@ namespace BetterRouterProgram
         /// Copies the previously loaded file directory into a back-up directory in case of an error on the router
         /// </summary>
         public static void CopyToSecondary(List<string> filesToCopy) {
-            //TODO insert literal values into instruction
+
+            FunctionUtil.UpdateProgress("Copying files to Secondary Directory", FunctionUtil.MessageType.Message);
+
+            //TODO switch between test and official
             string primaryDirectory = "a:/primary";
             string backupDirectory = "a:/secondary";
             string response = "";
@@ -231,36 +235,52 @@ namespace BetterRouterProgram
         /// </summary>
         /// <param name="password">The password used at the corresponding site/zone of the system</param>
         public static void SetPassword(string password) {
-            UpdateProgress("Setting Password", MessageType.Message);
+            UpdateProgress("Setting Passwords", MessageType.Message);
 
             password = password.Trim(' ', '\t', '\r', '\n');
-            
-            if(password.Equals(SerialConnection.GetSetting("current password"))){
-                UpdateProgress("Password cannot be set to the same value. Skipping Step...", MessageType.Error);
-                return;
+
+            if (password.Equals(string.Empty))
+            {
+                UpdateProgress("New Password was left empty. Skipping Step...", MessageType.Message);
+            }
+            else if (password.Equals(SerialConnection.GetSetting("current password")))
+            {
+                UpdateProgress("New Password cannot be set to the same value. Skipping Step...", MessageType.Message);
+            }           
+            else
+            {
+                string message = SerialConnection.RunInstruction(String.Format(
+                    "SETDefault -SYS NMPassWord = \"{0}\" \"{1}\" \"{2}\"",
+                    SerialConnection.GetSetting("current password"),
+                    password, password
+                ));
+
+                if (message.Contains("Password changed"))
+                {
+                    UpdateProgress("Password Succesfully Changed", MessageType.Success);
+                }
+                else if (message.Contains("Invalid password"))
+                {
+                    //TODO add IA compliance to the first menu to eliminate this error
+                    UpdateProgress("Password used doesn't meet requirements. Skipping Step...", MessageType.Error);
+                    return;
+                }
+                else
+                {
+                    UpdateProgress($"{message.Substring(0, 50)}...", MessageType.Error);
+                    return;
+                }
             }
 
-            string message = SerialConnection.RunInstruction(String.Format(
-                "SETDefault -SYS NMPassWord = \"{0}\" \"{1}\" \"{2}\"",
-                SerialConnection.GetSetting("current password"),
-                password, password
-            ));
-
-            if (message.Contains("Password changed")) {
-                UpdateProgress("Password Succesfully Changed", MessageType.Success);
+            if (SerialConnection.GetSetting("secret").Equals(string.Empty))
+            {
+                UpdateProgress("Secret was left empty. Skipping Step...", MessageType.Message);
             }
-            else if (message.Contains("Invalid password")) {
-                //TODO add IA compliance to the first menu to eliminate this error
-                UpdateProgress("Password used doesn't meet requirements. Skipping Step...", MessageType.Error);
-                return;
+            else
+            {
+                SerialConnection.RunInstruction($"setd -ac secret = \"{SerialConnection.GetSetting("secret")}\"");
+                UpdateProgress("Secret Password Set", MessageType.Success);
             }
-	        else {
-                UpdateProgress($"{message.Substring(0, 50)}...", MessageType.Error);
-                return;
-            }
-
-            SerialConnection.RunInstruction($"setd -ac secret = \"{SerialConnection.GetSetting("secret")}\"");
-            UpdateProgress("Secret Password Set", MessageType.Success);
         }
 
         /// <summary>

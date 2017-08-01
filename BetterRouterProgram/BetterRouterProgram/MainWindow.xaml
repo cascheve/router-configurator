@@ -79,7 +79,7 @@
         <TextBlock Text="Enter the Current Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" >
             <TextBlock.ToolTip>
                 <ToolTip>
-                    <TextBlock TextWrapping="Wrap" Width="300">Enter the password this Router currently looks for when authenticating a login.</TextBlock>
+                    <TextBlock TextWrapping="Wrap" Width="300">Enter the password this Router currently looks for when authenticating a login. New routers often have no password.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
@@ -88,7 +88,7 @@
         <TextBlock Text="Enter the New Password: " Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
                 <ToolTip>
-                    <TextBlock TextWrapping="Wrap" Width="300">Enter the password that the Router will use for future login authentication.</TextBlock>
+                    <TextBlock TextWrapping="Wrap" Width="300">Enter the password that the Router will use for future login authentication. Leaving this blank will skip the step.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
@@ -97,7 +97,7 @@
         <TextBlock Text="Enter the Secret Password: " Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
                 <ToolTip>
-                    <TextBlock TextWrapping="Wrap" Width="300">Enter the secret password. In some cases, this is similar to the system password.</TextBlock>
+                    <TextBlock TextWrapping="Wrap" Width="300">Enter the secret password. In some cases, this is similar to the system password. If this is left blank, it will skip this step.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
@@ -190,10 +190,10 @@
             </Grid.ColumnDefinitions>
 
             <CheckBox Name="ppc_copy" IsEnabled="False" IsChecked="True" Content="boot.ppc" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
-            <CheckBox Name="acl_copy" IsEnabled="True" IsChecked="False" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
+            <CheckBox Name="acl_copy" IsEnabled="True" IsChecked="True" Content="acl.cfg" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"/>
             <CheckBox Name="xgsn_copy" IsEnabled="False" IsChecked="False" Content="xgsn.cfg" Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"/>
 
-            <CheckBox Name="cfg_copy" IsEnabled="True" IsChecked="False" Content="boot.cfg" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+            <CheckBox Name="cfg_copy" IsEnabled="True" IsChecked="True" Content="boot.cfg" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
             <CheckBox Name="staticrp_copy" IsEnabled="True" IsChecked="False" Content="staticRP.cfg" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
             <CheckBox Name="antiacl_copy" IsEnabled="True" IsChecked="False" Content="antiacl.cfg" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center"/>
 
