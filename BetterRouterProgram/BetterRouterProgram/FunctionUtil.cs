@@ -73,6 +73,8 @@ namespace BetterRouterProgram
                 File.Delete(logFilePath);
             }*/
 
+            ProgressWindow.LogLocation.ToolTip += logFilePath;
+
             LogFileWriter = File.AppendText(logFilePath);
 
             LogFileWriter.WriteLine($"\n{DateTime.Now.ToString()}--------------------\n");
@@ -190,7 +192,7 @@ namespace BetterRouterProgram
         /// </summary>
         public static void CopyToSecondary(List<string> filesToCopy) {
 
-            FunctionUtil.UpdateProgress("Copying files to Secondary Directory", FunctionUtil.MessageType.Message);
+            //UpdateProgress("Copying files to Secondary Directory", MessageType.Message);
 
             //TODO switch between test and official
             string primaryDirectory = "a:/primary";
@@ -358,7 +360,7 @@ namespace BetterRouterProgram
             SerialConnection.CloseConnection();
 
             //give the user time to read the update messages
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
 
             //close the progress window and filewriter
             ProgressWindow.Close();

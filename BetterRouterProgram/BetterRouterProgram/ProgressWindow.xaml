@@ -40,7 +40,7 @@
             </Border>
         </ScrollViewer>
 
-        <TextBlock Text="All status updates can be found in the log file" Foreground="DodgerBlue" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <TextBlock Name ="LogLocation" Text="All status updates can be found in the log file" Foreground="DodgerBlue" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="1" VerticalAlignment="Center" HorizontalAlignment="Center" ToolTip="Log File Location: "/>
 
     </Grid>
 </Window>

@@ -110,29 +110,42 @@ namespace BetterRouterProgram
         {
             routerID_DD.Items.Clear();
 
+            List<string> routerIDs = new List <string>(Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName));
+
+            string fileName = "";
             string currentID = "";
+            string lastID = "";
             ComboBoxItem cBoxItem = null;
-            ComboBoxItem dBoxItem = null;
 
-            //select all of the .cfg files and determine if they match the pattern used by CCSi
-            foreach (var file in Directory.GetFiles(directory, "*.cfg").Select(Path.GetFileName))
+            for (int i = 0; i < routerIDs.Count; i++)
             {
-                if(file.StartsWith("z0") || file.StartsWith("cen"))
-                {
-                    currentID = file;
+                fileName = routerIDs[i];
 
-                    if (!currentID.Contains("acl") && !currentID.Contains("xgsn"))
+                if (fileName.StartsWith("z0") || fileName.StartsWith("cen"))
+                {
+                    currentID = fileName.Split('_')[0];
+
+                    if (fileName.Contains("ggsn") && i + 2 < routerIDs.Count && routerIDs[i + 1].Split('_')[0].Equals(currentID) && routerIDs[i + 2].Split('_')[0].Equals(currentID))
                     {
-                        dBoxItem = cBoxItem;
                         cBoxItem = new ComboBoxItem();
-                        cBoxItem.Content = currentID.Split('_')[0];
+                        cBoxItem.Content = currentID;
+                        routerID_DD.Items.Add(cBoxItem);
+                        i += 2;
+                        continue;
+                    }
+                    if (fileName.Contains("acl") && currentID.Equals(lastID) && !lastID.Contains("ggsn"))
+                    {
+                        cBoxItem = new ComboBoxItem();
+                        cBoxItem.Content = lastID;
                         routerID_DD.Items.Add(cBoxItem);
                     }
+
+                    lastID = currentID;
                 }
             }
 
-            dBoxItem.IsSelected = true;
             cBoxItem.IsSelected = true;
+            //((ComboBoxItem)routerID_DD.Items[0]).IsSelected = true;
         }
 
         ///<summary>
@@ -152,6 +165,12 @@ namespace BetterRouterProgram
 
             foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName))
             {
+                //TODO: if e.AddedItems.Length < 1 --> continue
+                if (e.AddedItems.Count < 1)
+                {
+                    break;
+                }
+
                 if (e.AddedItems[0].ToString().Split(':').Length > 1)
                 {
                     if (file.StartsWith(e.AddedItems[0].ToString().Split(':')[1].Trim()) && file.Contains("_xgsn"))
@@ -238,7 +257,14 @@ namespace BetterRouterProgram
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.Forms.MessageBox.Show("Error: " + ex.Message);
+                    if (ex.Message.Contains("reference"))
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error: The selected directory is invalid.");
+                    }
+                    else
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error: " + ex.Message);
+                    }
                 }
             }
             else
@@ -363,12 +389,14 @@ namespace BetterRouterProgram
                     }
                 }
 
+                string routerID = "";
+
                 //Before making the connection, adjust the router ID displayed so that it can be properly used in the connection
                 foreach (var file in Directory.GetFiles(filepathToolTip.Text, "*.cfg").Select(Path.GetFileName).ToArray()) 
                 {
                     if(file.StartsWith(routerID_DD.Text) && !file.Contains("_acl")) 
                     {
-                        routerID_DD.Text = file.Substring(0, file.Length - 4);
+                        routerID = file.Substring(0, file.Length - 4);
                         break;
                     }
                 }
@@ -380,7 +408,7 @@ namespace BetterRouterProgram
                     RebootCheckbox.IsChecked.HasValue? RebootCheckbox.IsChecked.Value : false,
                     NoAclRename.IsChecked.HasValue? NoAclRename.IsChecked.Value : false,
                     portNameDD.Text, currentPassword.Text, sysPassword.Text, 
-                    secretPassword.Text, routerID_DD.Text, filepathToolTip.Text,
+                    secretPassword.Text, routerID, filepathToolTip.Text,
                     this.hostIP.Text, PSKProfile.Text, PSKValue.Text, EthernetPort.Text
                 );
             }

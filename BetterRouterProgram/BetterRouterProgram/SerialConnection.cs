@@ -253,6 +253,8 @@ namespace BetterRouterProgram
                         formattedHostFile, file
                     ));
 
+                    Thread.Sleep(500);
+
                     //update the progress window according to the file's transfer status
                     if (message.EndsWith("DOWN"))
                     {
@@ -289,6 +291,15 @@ namespace BetterRouterProgram
             }
 
             SerialPort.ReadTimeout = 750;
+
+            Thread.Sleep(500);
+
+            pm.Message = "Performing Auxiallary Operations. Please Wait...";
+            pm.Type = FunctionUtil.MessageType.Message;
+            TransferWorker.ReportProgress(0, pm);
+
+            Thread.Sleep(500);
+
         }
 
         /// <summary>
@@ -359,6 +370,8 @@ namespace BetterRouterProgram
         {
             if (SerialPort.IsOpen)
             {
+                RunInstruction("l", '@');
+                RunInstruction("", ':');
                 SerialPort.Close();
             }
         }
@@ -451,6 +464,10 @@ namespace BetterRouterProgram
             }
         }
 
+        /// <summary>
+        /// A method to be used outside SerialConnection to adjust the serial port timeout
+        /// </summary>
+        /// <param name="timeout">The timeout.</param>
         public static void SetSerialPortTimeout(int timeout)
         {
             SerialPort.ReadTimeout = timeout;
