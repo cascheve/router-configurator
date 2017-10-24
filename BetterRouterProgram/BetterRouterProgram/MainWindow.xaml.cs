@@ -144,7 +144,14 @@ namespace BetterRouterProgram
                 }
             }
 
-            cBoxItem.IsSelected = true;
+            if (cBoxItem != null)
+            {
+                cBoxItem.IsSelected = true;
+            }
+            else
+            {
+                throw new Exception("The selected folder does not contain a valid set of files.");
+            }
             //((ComboBoxItem)routerID_DD.Items[0]).IsSelected = true;
         }
 
