@@ -121,9 +121,13 @@ namespace BetterRouterProgram
             {
                 fileName = routerIDs[i];
 
-                if (fileName.StartsWith("z0") || fileName.StartsWith("cen"))
+                if (fileName.StartsWith("z0") || fileName.StartsWith("cen") || fileName.StartsWith("cs"))
                 {
                     currentID = fileName.Split('_')[0];
+                    if (currentID.Contains(".cfg"))
+                    {
+                        currentID = currentID.Remove(currentID.Length - 4, 4);
+                    }
 
                     if (fileName.Contains("ggsn") && i + 2 < routerIDs.Count && routerIDs[i + 1].Split('_')[0].Equals(currentID) && routerIDs[i + 2].Split('_')[0].Equals(currentID))
                     {
