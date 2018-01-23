@@ -157,6 +157,10 @@ namespace BetterRouterProgram
             {
                 FunctionUtil.UpdateProgress("Unable to locate the Specified File, please try again.", FunctionUtil.MessageType.Error);
             }
+            catch (System.Net.Sockets.SocketException)
+            {
+                FunctionUtil.UpdateProgress("More than one TFTP application is running. Please close all other TFTP applications and try again. ", FunctionUtil.MessageType.Error);
+            }
             catch (System.ComponentModel.Win32Exception)
             {
                 FunctionUtil.UpdateProgress("Could not find the TFTP Client executable in the folder specified. "
@@ -290,7 +294,7 @@ namespace BetterRouterProgram
                 FunctionUtil.ConfigurationFinished(RebootStatus, true);
             }
 
-            SerialPort.ReadTimeout = 750;
+            SerialPort.ReadTimeout = 17500;
 
             Thread.Sleep(500);
 
@@ -452,8 +456,8 @@ namespace BetterRouterProgram
             try
             {
                 SerialPort = new SerialPort(comPort, 9600);
-                SerialPort.ReadTimeout = 750;
-                SerialPort.WriteTimeout = 500;
+                SerialPort.ReadTimeout = 17500;
+                SerialPort.WriteTimeout = 1500;
                 SerialPort.Open();
 
                 return true;

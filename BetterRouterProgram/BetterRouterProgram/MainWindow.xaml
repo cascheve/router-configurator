@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Background="#fbfbfb"
         Icon="icon1.ico"
-        Title="CCSi Router Configuration Tool" 
-        Height="570" 
+        Title="GGM8000 Configuration Tool" 
+        Height="620" 
         Width="650"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
@@ -35,7 +35,21 @@
             <RowDefinition Height="15"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="100"/>
+
+            <RowDefinition Height="25"/>
+
+
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="5"/>
+            <!--<RowDefinition Height="145"/>-->
+            
             <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
 
@@ -49,8 +63,6 @@
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Mouse over an option for help" Foreground="DodgerBlue"  Grid.Row="21" Grid.Column="1" VerticalAlignment="Center" />
-
         <TextBlock Text="Host Ethernet IP Address " Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" >
             <TextBlock.ToolTip>
                 <ToolTip>
@@ -59,10 +71,12 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <TextBox Name="hostIP" Text="" IsReadOnly="True" Grid.Row="1" Grid.Column="3" Width="100" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+        <DockPanel Grid.Row="1" Grid.Column="3">
+            <TextBox Name="hostIP" Text="" IsReadOnly="True"  Width="100" DockPanel.Dock="Left" VerticalContentAlignment="Center"/>
 
-        <Button Name="refreshIP" Content="Refresh IP" Click="refreshIP_Click" Grid.Row="1" Grid.Column="3" Margin="110,0,0,0" Width="80" HorizontalAlignment="Left"/>
-        
+            <Button Name="refreshIP" Content="Refresh IP" Click="refreshIP_Click" DockPanel.Dock="Left" Margin="5, 0, 0, 0" Width="80" HorizontalAlignment="Left"/>
+        </DockPanel>
+
         <TextBlock Text="Choose the Serial Port: " Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
             <TextBlock.ToolTip>
                 <ToolTip>
@@ -72,9 +86,12 @@
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
-        <ComboBox x:Name="portNameDD" Grid.Row="3" Grid.Column="3" Width="100" Height="22" HorizontalAlignment="Left"/>
 
-        <Button Name="refreshPorts" Content="Refresh Ports" Click="refreshPorts_Click" Grid.Row="3" Grid.Column="3" Margin="110,0,0,0" Width="80" HorizontalAlignment="Left"/>
+        <DockPanel Grid.Row="3" Grid.Column="3">
+            <ComboBox x:Name="portNameDD" Width="100" DockPanel.Dock="Left"/>
+
+            <Button Name="refreshPorts" Content="Refresh Ports" Click="refreshPorts_Click" Width="80" DockPanel.Dock="Left" Margin="5, 0, 0, 0" HorizontalAlignment="Left"/>
+        </DockPanel>
 
         <TextBlock Text="Enter the Current Password: " Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" >
             <TextBlock.ToolTip>
@@ -107,23 +124,25 @@
         <TextBlock Name="filepathPrompt" Text="Path to Configuration File Directory: " Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
             <TextBlock.ToolTip>
                 <ToolTip>
-                    <TextBlock TextWrapping="Wrap" Width="320">Browse for the folder that contains the configuration files required to configure the router, as well as the TFTPD32 application. If your acl files are separated from the rest of the configuration files, it may be necessary to copy and combine the folders.</TextBlock>
+                    <TextBlock TextWrapping="Wrap" Width="320">Browse for the folder that contains the configuration files required to configure the router. If your acl files are separated from the rest of the configuration files, it may be necessary to copy and combine the folders.</TextBlock>
                 </ToolTip>
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <TextBlock Name="filepathText" Text="" Grid.Row="11" Grid.Column="3" HorizontalAlignment="Right" Width="280" VerticalAlignment="Center">
-            <TextBlock.ToolTip>
-                <ToolTip>
-                    <StackPanel>
-                        <TextBlock FontWeight="Bold">Selected Configuration Folder</TextBlock>
-                        <TextBlock Name="filepathToolTip"></TextBlock>
-                    </StackPanel>
-                </ToolTip>
-            </TextBlock.ToolTip>
-        </TextBlock>
+        <DockPanel Grid.Row="11" Grid.Column="3" >
+            <TextBox Name="filepathText" Text="" Width="250" HorizontalAlignment="Left" VerticalContentAlignment="Center" IsReadOnly="False">
+                <TextBox.ToolTip>
+                    <ToolTip>
+                        <StackPanel>
+                            <TextBlock FontWeight="Bold">Selected Configuration Folder</TextBlock>
+                            <TextBlock Name="filepathToolTip"></TextBlock>
+                        </StackPanel>
+                    </ToolTip>
+                </TextBox.ToolTip>
+            </TextBox>
 
-        <Button Name="browseButton" Content="Browse" Grid.Column="3" Grid.Row="11" Click="BrowseFiles" Width="100" HorizontalAlignment="Left"/>
+            <Button Name="browseButton" Content="Browse" Click="BrowseFiles" Width="100" HorizontalAlignment="Left" Margin="5, 0, 0, 0"/>
+        </DockPanel>
 
         <TextBlock Text="Select the Router ID: " Grid.Row="13" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" >
             <TextBlock.ToolTip>
@@ -133,9 +152,9 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <ComboBox x:Name="routerID_DD" Grid.Row="13" Grid.Column="3" Width="250" Height="22" SelectionChanged="RouterIDSelectionChanged" HorizontalAlignment="Left"/>
+        <ComboBox x:Name="routerID_DD" Grid.Row="13" Grid.Column="3" Width="250" SelectionChanged="RouterIDSelectionChanged" HorizontalAlignment="Left"/>
 
-        <Separator Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="3" Width="500" HorizontalAlignment="Left" Height="10" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Separator Grid.Row="14" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="10"/>
 
         <TextBlock Text="Files Transferred to Primary: " Grid.Row="15" Grid.Column="1" VerticalAlignment="Center">
             <TextBlock.ToolTip>
@@ -167,7 +186,7 @@
 
         </Grid>
 
-        <Separator Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="3" Width="500" HorizontalAlignment="Left" Height="10" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
+        <Separator Grid.Row="16" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="10" VerticalAlignment="Center" VerticalContentAlignment="Center"/>
 
         <TextBlock Text="Files Copied to Secondary: " Grid.Row="17" Grid.Column="1" VerticalAlignment="Center">
             <TextBlock.ToolTip>
@@ -199,7 +218,7 @@
 
         </Grid>
 
-        <Separator Grid.Row="18" Grid.Column="1" Grid.ColumnSpan="3" Width="500" HorizontalAlignment="Left"/>
+        <Separator Grid.Row="18" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch"/>
 
         <TextBlock Text="PSK Profile (optional): " Grid.Row="19" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0" >
             <TextBlock.ToolTip>
@@ -209,12 +228,16 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <ComboBox Name="PSKProfile" Grid.Row="19" Grid.Column="3" Width="180" Height="22" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False" />
+        <ComboBox Name="PSKProfile" Grid.Row="19" Grid.Column="3" Width="180" HorizontalAlignment="Left" IsEnabled="False" />
 
-        <TextBlock Text="Pre-Shared Key:" Grid.Row="19" Grid.Column="3" Margin="190,3,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Enter the Pre-Shared Key used for this Router Profile."/>
-        <TextBox Name="PSKValue" Text="" Grid.Row="19" Grid.Column="3" Width="100" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="290,0,0,0" Height="22" IsEnabled="False" />
+        <TextBlock Text="Pre-Shared Key:" Grid.Row="21" Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <TextBlock.ToolTip>
+                Enter the Pre-Shared Key used for this Router Profile.
+            </TextBlock.ToolTip>
+        </TextBlock>
+        <TextBox Name="PSKValue" Text="" Grid.Row="21" Grid.Column="3" Width="100" HorizontalAlignment="Left" VerticalContentAlignment="Center" IsEnabled="False" />
 
-        <TextBlock Text="Set the Ethernet Port (optional): " Grid.Row="19" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,30,0,0" >
+        <TextBlock Text="Set the Ethernet Port (optional): " Grid.Row="23" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
             <TextBlock.ToolTip>
                 <ToolTip>
                     <TextBlock TextWrapping="Wrap" Width="300">Select the ethernet port on the router used for file transfer. </TextBlock>
@@ -222,23 +245,33 @@
             </TextBlock.ToolTip>
         </TextBlock>
 
-        <ComboBox Name="EthernetPort" Grid.Row="19" Grid.Column="3" Width="80" Height="22" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="True" Margin="0,25,0,0">
+        <ComboBox Name="EthernetPort" Grid.Row="23" Grid.Column="3" Width="80" HorizontalAlignment="Left" IsEnabled="True">
             <ComboBoxItem Content="1" IsSelected="True"/>
             <ComboBoxItem Content="2"/>
             <ComboBoxItem Content="3"/>
             <ComboBoxItem Content="4"/>
         </ComboBox>
 
-        <CheckBox Name="NoAclRename" IsEnabled="True" IsChecked="False" Content="Transfer acl.cfg as noacl.cfg (K Core Only)" Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="0,55,0,0" ToolTip="In a K Core System it is necessary to change the name of acl.cfg to noacl.cfg. If your system is not a K Core, you may skip this step."/>
+        <CheckBox Name="NoAclRename" IsEnabled="True" IsChecked="False" Content="Transfer acl.cfg as noacl.cfg (K Core Only)" Grid.Row="25" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <CheckBox.ToolTip>
+                In a K Core System it is necessary to change the name of acl.cfg to noacl.cfg. If your system is not a K Core, you may skip this step.
+            </CheckBox.ToolTip>
+        </CheckBox>
 
-        <CheckBox Name="RebootCheckbox" IsEnabled="True" IsChecked="False" Content="Reboot After Configuration (Recommended)" Grid.Row="19" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalContentAlignment="Center" VerticalAlignment="Top" Margin="0,80,0,0" ToolTip="If you want to send a Reboot command to the router after all operations have been completed, check this box. In the event of an error, the reboot command will not be sent."/>
+        <CheckBox Name="RebootCheckbox" IsEnabled="True" IsChecked="False" Content="Reboot After Configuration (Recommended)" Grid.Row="27" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <CheckBox.ToolTip>
+                If you want to send a Reboot command to the router after all operations have been completed, check this box. In the event of an error, the reboot command will not be sent.
+            </CheckBox.ToolTip>
+        </CheckBox>
 
-        <Separator Grid.Row="20" Grid.Column="1" Grid.ColumnSpan="3" />
+        <Separator Grid.Row="29" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch"/>
 
-        <Button Name="connectButton" IsEnabled="True" Content="Connect" Grid.Column="3" Grid.Row="21" Click="AttemptConnection"  HorizontalAlignment="Right" Width="105" Panel.ZIndex="1">
+        <TextBlock Text="Mouse over an option for help" Foreground="DodgerBlue"  Grid.Row="31" Grid.Column="1" VerticalAlignment="Center" />
+
+        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="31" Grid.Column="3" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+        <Button Name="connectButton" IsEnabled="True" Content="Connect" Grid.Column="3" Grid.Row="31" Click="AttemptConnection" HorizontalAlignment="Right" Width="105" Panel.ZIndex="1">
         </Button>
-
-        <TextBlock Foreground="Red" Name="errorText" Text="" Grid.Row="21" Grid.Column="3" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
     </Grid>
 </Window>

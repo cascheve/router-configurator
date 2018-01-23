@@ -8,7 +8,6 @@ using System.Linq;
 namespace BetterRouterProgram
 {
     //TODO Password IA in first menu
-    //TODO TFTPD32 alternative?
 
     /// <summary>
     /// A collection of static functions used to interact with the Serial Connection. 
@@ -27,9 +26,9 @@ namespace BetterRouterProgram
         private static ProgressWindow ProgressWindow;
 
         /// <summary>
-        /// tftpd32 application reference to open and close on command
+        /// tftpd64 application reference to open and close on command
         /// </summary>
-        private static Process Tftp;
+        //private static Process Tftp;
 
         /// <summary>
         /// Writer used to write to the log file for the current router
@@ -70,7 +69,8 @@ namespace BetterRouterProgram
             //Using this method of log keeping deletes all previous logging on the file, which may be useful IF there are long term errors
             /*if (File.Exists(logFilePath))
             {
-                File.Delete(logFilePath);
+                File.Delete(logFilePath); laptop difference
+
             }*/
 
             ProgressWindow.LogLocation.ToolTip += logFilePath;
@@ -152,7 +152,7 @@ namespace BetterRouterProgram
                 routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.') + 1) + "2";
             }
             else {
-                routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.') + 1) + "1";
+                routerIP = hostIP.Substring(0, hostIP.LastIndexOf('.') + 1) + "100";
             }
 
             // setd !1 -ip neta = 10.1.1.1 255.255.255.0
@@ -212,7 +212,7 @@ namespace BetterRouterProgram
                 }
                 else
                 {
-                    SerialConnection.SetSerialPortTimeout(750);
+                    SerialConnection.SetSerialPortTimeout(17500);
                 }
 
                 UpdateProgress($"Creating backup of {file}", MessageType.Message);
@@ -367,23 +367,23 @@ namespace BetterRouterProgram
             LogFileWriter.Close();
         }
 
-        /// <summary>
-        /// Called when the reference to the TFTP process is closed, which is required for file transfer
-        /// </summary>
-        /// <param name="sender">The sender of the close event</param>
-        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private static void OnTftpExit(object sender, EventArgs e)
-        {
-            System.Windows.Forms.MessageBox.Show("The TFTP Application was closed. This may cause errors in File Transfer.");
-            Tftp = null;
+        ///// <summary>
+        ///// Called when the reference to the TFTP process is closed, which is required for file transfer
+        ///// </summary>
+        ///// <param name="sender">The sender of the close event</param>
+        ///// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        //private static void OnTftpExit(object sender, EventArgs e)
+        //{
+        //    System.Windows.Forms.MessageBox.Show("The TFTP Application was closed. This may cause errors in File Transfer.");
+        //    Tftp = null;
 
-            //if the directory was renamed, set the name right again
-            if (Directory.Exists(@"C:\Motorola\SDM3000\Common\temp_TFTP"))
-            {
-                Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP");
-                Thread.Sleep(250);
-            }
-        }
+        //    //if the directory was renamed, set the name right again
+        //    if (Directory.Exists(@"C:\Motorola\SDM3000\Common\temp_TFTP"))
+        //    {
+        //        Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP");
+        //        Thread.Sleep(250);
+        //    }
+        //}
 
         /// <summary>
         /// Starts the TFTP application from the configuration folder
@@ -391,45 +391,47 @@ namespace BetterRouterProgram
         public static void StartTftp()
         {
             //this folder was found to cause errors when attempting to use TFTP in the program's context. Renaming clears the issue.
-            if (Directory.Exists(@"C:\Motorola\SDM3000\Common\TFTP"))
-            {
-                Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename TFTP temp_TFTP");
-                Thread.Sleep(250);
-            }
+            //if (Directory.Exists(@"C:\Motorola\SDM3000\Common\TFTP"))
+            //{
+            //    Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename TFTP temp_TFTP");
+            //    Thread.Sleep(250);
+            //}
 
-            //if the reference to TFTP is null (There is no relevant instance open) create a new one
-            if (Tftp == null)
-            {
-                Tftp = new Process();
-                Tftp.EnableRaisingEvents = true;
-                Tftp.Exited += OnTftpExit;
-                Tftp.StartInfo.Arguments = @"C:\";
-                Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd32.exe";
-                Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
-                Tftp.Start();
-            }
+            TFTPServer.RunServer(SerialConnection.GetSetting("config directory"));
 
-            //if the directory was renamed, set the name right again
-            if (Directory.Exists(@"C:\Motorola\SDM3000\Common\temp_TFTP"))
-            {
-                Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP");
-                Thread.Sleep(250);
-            }
+            ////if the reference to TFTP is null (There is no relevant instance open) create a new one
+            //if (Tftp == null)
+            //{
+            //    Tftp = new Process();
+            //    Tftp.EnableRaisingEvents = true;
+            //    Tftp.Exited += OnTftpExit;
+            //    Tftp.StartInfo.Arguments = @"C:\";
+            //    Tftp.StartInfo.FileName = SerialConnection.GetSetting("config directory") + @"\tftpd64.exe";
+            //    Tftp.StartInfo.WorkingDirectory = SerialConnection.GetSetting("config directory");
+            //    Tftp.Start();
+            //}
+
+            ////if the directory was renamed, set the name right again
+            //if (Directory.Exists(@"C:\Motorola\SDM3000\Common\temp_TFTP"))
+            //{
+            //    Process.Start("CMD.exe", @"/C cd C:\Motorola\SDM3000\Common\ & rename temp_TFTP TFTP");
+            //    Thread.Sleep(250);
+            //}
 
         }
 
-        /// <summary>
-        /// Stops the TFTP application. This is done as a convenience for the User.
-        /// </summary>
-        public static void StopTftp()
-        {
+        ///// <summary>
+        ///// Stops the TFTP application. This is done as a convenience for the User.
+        ///// </summary>
+        //public static void StopTftp()
+        //{
 
-            if (Tftp != null)
-            {
-                Tftp.CloseMainWindow();
-                Tftp.Close();
-                Tftp = null;
-            }
-        }
+        //    if (Tftp != null)
+        //    {
+        //        Tftp.CloseMainWindow();
+        //        Tftp.Close();
+        //        Tftp = null;
+        //    }
+        //}
     }
 }

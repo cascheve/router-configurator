@@ -16,6 +16,11 @@ namespace BetterRouterProgram
 {
     public partial class MainWindow : Window
     {
+        //TODO requires firewall be down or allow it; windows firewall inclusion?
+        //TODO Allow program to run https://support.symantec.com/en_US/article.TECH104526.html
+        //TODO Account for K Core issues -talk to Roy
+        //TODO adapt to HP Switch  Configurator
+
         //reference used to update the MainWindow from FunctionUtil, where the Router IDs are updated once files have been moved
         private static MainWindow MWRef;
 
@@ -65,6 +70,8 @@ namespace BetterRouterProgram
             pProcess.StartInfo.FileName = "ipconfig";
             pProcess.StartInfo.UseShellExecute = false;
             pProcess.StartInfo.RedirectStandardOutput = true;
+            pProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            pProcess.StartInfo.CreateNoWindow = true;
             pProcess.Start();
 
             string output = pProcess.StandardOutput.ReadToEnd();
@@ -208,7 +215,7 @@ namespace BetterRouterProgram
             String myStream = null;
             FolderBrowserDialog fbd = new FolderBrowserDialog();
 
-            fbd.Description = "Select the directory holding the configuration (*.cfg) files, acl files, and the TFTPD32 Application.";
+            fbd.Description = "Select the directory holding the configuration (*.cfg) files and .acl files";
             fbd.ShowNewFolderButton = false;
             //errorText.Text = fbd.SelectedPath;
              
@@ -336,13 +343,13 @@ namespace BetterRouterProgram
         }
 
         ///<summary>
-        ///Called when the window is closing, used to clean up the TFTPD32 application
+        ///Called when the window is closing, used to clean up the tftpd64 application
         ///</summary>
         ///<param name="sender">The sender of the close event</param>
         ///<param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void OnWindowClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            FunctionUtil.StopTftp();
+            //FunctionUtil.StopTftp();
         }
 
         ///<summary>
@@ -375,10 +382,10 @@ namespace BetterRouterProgram
             {
                 errorText.Text = "Please fill the configuration file directory";
             }
-            else if (!File.Exists(filepathToolTip.Text + @"\tftpd32.exe"))
-            {
-                errorText.Text = "tftpd32.exe not found in selected directory";
-            }
+            //else if (!File.Exists(filepathToolTip.Text + @"\tftpd64.exe"))
+            //{
+            //    errorText.Text = "tftpd64.exe not found in selected directory";
+            //}
             //else if (secretPassword.Equals(string.Empty))
             //{
             //    errorText.Text = "Please select the router's secret";
